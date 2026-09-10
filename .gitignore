@@ -19,6 +19,8 @@
 !.umirc.ts
 
 tsconfig.tsbuildinfo
+.eslintcache
+.stylelintcache
 
 # macOS
 .DS_Store

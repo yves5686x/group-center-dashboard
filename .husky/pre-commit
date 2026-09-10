@@ -1,2 +1,2 @@
 git config --local core.untrackedCache false
-npx --no-install lint-staged --quiet
+./node_modules/.bin/lint-staged --quiet

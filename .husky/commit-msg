@@ -1,1 +1,1 @@
-npx --no-install max verify-commit $1
+node scripts/verify-commit.cjs "$1"

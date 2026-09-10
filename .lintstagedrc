@@ -1,12 +1,11 @@
 {
-  "*.{md,json}": ["prettier --cache --write"],
-  "*.{js,jsx}": ["max lint --fix --eslint-only", "prettier --cache --write"],
-  "*.{css,less}": [
-    "max lint --fix --stylelint-only",
-    "prettier --cache --write"
+  "*.{md,json}": ["./node_modules/.bin/prettier --cache --write"],
+  "*.{js,jsx,ts,tsx}": [
+    "./node_modules/.bin/eslint --cache --fix",
+    "./node_modules/.bin/prettier --cache --write"
   ],
-  "*.ts?(x)": [
-    "max lint --fix --eslint-only",
-    "prettier --cache --parser=typescript --write"
+  "*.{css,less}": [
+    "./node_modules/.bin/stylelint --cache --fix",
+    "./node_modules/.bin/prettier --cache --write"
   ]
 }
