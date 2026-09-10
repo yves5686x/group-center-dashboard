@@ -33,8 +33,8 @@ const TextDivider: React.FC = () => {
 const GpuTaskDetailModal: React.FC<Props> = (props) => {
   const { taskInfo } = props;
 
-  // 聚合层暂未透出 cudaVersion 这一批环境字段，所以下面每一项都用 VShow
-  // 包住再取值：字段缺失时整行不渲染，而不是渲染出「undefined」。
+  // 这一批环境字段已由聚合层透出，但下面每一项仍用 VShow 包住再取值：
+  // 字段缺失/为空时整行不渲染，而不是渲染出「undefined」。
   // GpuTaskDetailTags 里的 CUDA 版本号同理走 shortenVersion 做空值保护
   // （原来的 cudaVersion.split('.') 在字段缺失时会把弹窗整个带崩）。
 

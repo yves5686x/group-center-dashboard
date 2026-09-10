@@ -82,7 +82,9 @@ declare namespace API {
     worldSize: number;
     localRank: number;
 
-    // ↓↓↓ 以下为聚合层暂未透出的字段，详见 Doc/dev 的待补清单 ↓↓↓
+    // ↓↓↓ 以下为后端补齐的遗留字段（2026-09-10 起已由聚合层实际透出）↓↓↓
+    // 仍保留 `?`：一是兼容 last-known-good 回退的旧快照，二是兼容字段缺失时
+    // 的降级路径。消费方继续用 VShow / 可选链，不必改。
 
     /** 任务 ID，订阅项目功能依赖它 */
     id?: number;

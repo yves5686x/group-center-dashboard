@@ -16,7 +16,7 @@ export const useFilter = () => {
     }
 
     // 多卡任务包括：worldSize > 1 (DDP) 或 multiprocessingSpawn = true (Spawn)
-    // multiprocessingSpawn 是聚合层尚未透出的可选字段，必须用 === true 收窄，
+    // multiprocessingSpawn 声明为可选（兼容旧快照），必须用 === true 收窄，
     // 否则返回值会变成 boolean | undefined。
     const isMultiGpu =
       (taskInfo.worldSize ?? 0) > 1 || taskInfo.multiprocessingSpawn === true;

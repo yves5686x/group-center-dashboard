@@ -184,8 +184,8 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
     history.push(`/task-query?${params.toString()}`);
   };
 
-  // id 是聚合层尚未透出的可选字段，缺失时不能传 0 给订阅接口 ——
-  // 0 是个合法数字，后端可能据此订阅到错误的项目。缺 id 就直接禁用入口。
+  // id 已由聚合层透出（agent 侧是字符串，后端转成数字；解析失败退化为 0）。
+  // 缺失时不能传 0 给订阅接口 —— 0 是个合法数字，后端可能据此订阅到错误的项目。
   const projectId = taskInfo.id;
   const canSubscribeProject =
     typeof projectId === 'number' &&
@@ -250,7 +250,7 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
       key: '6',
       label: canSubscribeProject
         ? `订阅项目"${taskInfo.projectName}"`
-        : '订阅项目（聚合层未提供任务 ID，暂不可用）',
+        : '订阅项目（缺少任务 ID，暂不可用）',
       icon: <PlusOutlined />,
       onClick: handleSubscribeProject,
       disabled: !canSubscribeProject,
@@ -277,7 +277,7 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
   const isDark = GetIsDarkMode();
 
   // 判断是否为僵尸进程
-  // 两个 zero* 字段是聚合层尚未透出的可选字段，缺失时不能当作已告警。
+  // 两个 zero* 字段已由聚合层透出；仍用 === true 收窄，避免缺失时误判为已告警。
   const isZombieProcess =
     taskInfo.zeroAlreadyAlertedGpuUsage === true &&
     taskInfo.zeroAlreadyAlertedCpuUsage === true;

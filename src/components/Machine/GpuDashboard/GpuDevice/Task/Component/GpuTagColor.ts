@@ -54,9 +54,10 @@ const colorSelectNewColor = (alreadyExistColors: string[]) => {
  * 多卡任务的分组键。
  *
  * 同一个 DDP 任务会在 N 张卡上各出现一次，需要一个稳定的键把它们关联起来。
- * 旧实现用 agent 的 topPythonPid（主进程 PID），但同源聚合层暂未透出该字段，
- * 所以按可用性依次退回：topPythonPid → screen 会话名 → 项目名/文件名。
- * 后端补上 topPythonPid 后这里会自动优先使用它，无需改调用方。
+ * 旧实现用 agent 的 topPythonPid（主进程 PID）。该字段已由聚合层透出，
+ * 但 agent 可能返回 -1（表示「无法判定」），所以仍按可用性依次退回：
+ * topPythonPid(>0) → screen 会话名 → 项目名/文件名。
+ * 正常情况下会优先命中 topPythonPid，降级分支只兜异常数据。
  */
 export const getTaskGroupKey = (taskInfo: API.RealtimeGpuTask): string => {
   const { topPythonPid, screenSessionName, projectName, pyFileName } = taskInfo;
