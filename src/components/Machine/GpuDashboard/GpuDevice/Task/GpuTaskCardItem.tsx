@@ -527,7 +527,7 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
 
                 <MultiGpuTag taskInfo={taskInfo} />
 
-                <VShow v-show={taskInfo.userEnvEpoch.length > 0}>
+                <VShow v-show={(taskInfo.userEnvEpoch?.length ?? 0) > 0}>
                   <Tag icon={<ClockCircleOutlined />} color="processing">
                     {taskInfo.userEnvEpoch}
                   </Tag>
