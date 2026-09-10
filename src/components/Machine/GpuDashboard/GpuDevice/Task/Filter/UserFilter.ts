@@ -10,8 +10,8 @@ export const useUserFilter = () => {
     (state) => state.isFuzzyMatch,
   );
 
-  const checkUserFilter = (taskInfo: API.DashboardGpuTaskItemInfo): boolean => {
-    return MatchStringFilter(taskInfo.name, userNameEng, isFuzzyMatch);
+  const checkUserFilter = (taskInfo: API.RealtimeGpuTask): boolean => {
+    return MatchStringFilter(taskInfo.name ?? '', userNameEng, isFuzzyMatch);
   };
 
   return { checkUserFilter, userNameEng, isFuzzyMatch };

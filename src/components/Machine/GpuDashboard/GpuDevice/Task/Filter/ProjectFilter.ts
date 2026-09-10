@@ -10,10 +10,12 @@ export const useProjectFilter = () => {
     (state) => state.isFuzzyMatch,
   );
 
-  const checkProjectFilter = (
-    taskInfo: API.DashboardGpuTaskItemInfo,
-  ): boolean => {
-    return MatchStringFilter(taskInfo.projectName, projectName, isFuzzyMatch);
+  const checkProjectFilter = (taskInfo: API.RealtimeGpuTask): boolean => {
+    return MatchStringFilter(
+      taskInfo.projectName ?? '',
+      projectName,
+      isFuzzyMatch,
+    );
   };
 
   return { checkProjectFilter, projectName, isFuzzyMatch };

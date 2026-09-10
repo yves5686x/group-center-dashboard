@@ -52,7 +52,7 @@ import styles from './GpuTaskCardItem.less';
 
 interface Props {
   index: number;
-  taskInfo: API.DashboardGpuTaskItemInfo;
+  taskInfo: API.RealtimeGpuTask;
   shouldRender: boolean;
 }
 
@@ -184,8 +184,20 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
     history.push(`/task-query?${params.toString()}`);
   };
 
+  // id 是聚合层尚未透出的可选字段，缺失时不能传 0 给订阅接口 ——
+  // 0 是个合法数字，后端可能据此订阅到错误的项目。缺 id 就直接禁用入口。
+  const projectId = taskInfo.id;
+  const canSubscribeProject =
+    typeof projectId === 'number' &&
+    Number.isFinite(projectId) &&
+    projectId > 0;
+
   // 处理订阅项目
   const handleSubscribeProject = () => {
+    if (!canSubscribeProject) {
+      return;
+    }
+
     setSubscriptionModalVisible(true);
   };
 
@@ -236,9 +248,12 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
     },
     {
       key: '6',
-      label: `订阅项目"${taskInfo.projectName}"`,
+      label: canSubscribeProject
+        ? `订阅项目"${taskInfo.projectName}"`
+        : '订阅项目（聚合层未提供任务 ID，暂不可用）',
       icon: <PlusOutlined />,
       onClick: handleSubscribeProject,
+      disabled: !canSubscribeProject,
     },
   ];
   const MoreMenu = () => (
@@ -262,8 +277,10 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
   const isDark = GetIsDarkMode();
 
   // 判断是否为僵尸进程
+  // 两个 zero* 字段是聚合层尚未透出的可选字段，缺失时不能当作已告警。
   const isZombieProcess =
-    taskInfo.zeroAlreadyAlertedGpuUsage && taskInfo.zeroAlreadyAlertedCpuUsage;
+    taskInfo.zeroAlreadyAlertedGpuUsage === true &&
+    taskInfo.zeroAlreadyAlertedCpuUsage === true;
 
   return (
     <div>
@@ -303,9 +320,14 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
           跳转到任务查询（按项目"{taskInfo.projectName}"）
         </ContextMenuItem>
         <ContextMenuDivider />
-        <ContextMenuItem onClick={handleSubscribeProject}>
+        <ContextMenuItem
+          onClick={handleSubscribeProject}
+          disabled={!canSubscribeProject}
+        >
           <PlusOutlined style={{ marginRight: '8px' }} />
-          订阅项目"{taskInfo.projectName}"
+          {canSubscribeProject
+            ? `订阅项目"${taskInfo.projectName}"`
+            : '订阅项目（缺任务 ID，暂不可用）'}
         </ContextMenuItem>
       </ContextMenu>
 
@@ -314,10 +336,10 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
 
       {/* Project Subscription Modal */}
       <ProjectSubscriptionModal
-        visible={subscriptionModalVisible}
+        visible={subscriptionModalVisible && canSubscribeProject}
         onCancel={() => setSubscriptionModalVisible(false)}
         onSuccess={handleSubscriptionSuccess}
-        projectId={taskInfo.id || 0}
+        projectId={projectId ?? 0}
         projectName={taskInfo.projectName}
       />
 
@@ -446,7 +468,7 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
                   </Tag>
                 </Popover>
 
-                <VShow v-show={taskInfo.debugMode}>
+                <VShow v-show={taskInfo.debugMode === true}>
                   <Popover
                     placement="bottom"
                     title="调试模式"
@@ -458,7 +480,7 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
                   </Popover>
                 </VShow>
 
-                <VShow v-show={taskInfo.multiprocessingSpawn}>
+                <VShow v-show={taskInfo.multiprocessingSpawn === true}>
                   <Popover
                     placement="bottom"
                     title="Multi-Process Spawn"
@@ -476,8 +498,8 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
 
                 <VShow
                   v-show={
-                    taskInfo.zeroAlreadyAlertedGpuUsage &&
-                    taskInfo.zeroAlreadyAlertedCpuUsage
+                    taskInfo.zeroAlreadyAlertedGpuUsage === true &&
+                    taskInfo.zeroAlreadyAlertedCpuUsage === true
                   }
                 >
                   <Popover
@@ -493,8 +515,8 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
 
                 <VShow
                   v-show={
-                    taskInfo.zeroAlreadyAlertedCpuUsage &&
-                    !taskInfo.zeroAlreadyAlertedGpuUsage
+                    taskInfo.zeroAlreadyAlertedCpuUsage === true &&
+                    taskInfo.zeroAlreadyAlertedGpuUsage !== true
                   }
                 >
                   <Popover
@@ -510,8 +532,8 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
 
                 <VShow
                   v-show={
-                    taskInfo.zeroAlreadyAlertedGpuUsage &&
-                    !taskInfo.zeroAlreadyAlertedCpuUsage
+                    taskInfo.zeroAlreadyAlertedGpuUsage === true &&
+                    taskInfo.zeroAlreadyAlertedCpuUsage !== true
                   }
                 >
                   <Popover

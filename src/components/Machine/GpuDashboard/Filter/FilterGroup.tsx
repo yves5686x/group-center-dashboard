@@ -13,9 +13,9 @@ import GpuCardFilter from './GpuCardFilter';
 import GpuServerFilter from './GpuServerFilter';
 
 interface FilterGroupProps {
-  machineList: API.FrontEndMachine[];
-  selectedMachines: API.FrontEndMachine[];
-  onSelectionChange: (machines: API.FrontEndMachine[]) => void;
+  machineList: API.RealtimeMachine[];
+  selectedMachines: API.RealtimeMachine[];
+  onSelectionChange: (machines: API.RealtimeMachine[]) => void;
 }
 
 const FilterGroup: React.FC<FilterGroupProps> = ({
@@ -57,11 +57,10 @@ const FilterGroup: React.FC<FilterGroupProps> = ({
     clearMultiGpuFilter();
 
     // 对于GPU服务器筛选器，全选所有机器而不是清空
+    // 持久化的是 serverNameEng，不是展示名
     const allMachines = machineList;
-    clearMachineSelection(allMachines.map((machine) => machine.machineName));
+    clearMachineSelection(allMachines.map((machine) => machine.serverNameEng));
     onSelectionChange(allMachines);
-
-    console.log('All filters disabled (GPU servers selected all)');
   };
 
   return (

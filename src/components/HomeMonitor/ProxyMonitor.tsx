@@ -219,7 +219,10 @@ const ProxyMonitor: React.FC<ProxyMonitorProps> = ({
         <span className={styles.detailLabel}>URL测试:</span>
         <Space size={[4, 4]} wrap>
           {server.urlTestResults.map((test, index) => {
-            const isTestSuccess = test.isSuccess ?? test.success;
+            // Kotlin 的 isSuccess 经 Jackson 序列化后 JSON key 会变成 success，
+            // 两种都要认。typings.d.ts 是 openapi 生成的，手改会被覆盖，
+            // 所以这里按字段实际形态兜底。
+            const isTestSuccess = test.isSuccess ?? (test as any).success;
             return (
               <Tooltip
                 key={index}

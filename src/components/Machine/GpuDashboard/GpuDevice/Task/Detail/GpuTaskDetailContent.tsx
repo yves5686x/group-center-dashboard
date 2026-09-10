@@ -5,10 +5,10 @@ import { Divider } from 'antd';
 import styles from './TaskDetail.less';
 
 interface Props {
-  taskInfo: API.DashboardGpuTaskItemInfo;
+  taskInfo: API.RealtimeGpuTask;
 }
 
-const systemMainMemoryString = (item: API.DashboardGpuTaskItemInfo) => {
+const systemMainMemoryString = (item: API.RealtimeGpuTask) => {
   const mainMemMB = item.taskMainMemoryMB;
   if (mainMemMB === undefined) {
     return '';
@@ -33,12 +33,10 @@ const TextDivider: React.FC = () => {
 const GpuTaskDetailModal: React.FC<Props> = (props) => {
   const { taskInfo } = props;
 
-  let cudaVersionShort = taskInfo.cudaVersion;
-  const cudaVersionShortSpilt = cudaVersionShort.split('.');
-  if (cudaVersionShortSpilt.length > 2) {
-    cudaVersionShort =
-      cudaVersionShortSpilt[0] + '.' + cudaVersionShortSpilt[1];
-  }
+  // 聚合层暂未透出 cudaVersion 这一批环境字段，所以下面每一项都用 VShow
+  // 包住再取值：字段缺失时整行不渲染，而不是渲染出「undefined」。
+  // GpuTaskDetailTags 里的 CUDA 版本号同理走 shortenVersion 做空值保护
+  // （原来的 cudaVersion.split('.') 在字段缺失时会把弹窗整个带崩）。
 
   return (
     <>
@@ -130,7 +128,7 @@ const GpuTaskDetailModal: React.FC<Props> = (props) => {
 
         {/* 多卡 */}
 
-        <VShow v-show={taskInfo.worldSize > 1}>
+        <VShow v-show={(taskInfo.worldSize ?? 0) > 1}>
           <TextDivider />
 
           <div>
@@ -138,10 +136,10 @@ const GpuTaskDetailModal: React.FC<Props> = (props) => {
             {taskInfo.worldSize}
             <br />
             <b>多卡任务索引: </b>
-            {taskInfo.localRank} ({taskInfo.localRank + 1} /{' '}
+            {taskInfo.localRank} ({(taskInfo.localRank ?? 0) + 1} /{' '}
             {taskInfo.worldSize})
             <br />
-            <VShow v-show={taskInfo.topPythonPid > 0}>
+            <VShow v-show={(taskInfo.topPythonPid ?? 0) > 0}>
               <div>
                 <b>主进程PID: </b>
                 {taskInfo.topPythonPid}

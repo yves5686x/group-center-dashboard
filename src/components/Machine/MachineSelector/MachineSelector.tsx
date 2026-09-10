@@ -2,10 +2,10 @@ import { Cascader } from 'antd';
 import React, { useEffect } from 'react';
 
 type MachineSelectorProps = {
-  machineList: API.FrontEndMachine[];
-  onMachineChange?: (selectedMachine: API.FrontEndMachine[]) => void;
+  machineList: API.RealtimeMachine[];
+  onMachineChange?: (selectedMachine: API.RealtimeMachine[]) => void;
   multipleMachine?: boolean;
-  tryToSelectMachineList?: API.FrontEndMachine[];
+  tryToSelectMachineList?: API.RealtimeMachine[];
 };
 
 interface Option {
@@ -26,7 +26,10 @@ const MachineSelector: React.FC<MachineSelectorProps> = ({
   // machineList[i].position
 
   // Second level
-  // machineList[i].machineName
+  // machineList[i].serverName
+
+  // 级联选项的 value 用 serverNameEng：它既是聚合层的路径参数，
+  // 也保证在同一 position 下唯一（展示名 serverName 可能重名或被改名）。
 
   const positionOptions: Option[] = [];
 
@@ -64,8 +67,8 @@ const MachineSelector: React.FC<MachineSelectorProps> = ({
 
         // @ts-ignore
         positionOptions[j].children.push({
-          value: machineList[i].machineUrl,
-          label: machineList[i].machineName,
+          value: machineList[i].serverNameEng,
+          label: machineList[i].serverName,
         });
       }
     }
@@ -87,7 +90,7 @@ const MachineSelector: React.FC<MachineSelectorProps> = ({
 
     // Singla Machine
     const selectedMachine = machineList.find(
-      (machine) => machine.machineUrl === value[1],
+      (machine) => machine.serverNameEng === value[1],
     );
     if (selectedMachine) {
       // console.log('onMachineChange', selectedMachine);
@@ -99,7 +102,7 @@ const MachineSelector: React.FC<MachineSelectorProps> = ({
 
   const [defaultValue, setDefaultValue] = React.useState<string[]>([]);
 
-  const selecteMachine = (machine: API.FrontEndMachine) => {
+  const selecteMachine = (machine: API.RealtimeMachine) => {
     // Find selectedMachine in positionOptions and children
 
     for (let i = 0; i < positionOptions.length; i++) {
@@ -111,9 +114,8 @@ const MachineSelector: React.FC<MachineSelectorProps> = ({
 
         for (let j = 0; j < position.children.length; j++) {
           const child = position.children[j];
-          if (child.label === machine.machineName) {
+          if (child.value === machine.serverNameEng) {
             const value = [position.value, child.value];
-            console.log('setDefaultValue', value);
             setDefaultValue(value);
           }
         }
@@ -122,21 +124,14 @@ const MachineSelector: React.FC<MachineSelectorProps> = ({
   };
 
   useEffect(() => {
-    //   console.log('useEffect', tryToSelectMachineList);
     if (tryToSelectMachineList && tryToSelectMachineList.length > 0) {
       const selectedMachine = machineList.find(
         (machine) =>
           machine &&
-          machine.machineUrl === tryToSelectMachineList[0].machineUrl,
+          machine.serverNameEng === tryToSelectMachineList[0].serverNameEng,
       );
       if (selectedMachine) {
-        console.log('Selector', selectedMachine);
-
         selecteMachine(selectedMachine);
-
-        // if (onMachineChange) {
-        //   onMachineChange([selectedMachine]);
-        // }
       }
     }
   }, [machineList, tryToSelectMachineList]);

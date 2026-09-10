@@ -29,3 +29,27 @@ export function removeVersionTilde(version: string): string {
 export function cleanVersion(version: string): string {
   return version.replace(/^[\^~]/, '');
 }
+
+/**
+ * 把版本号缩短为前 N 段，例如 12.4.1 → 12.4。
+ *
+ * 入参允许为 undefined / null / 空串：实时聚合层目前没有透出 cudaVersion、
+ * pythonVersion 这一批字段，调用方拿到的就是 undefined。原来的写法直接
+ * `version.split('.')`，字段缺失时会抛 TypeError 把整个详情弹窗带崩，
+ * 这里统一返回空串，由调用方的 VShow 决定是否渲染。
+ */
+export function shortenVersion(
+  version?: string | null,
+  segments: number = 2,
+): string {
+  if (!version) {
+    return '';
+  }
+
+  const parts = version.split('.');
+  if (parts.length <= segments) {
+    return version;
+  }
+
+  return parts.slice(0, segments).join('.');
+}

@@ -1,19 +1,26 @@
-import { Button, Space } from 'antd';
+import { Badge, Button, Space, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import styles from './GpuServerFilter.less';
 
 interface GpuServerFilterProps {
-  machineList: API.FrontEndMachine[];
-  selectedMachines: API.FrontEndMachine[];
-  onSelectionChange: (selectedMachines: API.FrontEndMachine[]) => void;
+  machineList: API.RealtimeMachine[];
+  selectedMachines: API.RealtimeMachine[];
+  onSelectionChange: (selectedMachines: API.RealtimeMachine[]) => void;
 }
 
+/**
+ * 选中标识统一用 serverNameEng。
+ *
+ * 旧实现用 machineName（展示名）做键，展示名会随后端配置变化，一旦变了，
+ * 持久化下来的选中名单就整体失配、看板直接空白。serverNameEng 是聚合层
+ * `/gpu`、`/disk` 两个端点的路径参数，天然稳定。
+ */
 const GpuServerFilter: React.FC<GpuServerFilterProps> = ({
   machineList,
   selectedMachines,
   onSelectionChange,
 }) => {
-  const [selectedMachineNames, setSelectedMachineNames] = useState<Set<string>>(
+  const [selectedMachineKeys, setSelectedMachineKeys] = useState<Set<string>>(
     new Set(),
   );
 
@@ -27,20 +34,20 @@ const GpuServerFilter: React.FC<GpuServerFilterProps> = ({
       selectedMachines.length === 0 &&
       !hasManualSelection
     ) {
-      const allMachineNames = new Set(
-        machineList.map((machine) => machine.machineName),
+      const allMachineKeys = new Set(
+        machineList.map((machine) => machine.serverNameEng),
       );
-      setSelectedMachineNames(allMachineNames);
+      setSelectedMachineKeys(allMachineKeys);
       onSelectionChange(machineList);
     }
   }, [machineList, selectedMachines.length, hasManualSelection]);
 
   // 同步外部选中状态
   useEffect(() => {
-    const selectedNames = new Set(
-      selectedMachines.map((machine) => machine.machineName),
+    const selectedKeys = new Set(
+      selectedMachines.map((machine) => machine.serverNameEng),
     );
-    setSelectedMachineNames(selectedNames);
+    setSelectedMachineKeys(selectedKeys);
 
     // 如果外部传入了空数组，标记为手动选择（避免自动全选）
     if (selectedMachines.length === 0) {
@@ -48,43 +55,43 @@ const GpuServerFilter: React.FC<GpuServerFilterProps> = ({
     }
   }, [selectedMachines]);
 
-  const handleMachineToggle = (machine: API.FrontEndMachine) => {
-    const newSelectedNames = new Set(selectedMachineNames);
+  const handleMachineToggle = (machine: API.RealtimeMachine) => {
+    const newSelectedKeys = new Set(selectedMachineKeys);
 
-    if (newSelectedNames.has(machine.machineName)) {
-      newSelectedNames.delete(machine.machineName);
+    if (newSelectedKeys.has(machine.serverNameEng)) {
+      newSelectedKeys.delete(machine.serverNameEng);
     } else {
-      newSelectedNames.add(machine.machineName);
+      newSelectedKeys.add(machine.serverNameEng);
     }
 
-    setSelectedMachineNames(newSelectedNames);
+    setSelectedMachineKeys(newSelectedKeys);
     setHasManualSelection(true); // 标记为手动选择
 
     // 更新选中的机器列表
-    const newSelectedMachines = machineList.filter((machine) =>
-      newSelectedNames.has(machine.machineName),
+    const newSelectedMachines = machineList.filter((item) =>
+      newSelectedKeys.has(item.serverNameEng),
     );
     onSelectionChange(newSelectedMachines);
   };
 
   const handleSelectAll = () => {
-    const allMachineNames = new Set(
-      machineList.map((machine) => machine.machineName),
+    const allMachineKeys = new Set(
+      machineList.map((machine) => machine.serverNameEng),
     );
-    setSelectedMachineNames(allMachineNames);
+    setSelectedMachineKeys(allMachineKeys);
     setHasManualSelection(true); // 标记为手动选择
     onSelectionChange(machineList);
   };
 
   const handleClearAll = () => {
     // 清空选择，不选择任何机器
-    setSelectedMachineNames(new Set());
+    setSelectedMachineKeys(new Set());
     setHasManualSelection(true); // 标记为手动清空
     onSelectionChange([]);
   };
 
-  const isSelected = (machineName: string) => {
-    return selectedMachineNames.has(machineName);
+  const isSelected = (serverNameEng: string) => {
+    return selectedMachineKeys.has(serverNameEng);
   };
 
   return (
@@ -113,18 +120,33 @@ const GpuServerFilter: React.FC<GpuServerFilterProps> = ({
 
       <div className={styles.machineButtons}>
         {machineList.map((machine) => (
-          <Button
-            key={machine.machineName}
-            type={isSelected(machine.machineName) ? 'primary' : 'default'}
-            className={`${styles.machineButton} ${
-              isSelected(machine.machineName)
-                ? styles.selected
-                : styles.unselected
-            }`}
-            onClick={() => handleMachineToggle(machine)}
+          <Tooltip
+            key={machine.serverNameEng}
+            title={
+              <div style={{ fontSize: 12, lineHeight: 1.8 }}>
+                <div>标识：{machine.serverNameEng}</div>
+                {machine.position ? <div>位置：{machine.position}</div> : null}
+                <div>Agent 心跳：{machine.agentOnline ? '在线' : '离线'}</div>
+                {/* stale 只说明缓存里的快照过期，和心跳是两回事 */}
+                <div>数据状态：{machine.stale ? '可能过期' : '正常'}</div>
+              </div>
+            }
           >
-            {machine.machineName}
-          </Button>
+            <Button
+              type={isSelected(machine.serverNameEng) ? 'primary' : 'default'}
+              className={`${styles.machineButton} ${
+                isSelected(machine.serverNameEng)
+                  ? styles.selected
+                  : styles.unselected
+              }`}
+              onClick={() => handleMachineToggle(machine)}
+            >
+              <Space size={6}>
+                <Badge status={machine.agentOnline ? 'success' : 'default'} />
+                {machine.serverName}
+              </Space>
+            </Button>
+          </Tooltip>
         ))}
       </div>
     </div>

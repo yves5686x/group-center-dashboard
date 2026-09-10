@@ -1,4 +1,5 @@
 import VShow from '@/components/Vue/V-Show';
+import { shortenVersion } from '@/utils/format';
 import {
   ForkOutlined,
   FundProjectionScreenOutlined,
@@ -10,18 +11,14 @@ import { Tag } from 'antd';
 import styles from './TaskDetail.less';
 
 interface Props {
-  taskInfo: API.DashboardGpuTaskItemInfo;
+  taskInfo: API.RealtimeGpuTask;
 }
 
 const GpuTaskDetailTags: React.FC<Props> = (props) => {
   const { taskInfo } = props;
 
-  let cudaVersionShort = taskInfo.cudaVersion;
-  const cudaVersionShortSpilt = cudaVersionShort.split('.');
-  if (cudaVersionShortSpilt.length > 2) {
-    cudaVersionShort =
-      cudaVersionShortSpilt[0] + '.' + cudaVersionShortSpilt[1];
-  }
+  // 同 GpuTaskDetailContent：cudaVersion 是可选字段，不能直接 split。
+  const cudaVersionShort = shortenVersion(taskInfo.cudaVersion);
 
   return (
     <>

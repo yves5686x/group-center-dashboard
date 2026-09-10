@@ -9,7 +9,8 @@ import React from 'react';
 import styles from './DiskUsageCard.less';
 
 interface Props {
-  diskUsage: API.MachineDiskUsage;
+  /** 字段与旧 agent disk_usage 完全一致，只是改由聚合层下发 */
+  diskUsage: API.RealtimeDiskMount;
 }
 
 const calculateColorIndex = (
@@ -57,10 +58,13 @@ const ProgressComponent = (percent: number) => {
 const DiskUsageCard: React.FC<Props> = (props) => {
   const { diskUsage } = props;
 
-  const cardTitle = `${diskUsage.mountPoint}`;
-  if (diskUsage.purpose && diskUsage.purpose !== 'unknown') {
-    cardTitle.concat(` (${diskUsage.purpose})`);
-  }
+  // 旧写法是 `cardTitle.concat(...)` 但没接返回值，字符串不可变，
+  // 于是 purpose（“系统盘”这类用途标注）从来没被显示过。
+  const hasPurpose =
+    !!diskUsage.purpose && diskUsage.purpose.toLowerCase() !== 'unknown';
+  const cardTitle = hasPurpose
+    ? `${diskUsage.mountPoint} (${diskUsage.purpose})`
+    : `${diskUsage.mountPoint}`;
 
   return (
     <div className={styles.cardParentDiv}>

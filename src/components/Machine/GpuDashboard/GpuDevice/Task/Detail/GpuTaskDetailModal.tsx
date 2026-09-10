@@ -9,7 +9,7 @@ export interface GpuTaskDetailModalHandles {
 }
 
 interface Props {
-  taskInfo: API.DashboardGpuTaskItemInfo;
+  taskInfo: API.RealtimeGpuTask;
 }
 
 const GpuTaskDetailModal = React.forwardRef<GpuTaskDetailModalHandles, Props>(

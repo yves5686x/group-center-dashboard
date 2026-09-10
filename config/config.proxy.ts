@@ -21,11 +21,10 @@ let proxyConfig = finalResult
           changeOrigin: true,
           pathRewrite: { '^/web': '' },
         },
-        '/gpu': {
-          target: process.env.GROUP_CENTER_URL + '/gpu/',
-          changeOrigin: true,
-          pathRewrite: { '^/gpu': '' },
-        },
+        // '/gpu' 代理规则已删除：它原本服务于「前端直连 agent」的旧架构
+        // （machineUrl 形如 /gpu/3090）。实时数据改走同源聚合层后前端不再直连
+        // agent，这条规则既无用又有害 —— 它会匹配所有 /gpu* 前缀路径，把前端
+        // 路由 /gpu-dashboard 也拐到后端，导致页面 404。
       },
     }
   : {};

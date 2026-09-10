@@ -10,15 +10,16 @@ export const useFilter = () => {
     (state) => state.multiGpuFilter,
   );
 
-  const checkMultiGpuFilter = (
-    taskInfo: API.DashboardGpuTaskItemInfo,
-  ): boolean => {
+  const checkMultiGpuFilter = (taskInfo: API.RealtimeGpuTask): boolean => {
     if (multiGpuFilter === 'none') {
       return true; // 不启用过滤器，显示所有任务
     }
 
     // 多卡任务包括：worldSize > 1 (DDP) 或 multiprocessingSpawn = true (Spawn)
-    const isMultiGpu = taskInfo.worldSize > 1 || taskInfo.multiprocessingSpawn;
+    // multiprocessingSpawn 是聚合层尚未透出的可选字段，必须用 === true 收窄，
+    // 否则返回值会变成 boolean | undefined。
+    const isMultiGpu =
+      (taskInfo.worldSize ?? 0) > 1 || taskInfo.multiprocessingSpawn === true;
 
     if (multiGpuFilter === 'single') {
       return !isMultiGpu; // 只显示单卡任务
@@ -29,7 +30,7 @@ export const useFilter = () => {
     return true;
   };
 
-  const checkFilter = (taskInfo: API.DashboardGpuTaskItemInfo): boolean => {
+  const checkFilter = (taskInfo: API.RealtimeGpuTask): boolean => {
     let finalResult = true;
 
     finalResult = finalResult && checkUserFilter(taskInfo);

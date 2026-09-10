@@ -1,77 +1,26 @@
 import VShow from '@/components/Vue/V-Show';
-import { getGpuTaskInfo } from '@/services/agent/GpuInfo';
-import { CheckIsDevMode } from '@/utils/node';
-import { Skeleton } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useFilter } from './Filter';
 import GpuTaskCardItem from './GpuTaskCardItem';
 import styles from './GpuTaskListCard.less';
 
 interface Props {
-  apiUrl: string;
-  gpuIndex: number;
+  /**
+   * 本卡上的任务，由上层的单机快照统一下发。
+   *
+   * 旧实现在这里各自轮询 `gpu_task_info?gpuIndex=N`，8 卡机器就是 8 个独立
+   * 定时器直打 agent；聚合层已经一次返回整机所有卡的任务，所以这里不再取数。
+   */
+  tasks?: API.RealtimeGpuTask[];
 }
 
-const useGpuTaskListState = (apiUrl: string, gpuIndex: number) => {
-  const [gpuTaskList, setGpuTaskList] =
-    useState<API.DashboardGpuTaskItemInfo[]>();
-
-  // 判断是否为开发模式
-  const isDevMode = CheckIsDevMode();
-
-  // 开发环境刷新间隔为60秒
-  const refreshIntervalDev = 60 * 1000;
-
-  // 生产环境刷新间隔为2秒
-  const refreshIntervalProd = 2 * 1000;
-
-  // 计算最终刷新间隔
-  const refreshInterval = isDevMode ? refreshIntervalDev : refreshIntervalProd;
-
-  // 刷新数据
-  const refreshData = () => {
-    getGpuTaskInfo(apiUrl, gpuIndex)
-      .then((data) => {
-        setGpuTaskList(data.taskList);
-      })
-      .catch((error: any) => {
-        console.log('Error(getGpuTaskInfo):', error);
-      });
-  };
-
-  // 第一次手动刷新
-  useEffect(() => {
-    refreshData();
-  }, []);
-
-  // 后续时间间隔到后自动刷新
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      refreshData();
-    }, refreshInterval);
-
-    return () => clearInterval(intervalId); // 在组件卸载时清除定时器
-  }, [apiUrl]); // 依赖项数组包含apiUrl，当apiUrl发生变化时重新设置定时器
-
-  return gpuTaskList;
-};
-
 const GpuTaskListCard: React.FC<Props> = (props) => {
-  const { apiUrl, gpuIndex } = props;
+  const { tasks } = props;
 
-  const gpuTaskList = useGpuTaskListState(apiUrl, gpuIndex);
   const { checkFilter } = useFilter();
 
-  if (!gpuTaskList) {
-    return (
-      <div>
-        <Skeleton />
-      </div>
-    );
-  }
-
   // 在父组件中进行过滤检查，避免子组件中的 hooks 调用不一致
-  const filteredTaskList = gpuTaskList.filter((taskInfo) =>
+  const filteredTaskList = (tasks ?? []).filter((taskInfo) =>
     checkFilter(taskInfo),
   );
 
@@ -79,7 +28,7 @@ const GpuTaskListCard: React.FC<Props> = (props) => {
     <div>
       <VShow v-show={filteredTaskList.length > 0}>
         {filteredTaskList.map((taskInfo, i) => (
-          <div className={styles.gpuTaskItemDiv} key={i}>
+          <div className={styles.gpuTaskItemDiv} key={taskInfo.pid ?? i}>
             <GpuTaskCardItem
               index={i}
               taskInfo={taskInfo}

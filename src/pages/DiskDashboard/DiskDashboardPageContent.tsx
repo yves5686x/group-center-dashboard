@@ -1,56 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import { Empty, Skeleton } from 'antd';
+import React from 'react';
 
 import MachineDisk from '@/components/Machine/MachineInfo/Hardware/Disk/MachineDisk';
-import { getPublicMachineList } from '@/services/group_center/frontendPublic';
+import { useRealtimeMachineList } from '@/hooks/useRealtime';
 
 interface Props {
   name?: string;
 }
 
-const useMachineListState = () => {
-  const [machineList, setMachineList] = useState<API.FrontEndMachine[]>([]);
+/**
+ * 硬盘看板页。
+ *
+ * 机器列表改走同源聚合层 `/web/open/realtime/machines`，与 GPU 看板共用同一个
+ * 端点（后端 5s TTL 缓存 + 去重，两个页面同时开着也只会拉一次 agent）。
+ *
+ * 这里不按 `gpu` 过滤：存储服务器同样有磁盘要看，旧实现也是全量展示。
+ */
+const DiskDashboardPageContent: React.FC<Props> = () => {
+  const { data, loading, error } = useRealtimeMachineList();
 
-  useEffect(() => {
-    getPublicMachineList()
-      .then((data) => {
-        // console.log('data:', data);
-        setMachineList(data);
-      })
-      .catch((error: any) => {
-        console.log('error:', error);
-      });
-  }, []); // 依赖项数组为空数组，只在组件挂载时执行
+  const machineList = data ?? [];
 
-  return machineList;
-};
+  if (loading && machineList.length === 0) {
+    return <Skeleton active paragraph={{ rows: 6 }} />;
+  }
 
-const DiskDashboardPageContent: React.FC<Props> = (props) => {
-  const {} = props;
-
-  const machineList = useMachineListState();
-
-  if (!machineList) {
+  if (machineList.length === 0) {
     return (
-      <>
-        <h1>Trying to connect to server...</h1>
-      </>
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description={
+          <div style={{ fontSize: 13 }}>
+            <div>没有可用的服务器</div>
+            <div style={{ marginTop: 4, opacity: 0.65 }}>
+              {error ?? '后端 /web/open/realtime/machines 没有返回任何机器'}
+            </div>
+          </div>
+        }
+      />
     );
   }
 
   return (
     <div>
-      {/* <ul>
-        {machineList.map((machine) => (
-          <li key={machine.machineName}>{machine.machineName}</li>
-        ))}
-      </ul> */}
-
       {machineList.map((machine) => (
-        <MachineDisk
-          key={machine.machineName}
-          name={machine.machineName}
-          apiUrl={machine.machineUrl}
-        />
+        <MachineDisk key={machine.serverNameEng} machine={machine} />
       ))}
     </div>
   );
