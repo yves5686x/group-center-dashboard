@@ -93,7 +93,7 @@ declare namespace API {
 
     driverVersion: string;
 
-    userEnvEpoch: string;
+    userEnvEpoch?: string;
 
     // 零占用率监控相关字段
     cpuPercent: number; // Python: round(process_obj.cpu_percent, 1)
