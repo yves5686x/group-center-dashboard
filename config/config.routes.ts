@@ -62,12 +62,12 @@ const devRoutes = isDev
         component: './Access',
       },
       {
-        name: ' CRUD 示例',
+        name: 'CRUD 示例',
         path: '/table',
         component: './Table',
       },
       {
-        name: ' Dev Settings',
+        name: 'Dev Settings',
         path: '/dev_settings',
         component: './DevSettings',
       },

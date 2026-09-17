@@ -4,18 +4,11 @@ import { getRandomFloat, getRandomInt } from './common';
  * 实时聚合层的 mock 数据。
  *
  * 形状严格对齐本机后端 `/web/open/realtime/**` 的真实响应（serverVersion 1.8.8）。
- * 每台机器固定一种降级形态，方便逐个肉眼验证 UI：
- *
- * | serverNameEng | gpu 形态            | disk 形态           | 用来验证                    |
- * |---------------|---------------------|---------------------|-----------------------------|
- * | 3090          | agent / 1卡有任务   | cache               | 正常路径 + 毫秒级时间戳     |
- * | 4098a         | agent / 8卡全空闲   | agent               | 空闲卡（coreUsage≈0,无任务）|
- * | 4098b         | agent / 多卡DDP任务 | agent               | 多卡标签 + 遗留字段仍在时   |
- * | 2084          | cache               | cache               | 「缓存」来源                |
- * | 2082          | last-known-good     | last-known-good     | 「旧数据」+「数据可能过期」 |
- * | h100-01       | none / 空快照       | none / 空快照       | 「机器不可达」空态          |
- * | noagent       | —                   | —                   | hasApiUrl=false 空态        |
- * | storage-01    | 非 GPU 机器         | agent               | GPU 看板应过滤掉它          |
+ * 机器清单按实验室真实情况（2026-09-17 确认）：
+ * 3090 + 1080Ti（1卡）、2082（2卡）、2084（4卡）、4090a（单卡）、
+ * 4090b（单卡）、4098a（8卡）、4098b（8卡），全部 Agent 在线。
+ * 降级形态（cache / last-known-good / none / 非GPU机器）如需 UI 测试，
+ * 临时把某台的 gpuSource/diskSource 换掉即可。
  */
 
 const SERVER_VERSION = '1.8.8-mock';
@@ -56,14 +49,80 @@ const machineSeeds: MachineSeed[] = [
     position: '科研楼509',
     gpu: true,
     hasApiUrl: true,
-    agentOnline: false,
+    agentOnline: true,
     gpuCount: 1,
     gpuSource: 'agent',
-    diskSource: 'cache',
+    diskSource: 'agent',
     diskCount: 1,
     gpuName: 'RTX 3090',
     memoryTotalMb: 24576,
     tdp: 350,
+    withLegacyTaskFields: false,
+  },
+  {
+    serverNameEng: '2082',
+    serverName: '2080Ti x 2',
+    position: '科研楼509',
+    gpu: true,
+    hasApiUrl: true,
+    agentOnline: true,
+    gpuCount: 2,
+    gpuSource: 'agent',
+    diskSource: 'agent',
+    diskCount: 2,
+    gpuName: 'RTX 2080 Ti',
+    memoryTotalMb: 11264,
+    tdp: 250,
+    withLegacyTaskFields: false,
+  },
+  {
+    serverNameEng: '2084',
+    serverName: '2080Ti x 4',
+    position: '科研楼309',
+    gpu: true,
+    hasApiUrl: true,
+    agentOnline: true,
+    gpuCount: 4,
+    gpuSource: 'agent',
+    diskSource: 'agent',
+    diskCount: 2,
+    gpuName: 'RTX 2080 Ti',
+    memoryTotalMb: 11264,
+    tdp: 250,
+    withLegacyTaskFields: false,
+  },
+  {
+    // 单卡机器（展示名与后端 Config/Machine/real.yaml 对齐）
+    serverNameEng: '4090a',
+    serverName: '4090A',
+    position: '科研楼509',
+    gpu: true,
+    hasApiUrl: true,
+    agentOnline: true,
+    gpuCount: 1,
+    gpuSource: 'agent',
+    diskSource: 'agent',
+    diskCount: 2,
+    gpuName: 'RTX 4090',
+    memoryTotalMb: 24564,
+    tdp: 450,
+    withLegacyTaskFields: false,
+  },
+  {
+    // 单卡机器（展示名与后端 Config/Machine/real.yaml 对齐）
+    serverNameEng: '4090b',
+    serverName: '4090B',
+    position: '科研楼509',
+    gpu: true,
+    hasApiUrl: true,
+    agentOnline: true,
+    gpuCount: 1,
+    gpuSource: 'agent',
+    diskSource: 'agent',
+    diskCount: 2,
+    gpuName: 'RTX 4090',
+    memoryTotalMb: 24564,
+    tdp: 450,
     withLegacyTaskFields: false,
   },
   {
@@ -98,87 +157,6 @@ const machineSeeds: MachineSeed[] = [
     tdp: 450,
     // 这台机器带上遗留字段，用来验证「后端补齐后 UI 无需改动即可自动亮起」
     withLegacyTaskFields: true,
-  },
-  {
-    serverNameEng: '2084',
-    serverName: '2080Ti x 4',
-    position: '科研楼509',
-    gpu: true,
-    hasApiUrl: true,
-    agentOnline: true,
-    gpuCount: 4,
-    gpuSource: 'cache',
-    diskSource: 'cache',
-    diskCount: 2,
-    gpuName: 'RTX 2080 Ti',
-    memoryTotalMb: 11264,
-    tdp: 250,
-    withLegacyTaskFields: false,
-  },
-  {
-    serverNameEng: '2082',
-    serverName: '2080Ti x 2',
-    position: '科研楼509',
-    gpu: true,
-    hasApiUrl: true,
-    agentOnline: false,
-    gpuCount: 2,
-    gpuSource: 'last-known-good',
-    diskSource: 'last-known-good',
-    diskCount: 2,
-    gpuName: 'RTX 2080 Ti',
-    memoryTotalMb: 11264,
-    tdp: 250,
-    withLegacyTaskFields: false,
-  },
-  {
-    serverNameEng: 'h100-01',
-    serverName: 'H100-01-8GPU',
-    position: '核心机房',
-    gpu: true,
-    hasApiUrl: true,
-    agentOnline: false,
-    gpuCount: 0,
-    gpuSource: 'none',
-    diskSource: 'none',
-    diskCount: 0,
-    gpuName: 'NVIDIA H100',
-    memoryTotalMb: 81559,
-    tdp: 700,
-    withLegacyTaskFields: false,
-  },
-  {
-    serverNameEng: 'noagent',
-    serverName: '未配置Agent的机器',
-    position: '未知',
-    gpu: true,
-    hasApiUrl: false,
-    agentOnline: false,
-    gpuCount: 0,
-    gpuSource: 'none',
-    diskSource: 'none',
-    diskCount: 0,
-    gpuName: 'Unknown',
-    memoryTotalMb: 0,
-    tdp: 0,
-    withLegacyTaskFields: false,
-  },
-  {
-    serverNameEng: 'storage-01',
-    serverName: '存储服务器-01',
-    position: '核心机房',
-    // 非 GPU 机器：GPU 看板必须把它过滤掉，硬盘看板要能看到它
-    gpu: false,
-    hasApiUrl: true,
-    agentOnline: true,
-    gpuCount: 0,
-    gpuSource: 'none',
-    diskSource: 'agent',
-    diskCount: 4,
-    gpuName: 'Unknown',
-    memoryTotalMb: 131072,
-    tdp: 0,
-    withLegacyTaskFields: false,
   },
 ];
 

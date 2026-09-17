@@ -8,6 +8,8 @@ console.log('DISABLE_PROXY', disableProxy);
 console.log('ENABLE_PROXY', enableProxy);
 console.log('[Proxy]', finalResult);
 
+console.log('[Proxy] GROUP_CENTER_URL =', process.env.GROUP_CENTER_URL);
+
 let proxyConfig = finalResult
   ? {
       proxy: {
@@ -25,6 +27,12 @@ let proxyConfig = finalResult
         // （machineUrl 形如 /gpu/3090）。实时数据改走同源聚合层后前端不再直连
         // agent，这条规则既无用又有害 —— 它会匹配所有 /gpu* 前缀路径，把前端
         // 路由 /gpu-dashboard 也拐到后端，导致页面 404。
+        // '/version' 在生产由后端同源提供；dev 下补一条代理，否则反馈报告页
+        // 拿到的是前端 dev server 的 SPA HTML。
+        '/version': {
+          target: process.env.GROUP_CENTER_URL || '',
+          changeOrigin: true,
+        },
       },
     }
   : {};
