@@ -2,12 +2,10 @@ import {
   formatFreshness,
   getTimeStrFromSecondsTimestamp,
 } from '@/utils/Time/DateTimeUtils';
-import { Badge, Space, Tag, Tooltip } from 'antd';
+import { Space, Tag, Tooltip } from 'antd';
 import React from 'react';
 
 interface Props {
-  /** 心跳判定的在线状态，与「能否取到实时数据」是两回事，单独做圆点 */
-  agentOnline: boolean;
   /** 是否过期：agent 宕机回退旧数据、或从无数据 */
   stale: boolean;
   source: API.RealtimeSource;
@@ -17,8 +15,6 @@ interface Props {
   snapshotTime: number;
   /** source 为 none / last-known-good 时后端可能给出说明 */
   error?: string | null;
-  /** 是否显示在线圆点，紧凑场景可关掉 */
-  showAgentDot?: boolean;
 }
 
 const SOURCE_LABEL: Record<API.RealtimeSource, string> = {
@@ -42,22 +38,13 @@ const SOURCE_COLOR: Record<API.RealtimeSource, string> = {
  * 意味着拿不到实时值，必须让用户看见，否则看板会「看起来很正常地骗人」。
  */
 const RealtimeStatusBadge: React.FC<Props> = (props) => {
-  const {
-    agentOnline,
-    stale,
-    source,
-    freshness,
-    snapshotTime,
-    error,
-    showAgentDot = true,
-  } = props;
+  const { stale, source, freshness, snapshotTime, error } = props;
 
   const tooltipContent = (
     <div style={{ fontSize: 12, lineHeight: 1.8 }}>
       <div>数据来源：{SOURCE_LABEL[source]}</div>
       <div>数据年龄：{formatFreshness(freshness)}</div>
       <div>快照时间：{getTimeStrFromSecondsTimestamp(snapshotTime)}</div>
-      <div>Agent 心跳：{agentOnline ? '在线' : '离线'}</div>
       {error ? <div>后端说明：{error}</div> : null}
     </div>
   );
@@ -65,17 +52,6 @@ const RealtimeStatusBadge: React.FC<Props> = (props) => {
   return (
     <Tooltip title={tooltipContent} placement="top">
       <Space size={4} style={{ cursor: 'help' }}>
-        {showAgentDot ? (
-          <Badge
-            status={agentOnline ? 'success' : 'default'}
-            text={
-              <span style={{ fontSize: 12 }}>
-                {agentOnline ? 'Agent在线' : 'Agent离线'}
-              </span>
-            }
-          />
-        ) : null}
-
         {/* agent / cache 都是正常数据，不需要额外打扰用户 */}
         {source === 'last-known-good' || source === 'none' ? (
           <Tag color={SOURCE_COLOR[source]} style={{ marginInlineEnd: 0 }}>

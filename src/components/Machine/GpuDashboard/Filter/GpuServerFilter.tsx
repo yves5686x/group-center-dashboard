@@ -1,4 +1,4 @@
-import { Badge, Button, Space, Tooltip } from 'antd';
+import { Button, Space, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import styles from './GpuServerFilter.less';
 
@@ -126,7 +126,6 @@ const GpuServerFilter: React.FC<GpuServerFilterProps> = ({
               <div style={{ fontSize: 12, lineHeight: 1.8 }}>
                 <div>标识：{machine.serverNameEng}</div>
                 {machine.position ? <div>位置：{machine.position}</div> : null}
-                <div>Agent 心跳：{machine.agentOnline ? '在线' : '离线'}</div>
                 {/* stale 只说明缓存里的快照过期，和心跳是两回事 */}
                 <div>数据状态：{machine.stale ? '可能过期' : '正常'}</div>
               </div>
@@ -141,10 +140,7 @@ const GpuServerFilter: React.FC<GpuServerFilterProps> = ({
               }`}
               onClick={() => handleMachineToggle(machine)}
             >
-              <Space size={6}>
-                <Badge status={machine.agentOnline ? 'success' : 'default'} />
-                {machine.serverName}
-              </Space>
+              <Space size={6}>{machine.serverName}</Space>
             </Button>
           </Tooltip>
         ))}

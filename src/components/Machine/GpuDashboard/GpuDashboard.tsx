@@ -318,13 +318,14 @@ const GpuDashboard: React.FC<Props> = (props) => {
         styles={{ body: { padding: '12px 16px' } }}
         onContextMenu={handleContextMenu}
       >
+        {/* 标题居中；数据状态徽标绝对定位到右侧，避免把标题挤偏 */}
         <div
           style={{
+            position: 'relative',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             gap: 12,
-            flexWrap: 'wrap',
           }}
         >
           <Tooltip
@@ -332,30 +333,33 @@ const GpuDashboard: React.FC<Props> = (props) => {
             placement="top"
             color={token.colorBgElevated}
           >
-            <h1 className={styles.title} style={{ cursor: 'help', margin: 0 }}>
+            <h1
+              className={styles.title}
+              style={{ cursor: 'help', margin: 0, textAlign: 'center' }}
+            >
               {machine.serverName}
             </h1>
           </Tooltip>
 
-          {snapshot ? (
-            <RealtimeStatusBadge
-              agentOnline={snapshot.agentOnline}
-              stale={snapshot.stale}
-              source={snapshot.source}
-              freshness={snapshot.freshness}
-              snapshotTime={snapshot.snapshotTime}
-              error={snapshot.error}
-            />
-          ) : (
-            // 还没拿到快照时，先用机器列表里的心跳与过期标记顶上
-            <RealtimeStatusBadge
-              agentOnline={machine.agentOnline}
-              stale={machine.stale}
-              source="none"
-              freshness={machine.freshness}
-              snapshotTime={machine.snapshotTime}
-            />
-          )}
+          <div style={{ position: 'absolute', right: 0 }}>
+            {snapshot ? (
+              <RealtimeStatusBadge
+                stale={snapshot.stale}
+                source={snapshot.source}
+                freshness={snapshot.freshness}
+                snapshotTime={snapshot.snapshotTime}
+                error={snapshot.error}
+              />
+            ) : (
+              // 还没拿到快照时，先用机器列表里的过期标记顶上
+              <RealtimeStatusBadge
+                stale={machine.stale}
+                source="none"
+                freshness={machine.freshness}
+                snapshotTime={machine.snapshotTime}
+              />
+            )}
+          </div>
         </div>
       </Card>
       {gpuInfoContent()}

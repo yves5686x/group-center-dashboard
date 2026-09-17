@@ -47,36 +47,37 @@ const MachineDisk: React.FC<Props> = (props) => {
       <Card
         size="default"
         title={
+          // 标题居中；数据状态徽标绝对定位到右侧，避免把标题挤偏
           <div
             style={{
+              position: 'relative',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
+              justifyContent: 'center',
               gap: 12,
-              flexWrap: 'wrap',
             }}
           >
-            <span>{machine.serverName}</span>
+            <span style={{ textAlign: 'center' }}>{machine.serverName}</span>
 
-            {snapshot ? (
-              <RealtimeStatusBadge
-                agentOnline={snapshot.agentOnline}
-                stale={snapshot.stale}
-                source={snapshot.source}
-                freshness={snapshot.freshness}
-                snapshotTime={snapshot.snapshotTime}
-                error={snapshot.error}
-              />
-            ) : (
-              // 还没拿到快照时，先用机器列表里的心跳与过期标记顶上
-              <RealtimeStatusBadge
-                agentOnline={machine.agentOnline}
-                stale={machine.stale}
-                source="none"
-                freshness={machine.freshness}
-                snapshotTime={machine.snapshotTime}
-              />
-            )}
+            <div style={{ position: 'absolute', right: 0 }}>
+              {snapshot ? (
+                <RealtimeStatusBadge
+                  stale={snapshot.stale}
+                  source={snapshot.source}
+                  freshness={snapshot.freshness}
+                  snapshotTime={snapshot.snapshotTime}
+                  error={snapshot.error}
+                />
+              ) : (
+                // 还没拿到快照时，先用机器列表里的过期标记顶上
+                <RealtimeStatusBadge
+                  stale={machine.stale}
+                  source="none"
+                  freshness={machine.freshness}
+                  snapshotTime={machine.snapshotTime}
+                />
+              )}
+            </div>
           </div>
         }
       >

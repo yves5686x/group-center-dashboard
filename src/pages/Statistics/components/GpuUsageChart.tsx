@@ -97,25 +97,37 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
     }
   };
 
-  // 按GPU型号聚合，只计算一次
-  const gpuModelSummary = useMemo(() => {
+  // 按服务器聚合（同型号的卡分布在多台服务器上，只看型号看不出在哪台机器）
+  const serverSummary = useMemo(() => {
     if (!gpuData) return { map: new Map<string, number>(), list: [] };
 
     const map = new Map<string, number>();
     gpuData.usageByDevice.forEach((gpu) => {
-      const gpuModel = gpu.gpuName || '未知GPU';
-      const currentCount = map.get(gpuModel) || 0;
-      map.set(gpuModel, currentCount + (gpu.totalUsageCount || 0));
+      const server = gpu.serverName || '未知服务器';
+      const currentCount = map.get(server) || 0;
+      map.set(server, currentCount + (gpu.totalUsageCount || 0));
     });
 
     const list = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
     return { map, list };
   }, [gpuData]);
 
+  // 每台服务器上用到过的 GPU 型号（汇总卡里展示）
+  const serverGpuModels = useMemo(() => {
+    const map = new Map<string, Set<string>>();
+    gpuData?.usageByDevice.forEach((gpu) => {
+      const server = gpu.serverName || '未知服务器';
+      const model = gpu.gpuName || '未知GPU';
+      if (!map.has(server)) map.set(server, new Set());
+      map.get(server)!.add(model);
+    });
+    return map;
+  }, [gpuData]);
+
   const getPieChartData = () => {
     if (!gpuData) return [];
-    const allData = gpuModelSummary.list.map(([gpuModel, taskCount]) => ({
-      type: gpuModel,
+    const allData = serverSummary.list.map(([server, taskCount]) => ({
+      type: server,
       value: taskCount,
     }));
     return mergeTopKWithOther(allData, topK);
@@ -348,7 +360,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
       </Row>
 
       <Card
-        title="各GPU设备任务数分布"
+        title="各服务器任务数分布"
         style={{ marginBottom: 24 }}
         extra={
           <div
@@ -373,14 +385,14 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
         }
       >
         <Row gutter={16}>
-          {gpuModelSummary.list.map(([gpuModel, taskCount], index) => {
+          {serverSummary.list.map(([server, taskCount], index) => {
             const taskPercent =
               gpuData.totalTasks > 0
                 ? ((taskCount / gpuData.totalTasks) * 100).toFixed(1)
                 : '0';
-            const serverCount = gpuData.usageByDevice.filter(
-              (gpu) => (gpu.gpuName || '未知GPU') === gpuModel,
-            ).length;
+            const gpuModels = Array.from(
+              serverGpuModels.get(server) ?? [],
+            ).join('、');
 
             return (
               <Col xs={24} sm={12} md={8} lg={6} key={index}>
@@ -393,7 +405,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
                         marginBottom: 4,
                       }}
                     >
-                      {gpuModel}
+                      {server}
                     </div>
                     <div
                       style={{
@@ -402,7 +414,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
                         marginBottom: 8,
                       }}
                     >
-                      {serverCount}台服务器
+                      {gpuModels}
                     </div>
                     <div
                       style={{
@@ -441,7 +453,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
                   alignItems: 'center',
                 }}
               >
-                <span>GPU型号任务数分布</span>
+                <span>各服务器任务数分布</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontSize: '12px', color: '#666' }}>
                     显示前
@@ -460,7 +472,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
                     <Option value={null}>无限制</Option>
                   </Select>
                   <span style={{ fontSize: '12px', color: '#666' }}>
-                    个型号
+                    台服务器
                   </span>
                 </div>
               </div>
@@ -478,7 +490,10 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
           </Card>
         </Col>
         <Col xs={24} lg={12}>
-          <Card title="各GPU设备任务数对比" style={{ marginBottom: 16 }}>
+          <Card
+            title="GPU型号在各服务器的任务数对比"
+            style={{ marginBottom: 16 }}
+          >
             {getColumnChartData().length > 0 ? (
               <Column {...columnConfig} />
             ) : (
