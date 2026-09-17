@@ -3,7 +3,7 @@ import {
   CloseCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Space, Statistic, Tag, Tooltip } from 'antd';
+import { Alert, Button, Card, Space, Statistic, Tag, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -29,6 +29,7 @@ const MachineStatusMonitor: React.FC<MachineStatusMonitorProps> = ({
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [fetchError, setFetchError] = useState(false);
 
   const fetchMachineData = async (isManualRefresh = false) => {
     // 只有手动刷新时才设置refreshing状态
@@ -47,9 +48,11 @@ const MachineStatusMonitor: React.FC<MachineStatusMonitorProps> = ({
       setStatusSummary(summaryResponse || {});
 
       setLastUpdate(new Date());
+      setFetchError(false);
     } catch (error) {
       console.error('获取机器状态数据失败:', error);
-      // 出错时保持现有数据，不重置
+      // 出错时保持现有数据，不重置，但要给用户可见的提示
+      setFetchError(true);
     } finally {
       // 只有手动刷新时才清除refreshing状态
       if (isManualRefresh) {
@@ -169,6 +172,15 @@ const MachineStatusMonitor: React.FC<MachineStatusMonitorProps> = ({
       }
       className={styles.machineMonitor}
     >
+      {fetchError && (
+        <Alert
+          type="warning"
+          showIcon
+          message="监控数据获取失败，当前显示的可能是旧数据，将自动重试"
+          style={{ marginBottom: 16 }}
+        />
+      )}
+
       {/* 状态摘要 */}
       {statusSummary && (
         <div className={styles.statusSummary}>

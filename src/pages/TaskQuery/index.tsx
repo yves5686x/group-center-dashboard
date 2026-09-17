@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-components';
-import { Modal } from 'antd';
+import { Alert, message, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import { queryGpuTasksSimple } from '@/services/group_center/gpuTaskQuery';
@@ -14,6 +14,7 @@ const TaskQueryPage: React.FC = () => {
   const [queryResults, setQueryResults] = useState<API.GpuTaskInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
+  const [queryError, setQueryError] = useState<string | null>(null);
   const [formInitialValues, setFormInitialValues] = useState<any>({});
 
   // 解析URL参数并设置查询条件
@@ -173,15 +174,20 @@ const TaskQueryPage: React.FC = () => {
 
         setQueryResults(Array.isArray(data) ? data : []);
         setTotalCount(total);
+        setQueryError(null);
       } else {
         console.error('查询失败:', result);
         setQueryResults([]);
         setTotalCount(0);
+        setQueryError('查询失败：服务返回异常，请稍后重试');
+        message.error('查询失败：服务返回异常，请稍后重试');
       }
     } catch (error) {
       console.error('查询异常:', error);
       setQueryResults([]);
       setTotalCount(0);
+      setQueryError('查询失败：无法连接服务器，请稍后重试');
+      message.error('查询失败：无法连接服务器，请稍后重试');
     } finally {
       setLoading(false);
     }
@@ -197,6 +203,7 @@ const TaskQueryPage: React.FC = () => {
     setQueryParams({});
     setQueryResults([]);
     setTotalCount(0);
+    setQueryError(null);
   };
 
   return (
@@ -218,6 +225,14 @@ const TaskQueryPage: React.FC = () => {
 
         {/* 查询结果 */}
         <div className={styles.resultSection}>
+          {queryError && (
+            <Alert
+              type="error"
+              showIcon
+              message={queryError}
+              style={{ marginBottom: 16 }}
+            />
+          )}
           <TaskResultTable
             data={queryResults}
             loading={loading}

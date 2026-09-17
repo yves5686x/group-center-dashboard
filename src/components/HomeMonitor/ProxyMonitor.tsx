@@ -8,6 +8,7 @@ import {
   ReloadOutlined,
 } from '@ant-design/icons';
 import {
+  Alert,
   Button,
   Card,
   Dropdown,
@@ -51,6 +52,7 @@ const ProxyMonitor: React.FC<ProxyMonitorProps> = ({
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [fetchError, setFetchError] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
   // 右键菜单状态
@@ -84,9 +86,11 @@ const ProxyMonitor: React.FC<ProxyMonitorProps> = ({
       }
 
       setLastUpdate(new Date());
+      setFetchError(false);
     } catch (error) {
       console.error('获取代理服务器数据失败:', error);
-      // 出错时保持现有数据，不重置
+      // 出错时保持现有数据，不重置，但要给用户可见的提示
+      setFetchError(true);
     } finally {
       // 只有手动刷新时才清除refreshing状态
       if (isManualRefresh) {
@@ -493,6 +497,15 @@ const ProxyMonitor: React.FC<ProxyMonitorProps> = ({
         }
         className={styles.proxyMonitor}
       >
+        {fetchError && (
+          <Alert
+            type="warning"
+            showIcon
+            message="监控数据获取失败，当前显示的可能是旧数据，将自动重试"
+            style={{ marginBottom: 16 }}
+          />
+        )}
+
         {/* 状态摘要 */}
         {proxyStatus && (
           <div className={styles.statusSummary}>

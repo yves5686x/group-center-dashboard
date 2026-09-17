@@ -6,7 +6,6 @@ import {
   DatePicker,
   Form,
   Input,
-  Modal,
   Row,
   Select,
   Space,
@@ -41,29 +40,9 @@ const TaskQueryForm: React.FC<TaskQueryFormProps> = ({
   }, [initialValues, form]);
 
   const handleSubmit = (values: any) => {
-    // 检查是否为空查询条件
-    const isEmptyQuery =
-      !values.userName &&
-      !values.projectName &&
-      !values.deviceName &&
-      !values.taskType &&
-      !values.timeRange &&
-      values.isMultiGpu === undefined;
-
-    if (isEmptyQuery) {
-      // 显示确认弹窗
-      Modal.confirm({
-        title: '空条件查询确认',
-        content: '您没有设置任何查询条件，这将查询所有任务。确定要继续吗？',
-        okText: '确定',
-        cancelText: '取消',
-        onOk: () => {
-          executeQuery(values);
-        },
-      });
-    } else {
-      executeQuery(values);
-    }
+    // 空条件确认统一在页面层 handleQuery 中处理，这里直接提交，
+    // 避免两层各弹一次确认框导致用户需要点两次「确定」。
+    executeQuery(values);
   };
 
   const executeQuery = (values: any) => {
