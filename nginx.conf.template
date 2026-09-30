@@ -5,11 +5,8 @@ server {
     listen       8080;
     server_name  _;
 
-    # 日志走 stdout/stderr，由 docker logs 收集。
-    # 非 root 写不了 /var/log/nginx（属 root），且容器里本就不该落盘。
-    access_log /dev/stdout;
-    error_log  /dev/stderr warn;
-
+    # 日志在主配置 nginx.conf 里已指向 /dev/stdout 与 /dev/stderr，
+    # 这里不再重复声明
     root  /usr/share/nginx/html;
     index index.html;
 

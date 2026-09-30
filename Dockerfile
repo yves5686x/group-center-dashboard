@@ -50,16 +50,17 @@ ENV BACKEND_URL="http://backend:8080"
 # 再报 undefined variable '$$'（写成 "$$" 虽然结果相同，但会触发该告警）
 ENV NGINX_ENVSUBST_FILTER='^BACKEND_URL$'
 
+# 整体替换官方主配置：pid 与各级 temp 目录都显式指向非 root 可写的位置，
+# 不再依赖 sed 改官方配置（其内容随版本变化，匹配不到还会静默通过）。
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
+# entrypoint 启动时要把 templates/ 渲染进 /etc/nginx/conf.d，该目录必须可写
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# 非 root 运行需要两处可写路径：
-# - /var/cache/nginx：各级 *_temp_path（client/proxy/fastcgi…）默认落在这里，
-#   nginx 启动时按需创建子目录，把父目录的属主给到 101 即可
-# - pid 文件：不用改配置文件（改 alpine 主配置太依赖其具体内容，sed 匹配
-#   不到时还会静默通过），改为在 CMD 的 -g 里用全局指令覆盖
-RUN chown -R 101:101 /usr/share/nginx/html /var/cache/nginx \
+RUN mkdir -p /tmp/client_temp /tmp/proxy_temp /tmp/fastcgi_temp \
+             /tmp/uwsgi_temp /tmp/scgi_temp \
+    && chown -R 101:101 /usr/share/nginx/html /etc/nginx/conf.d \
     && nginx -t
 
 USER 101
@@ -70,5 +71,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget -qO- http://127.0.0.1:8080/ >/dev/null || exit 1
 
-# pid 指到 /tmp：/var/run 非 root 不可写
-CMD ["nginx", "-g", "daemon off; pid /tmp/nginx.pid;"]
+# pid 等已在 nginx.conf 中指定，不在 -g 里重复追加
+CMD ["nginx", "-g", "daemon off;"]
