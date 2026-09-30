@@ -117,6 +117,12 @@ jobs:
               docker inspect -f 'status={{.State.Status}} exit={{.State.ExitCode}} oom={{.State.OOMKilled}} err={{.State.Error}}' gcd-smoke 2>&1 || true
               echo "--- 容器日志 ---"
               docker logs gcd-smoke 2>&1 || true
+              echo "--- 渲染后的 conf.d/default.conf（前 60 行）---"
+              docker exec gcd-smoke sh -c 'head -60 /etc/nginx/conf.d/default.conf' 2>&1 || true
+              echo "--- BACKEND_URL 实际值 ---"
+              docker exec gcd-smoke sh -c 'echo "[$BACKEND_URL]"' 2>&1 || true
+              echo "--- /tmp 与 pid 权限 ---"
+              docker exec gcd-smoke sh -c 'ls -ld /tmp /tmp/nginx.pid 2>&1' || true
               echo "--- 以 root 跑 nginx -t ---"
               docker run --rm --user 0 --entrypoint nginx gcd-smoke:local -t 2>&1 || true
               echo "--- 以 uid 101 跑 nginx -t ---"

@@ -62,7 +62,10 @@ RUN mkdir -p /tmp/client_temp /tmp/proxy_temp /tmp/fastcgi_temp \
              /tmp/uwsgi_temp /tmp/scgi_temp \
     && chmod 1777 /tmp \
     && chown -R 101:101 /usr/share/nginx/html /etc/nginx/conf.d \
-    && nginx -t
+    && nginx -t \
+    # 构建期以 root 跑 nginx -t 可能留下 root 属主的 pid 文件，
+    # 运行期 uid 101 就写不掉了，这里清掉
+    && rm -f /tmp/nginx.pid
 
 USER 101
 
