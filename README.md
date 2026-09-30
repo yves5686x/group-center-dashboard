@@ -10,7 +10,7 @@
 
 You can use `pnpm` and `WebPack` on Windows.
 
-`Bun` and `Mako` is only for macOS and Linux.
+`Mako` is only for macOS and Linux.
 
 ## Install Environment
 
@@ -27,7 +27,7 @@ https://mirrors.tuna.tsinghua.edu.cn/help/homebrew/
 #### Install Software
 
 ```bash
-brew install node pnpm bun
+brew install node pnpm
 ```
 
 ### Node Config
@@ -46,19 +46,52 @@ npm i -g npm-check-updates
 ncu -u
 ```
 
-## Bun
+## pnpm
+
+项目统一使用 `pnpm`（与 `.umirc.ts` 的 `npmClient` 一致），仓库里只保留 `pnpm-lock.yaml` 一份 lockfile。
 
 ### Install Package
 
 ```bash
-bun install
+pnpm install
+```
+
+CI 与镜像里用 `--frozen-lockfile`，lockfile 与 `package.json` 不一致时直接失败：
+
+```bash
+pnpm install --frozen-lockfile
 ```
 
 ### Run
 
 ```bash
-bun dev
+pnpm dev
 ```
+
+### Build
+
+```bash
+pnpm build
+```
+
+## Docker
+
+产物是纯静态 SPA，镜像用 nginx 托管，多阶段构建后以非 root 运行。
+
+```bash
+docker build -t group-center-dashboard .
+docker run -d -p 8080:80 -e BACKEND_URL=http://你的后端地址:15090 group-center-dashboard
+```
+
+`BACKEND_URL` 在容器启动时注入，nginx 把 `/api`、`/web`、`/version` 反代到后端（与 `config/config.proxy.ts` 的 dev 代理规则一致）。
+
+本地联调：
+
+```bash
+docker compose up --build
+```
+
+镜像里 **mock 不生效**（mock 只在 dev server 启用），后端没起的话页面能打开但没有数据。
 
 ## Create Project
 
@@ -74,11 +107,13 @@ npx umi config set mako {}
 
 ## Issues
 
-### Outdated lockfile version: failed to parse lockfile: 'bun.lockb'
+### ERR_PNPM_OUTDATED_LOCKFILE
 
-Please upgrade bun to at least 'v1.2.0'!
+`package.json` 改了依赖但没重新生成 `pnpm-lock.yaml`。补一次即可：
 
-https://bun.com/docs/pm/lockfile
+```bash
+pnpm install
+```
 
 ## Ref
 

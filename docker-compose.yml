@@ -1,0 +1,23 @@
+# 本地起前端镜像 + 后端联调。
+# 后端不在本仓库里，backend 用 external 声明，值填 group-center 后端的实际地址。
+#
+#   docker compose up --build
+#   打开 http://localhost:8080
+#
+# 注意：mock 在生产构建下不生效（mock 只在 dev server 启用），
+# 所以容器里的页面会直接打后端。后端没起的话页面能打开但全是空数据。
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: group-center-dashboard:local
+    container_name: gcd-web
+    ports:
+      - "8080:80"
+    environment:
+      # 换成你自己的后端地址
+      BACKEND_URL: "http://host.docker.internal:15090"
+    depends_on: []
+    restart: unless-stopped
