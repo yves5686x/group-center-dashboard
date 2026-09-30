@@ -80,8 +80,10 @@ pnpm build
 
 ```bash
 docker build -t group-center-dashboard .
-docker run -d -p 8080:80 -e BACKEND_URL=http://你的后端地址:15090 group-center-dashboard
+docker run -d -p 8080:8080 -e BACKEND_URL=http://你的后端地址:15090 group-center-dashboard
 ```
+
+容器内 nginx 监听 **8080**（镜像以非 root 运行，绑不了 80 这种特权端口），宿主侧用 `-p 8080:8080` 映射。
 
 `BACKEND_URL` 在容器启动时注入，nginx 把 `/api`、`/web`、`/version` 反代到后端（与 `config/config.proxy.ts` 的 dev 代理规则一致）。
 

@@ -52,17 +52,29 @@ ENV NGINX_ENVSUBST_FILTER='^BACKEND_URL$'
 
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
+# alpine 主配置的 pid 与各级 temp 目录默认在 /var 下，非 root 无权写，
+# 统一挪到 /tmp。sed 匹配不到时是静默成功的，所以逐条校验是否真的改了。
+RUN set -eux; \
+    sed -i 's#^pid .*#pid /tmp/nginx.pid;#' /etc/nginx/nginx.conf; \
+    grep -q '^pid /tmp/nginx.pid;' /etc/nginx/nginx.conf; \
+    for d in client_body proxy fastcgi uwsgi scgi; do \
+        sed -i "s#^${d}_temp_path .*#${d}_temp_path /tmp/${d}_temp;#" /etc/nginx/nginx.conf; \
+        grep -q "^${d}_temp_path /tmp/${d}_temp;" /etc/nginx/nginx.conf; \
+    done; \
+    mkdir -p /tmp/client_temp /tmp/proxy_temp /tmp/fastcgi_temp /tmp/uwsgi_temp /tmp/scgi_temp
+
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # 用 node 镜像自带的非 root 用户（nginx alpine 里没有这个用户）
-RUN chown -R 101:101 /usr/share/nginx/html /var/cache/nginx /var/run \
+RUN chown -R 101:101 /usr/share/nginx/html /var/cache/nginx \
     && nginx -t
 
 USER 101
 
-EXPOSE 80
+# 8080 而非 80：非 root 无法绑定特权端口，见 nginx.conf.template 注释
+EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget -qO- http://127.0.0.1/ >/dev/null || exit 1
+    CMD wget -qO- http://127.0.0.1:8080/ >/dev/null || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]

@@ -1,6 +1,14 @@
 server {
-    listen       80;
+    # 容器内用 8080 而非 80：镜像以非 root 用户（uid 101）运行，
+    # 而 1024 以下的端口是特权端口，非 root 无权绑定，会直接
+    # "Permission denied" 起不来。宿主侧用 -p 8080:8080 映射即可。
+    listen       8080;
     server_name  _;
+
+    # 日志走 stdout/stderr，由 docker logs 收集。
+    # 非 root 写不了 /var/log/nginx（属 root），且容器里本就不该落盘。
+    access_log /dev/stdout;
+    error_log  /dev/stderr warn;
 
     root  /usr/share/nginx/html;
     index index.html;

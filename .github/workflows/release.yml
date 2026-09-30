@@ -74,6 +74,73 @@ jobs:
       - name: 设置 Buildx
         uses: docker/setup-buildx-action@v4
 
+      # 冒烟测试：先构建成本地镜像、真的把容器跑起来验证，
+      # 通过后才推送。构建能成功不代表能启动 —— 非 root 绑不了 80
+      # 这种特权端口这类问题只有 run 起来才会暴露。
+      - name: 构建本地镜像用于冒烟测试
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          load: true
+          push: false
+          tags: gcd-smoke:local
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
+
+      - name: 启动容器并验证
+        run: |
+          set -euo pipefail
+          # 后端地址指向一个不存在的服务：这里只验证静态托管与 SPA
+          # fallback，接口 502 属预期，不作为失败依据
+          docker run -d --name gcd-smoke -p 18080:8080 \
+            -e BACKEND_URL=http://127.0.0.1:9 gcd-smoke:local
+
+          # 等 nginx 起来
+          for i in $(seq 1 30); do
+            if curl -fsS -o /dev/null http://127.0.0.1:18080/; then break; fi
+            sleep 1
+          done
+
+          fail=0
+          check() {
+            local path="$1" expect="$2" desc="$3"
+            local code
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:18080${path}")
+            if [ "$code" = "$expect" ]; then
+              echo "  ok   ${path} → ${code} (${desc})"
+            else
+              echo "  FAIL ${path} → ${code}，期望 ${expect} (${desc})"
+              fail=1
+            fi
+          }
+
+          # 首页与 SPA history fallback：深层路由必须回落到 index.html
+          check "/"            200 "首页"
+          check "/home"        200 "首页路由"
+          check "/gpu-dashboard" 200 "SPA fallback"
+          check "/statistics"  200 "SPA fallback"
+          check "/deep/unknown/route" 200 "SPA fallback"
+          # 静态资源
+          check "/umi.js"      200 "主脚本"
+          check "/umi.css"     200 "主样式"
+          check "/preload_helper.js" 200 "预载脚本"
+          check "/not-exist.js" 404 "不存在的资源应为 404"
+
+          # 容器健康状态
+          hs=$(docker inspect -f '{{.State.Health.Status}}' gcd-smoke)
+          echo "  健康状态: $hs"
+          [ "$hs" = "healthy" ] || { echo "  FAIL 容器未 healthy"; fail=1; }
+
+          # 确认确实以非 root 运行
+          uid_in=$(docker exec gcd-smoke id -u)
+          echo "  容器内 uid: $uid_in"
+          [ "$uid_in" = "101" ] || { echo "  FAIL 期望非 root(101)，实际 $uid_in"; fail=1; }
+
+          docker logs gcd-smoke 2>&1 | tail -20 || true
+          docker rm -f gcd-smoke || true
+          exit $fail
+
       - name: 推导镜像标签
         id: meta
         uses: docker/metadata-action@v6
@@ -107,10 +174,11 @@ jobs:
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.semver }}
             ```
 
-            启动时通过 `BACKEND_URL` 指定后端地址：
+            启动时通过 `BACKEND_URL` 指定后端地址（容器内 nginx 监听 8080，
+            因为镜像以非 root 运行，绑不了 80 这种特权端口）：
 
             ```bash
-            docker run -d -p 8080:80 \
+            docker run -d -p 8080:8080 \
               -e BACKEND_URL=http://你的后端地址:15090 \
               ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.semver }}
             ```
