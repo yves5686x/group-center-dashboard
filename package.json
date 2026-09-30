@@ -12,7 +12,7 @@
     "format": "prettier --cache --write .",
     "postinstall": "max setup",
     "lint": "max lint",
-    "lint:style": "bun run stylelint \"src/**/*.less\"",
+    "lint:style": "stylelint \"src/**/*.less\"",
     "mirrors": "nrm use taobao",
     "openapi": "cross-env ENABLE_OPEN_API=true max openapi",
     "openapi:old": "ts-node openapi.config.ts",

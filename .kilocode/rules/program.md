@@ -1,6 +1,6 @@
 # Program
 
-这是一个React程序，使用TypeScript开发。使用bun进行构建
+这是一个React程序，使用TypeScript开发。使用pnpm进行构建
 
 使用阿里的Umi.Max框架
 

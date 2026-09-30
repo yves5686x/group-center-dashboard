@@ -1,5 +1,12 @@
 /*node_modules*/
 
+# 包管理器：项目统一用 pnpm（与 .umirc.ts 的 npmClient 一致）。
+# 历史上 bun.lockb 和 package-lock.json 也提交进仓库，三份 lockfile 并存会让
+# CI / Docker 装出不确定的依赖，这里忽略掉防止再次混入。
+bun.lockb
+package-lock.json
+yarn.lock
+
 /.env.local
 /.umirc.local.ts
 /config/config.local.ts
