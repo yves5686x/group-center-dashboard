@@ -18,7 +18,9 @@ WORKDIR /app
 
 # 只拷锁文件 + 包描述，利用 Docker 层缓存：
 # 只要依赖没变，这一步就不会失效，比先拷全量再 install 快很多。
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+# 注意 .npmrc 已在 .dockerignore 中排除（里面配的是国内镜像源，
+# GitHub Actions runner 在境外走它反而更慢），所以这里不再 COPY。
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # 依赖装完再拷源码，改业务代码只会让最后一层失效

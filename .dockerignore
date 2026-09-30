@@ -17,6 +17,12 @@ src/.umi-test
 config/config.local.ts
 .umirc.local.ts
 
+# .npmrc 配的是国内镜像源（mirrors.cloud.tencent.com）。
+# GitHub Actions 的 runner 在境外，走这个源反而更慢甚至超时，
+# 所以镜像构建里排除它、用官方 registry。
+# 本地 docker build 不受影响（同样走官方源，速度通常也够用）。
+.npmrc
+
 # 文档与图片资源不参与构建
 Doc
 *.md

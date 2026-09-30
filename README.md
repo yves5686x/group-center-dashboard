@@ -93,6 +93,30 @@ docker compose up --build
 
 镜像里 **mock 不生效**（mock 只在 dev server 启用），后端没起的话页面能打开但没有数据。
 
+### 发布镜像
+
+推送 `v*` tag 会触发 GitHub Actions（`.github/workflows/release.yml`），构建镜像推到 GHCR，并自动创建 GitHub Release：
+
+```bash
+# 先把版本号同步到 package.json，再打 tag
+git tag v1.8.15
+git push origin dev --tags
+```
+
+工作流会校验 tag 与 `package.json` 的版本是否一致，不一致直接失败。
+
+拉取：
+
+```bash
+docker pull ghcr.io/yves5686x/group-center-dashboard:1.8.15
+```
+
+GHCR 包是公开的，但匿名拉取有速率限制；需要登录时：
+
+```bash
+echo "$GITHUB_TOKEN" | docker login ghcr.io -u yves5686x --password-stdin
+```
+
 ## Create Project
 
 ### Alibaba Umi

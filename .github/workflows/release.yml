@@ -1,0 +1,111 @@
+name: Release
+
+# 只在推送 v* tag 时触发，例如 v1.8.15。
+# 开发期不跑，避免每次推 dev 都做一遍完整构建。
+#
+# 注意：checkout 必须显式 fetch tags 所在提交。默认分支是 main，而历史
+# tag（含 v1.8.14）都只存在于 dev 上，直接 checkout 未必拿得到 tag 指向
+# 的那份代码，会构建出错误的镜像。
+on:
+  push:
+    tags:
+      - 'v*'
+
+# 权限最小化：只有推镜像和建 Release 需要 contents+packages 写权限
+permissions:
+  contents: write # 创建 GitHub Release
+  packages: write # 推送到 GHCR
+
+# 同一 tag 的重复触发（比如重跑）之间只保留最新一次
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  release:
+    name: 构建并发布镜像
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v7
+        with:
+          # 直接检出触发本次发布的那个 commit，
+          # 不能用默认分支 —— 历史 tag 只存在于 dev 上
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      # BuildKit 内置缓存，无需额外配置，能显著缩短重复构建时间
+      - name: 配置 BuildKit 缓存
+        uses: actions/cache@v6
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.ref_name }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: 校验 tag 与 package.json 版本一致
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PKG_VERSION="$(node -p "require('./package.json').version")"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::tag ${GITHUB_REF_NAME} 与 package.json 版本 ${PKG_VERSION} 不一致"
+            exit 1
+          fi
+          echo "版本一致: $PKG_VERSION"
+
+      - name: 登录 GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          # 内置 token 有效期有限，无需手动配置
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 设置 Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: 推导镜像标签
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest
+
+      - name: 构建并推送镜像
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
+
+      - name: 创建 GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          generate_release_notes: true
+          body: |
+            ## Docker
+
+            ```bash
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+            ```
+
+            启动时通过 `BACKEND_URL` 指定后端地址：
+
+            ```bash
+            docker run -d -p 8080:80 \
+              -e BACKEND_URL=http://你的后端地址:15090 \
+              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+            ```
