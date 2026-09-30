@@ -18,9 +18,12 @@ server {
     # 下面 ${BACKEND_URL} 会被替换成实际地址。
     #
     # 这里直接替换进 proxy_pass（而不是 nginx 变量），是为了让 nginx 在
-    # 加载配置时就解析一次后端主机名 —— 若写成 proxy_pass http://$var，
-    # 主机名会变成运行时解析，必须额外配 resolver 指令，脱离 Docker
-    # 环境就不可用了。
+    # 加载配置时就解析一次后端主机名 —— 若写成 proxy_pass $var，主机名会
+    # 变成运行时解析，必须额外配 resolver 指令，脱离 Docker 环境就不可用。
+    #
+    # 注意 BACKEND_URL 要带完整的 scheme（http://host:port），模板里不再
+    # 写死 http:// 前缀 —— 之前两边都带，渲染出 http://http://… 导致
+    # nginx 报 invalid port in upstream。
     #
     # 路径与 config/config.proxy.ts 的 dev 代理规则保持一致：/api、/web、/version。
     # 刻意不加 /gpu 前缀规则 —— 实时数据已迁移到同源聚合层，前端不再直连
@@ -40,7 +43,7 @@ server {
     # （dev 代理里 pathRewrite 去掉前缀再拼回 target 的 '/api/'，净效果也是透传。）
 
     location /api/ {
-        proxy_pass         http://${BACKEND_URL};
+        proxy_pass         ${BACKEND_URL};
         proxy_http_version 1.1;
         proxy_set_header   Host              $host;
         proxy_set_header   X-Real-IP         $remote_addr;
@@ -52,7 +55,7 @@ server {
     }
 
     location /web/ {
-        proxy_pass         http://${BACKEND_URL};
+        proxy_pass         ${BACKEND_URL};
         proxy_http_version 1.1;
         proxy_set_header   Host              $host;
         proxy_set_header   X-Real-IP         $remote_addr;
@@ -64,7 +67,7 @@ server {
 
     # 反馈报告页读后端的版本号；dev 下不补这条会拿到 dev server 的 SPA HTML
     location = /version {
-        proxy_pass         http://${BACKEND_URL};
+        proxy_pass         ${BACKEND_URL};
         proxy_http_version 1.1;
         proxy_set_header   Host $host;
     }

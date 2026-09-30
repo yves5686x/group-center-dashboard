@@ -45,6 +45,7 @@ FROM nginx:1.27-alpine AS runner
 
 # 使用官方镜像的模板机制：启动时对 templates/*.template 执行 envsubst，
 # 注入 BACKEND_URL。只替换这一个变量，避免误伤 nginx 自己的 $host/$uri。
+# 必须带 scheme（http://host:port），模板里不再补前缀。
 ENV BACKEND_URL="http://backend:8080"
 # 单引号避免 Docker 把 $ 当变量展开，BuildKit 的 UndefinedVar 检查也不会
 # 再报 undefined variable '$$'（写成 "$$" 虽然结果相同，但会触发该告警）
