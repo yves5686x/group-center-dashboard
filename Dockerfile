@@ -60,6 +60,7 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 
 RUN mkdir -p /tmp/client_temp /tmp/proxy_temp /tmp/fastcgi_temp \
              /tmp/uwsgi_temp /tmp/scgi_temp \
+    && chmod 1777 /tmp \
     && chown -R 101:101 /usr/share/nginx/html /etc/nginx/conf.d \
     && nginx -t
 

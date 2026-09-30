@@ -91,10 +91,11 @@ jobs:
       - name: 启动容器并验证
         run: |
           set -euo pipefail
-          # 后端地址指向一个不存在的服务：这里只验证静态托管与 SPA
-          # fallback，接口 502 属预期，不作为失败依据
+          # 后端地址指向一个不会连通的合法地址：这里只验证静态托管与 SPA
+          # fallback，接口 502 属预期，不作为失败依据。
+          # 注意不能用 127.0.0.1:9 —— nginx 会把 9 判为 invalid port 直接 emerg。
           docker run -d --name gcd-smoke -p 18080:8080 \
-            -e BACKEND_URL=http://127.0.0.1:9 gcd-smoke:local
+            -e BACKEND_URL=http://127.0.0.1:59999 gcd-smoke:local
 
           # 等 nginx 起来
           ready=0
