@@ -160,8 +160,16 @@ jobs:
           check "/preload_helper.js" 200 "预载脚本"
           check "/not-exist.js" 404 "不存在的资源应为 404"
 
-          # 容器健康状态
-          hs=$(docker inspect -f '{{.State.Health.Status}}' gcd-smoke)
+          # 容器健康状态。
+          # HEALTHCHECK 的 start-period 是 5s、interval 30s，刚跑完上面的
+          # 一串请求时状态多半还是 starting，这里要等它真正变 healthy。
+          hs=""
+          for i in $(seq 1 12); do
+            hs=$(docker inspect -f '{{.State.Health.Status}}' gcd-smoke)
+            [ "$hs" = "healthy" ] && break
+            [ "$hs" = "unhealthy" ] && break
+            sleep 5
+          done
           echo "  健康状态: $hs"
           [ "$hs" = "healthy" ] || { echo "  FAIL 容器未 healthy"; fail=1; }
 
