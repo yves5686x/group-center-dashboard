@@ -5,6 +5,10 @@ import { theme } from 'antd';
 import ThemeSwitch from './components/UI/ThemeSwitch';
 import { GetSystemTheme } from './utils/AntD5/AntD5DarkMode';
 
+// 全局响应式样式（移动端优化）。
+// 在这里 import 而不是在 .umirc.ts 的 styles 里配，原因见 .umirc.ts 注释。
+import './global.less';
+
 // 全局初始化数据配置，用于 Layout 用户信息和权限初始化
 // 更多信息见文档：https://umijs.org/docs/api/runtime-config#getinitialstate
 export async function getInitialState(): Promise<{ name: string }> {

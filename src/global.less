@@ -16,30 +16,30 @@
 
 // 全局卡片样式优化
 @media (max-width: 768px) {
-  :global(.ant-card) {
+  .ant-card {
     margin-bottom: 12px;
 
-    :global(.ant-card-head) {
+    .ant-card-head {
       padding: 12px 16px;
 
-      :global(.ant-card-head-title) {
+      .ant-card-head-title {
         font-size: 14px;
       }
     }
 
-    :global(.ant-card-body) {
+    .ant-card-body {
       padding: 16px;
     }
   }
 }
 
 @media (max-width: 480px) {
-  :global(.ant-card) {
-    :global(.ant-card-head) {
+  .ant-card {
+    .ant-card-head {
       padding: 10px 12px;
     }
 
-    :global(.ant-card-body) {
+    .ant-card-body {
       padding: 12px;
     }
   }
@@ -47,15 +47,15 @@
 
 // 表格响应式优化
 @media (max-width: 768px) {
-  :global(.ant-table) {
+  .ant-table {
     font-size: 12px;
 
-    :global(.ant-table-thead > tr > th) {
+    .ant-table-thead > tr > th {
       padding: 8px;
       font-size: 12px;
     }
 
-    :global(.ant-table-tbody > tr > td) {
+    .ant-table-tbody > tr > td {
       padding: 8px;
       font-size: 12px;
     }
@@ -63,12 +63,12 @@
 }
 
 @media (max-width: 480px) {
-  :global(.ant-table) {
-    :global(.ant-table-thead > tr > th) {
+  .ant-table {
+    .ant-table-thead > tr > th {
       padding: 6px 4px;
     }
 
-    :global(.ant-table-tbody > tr > td) {
+    .ant-table-tbody > tr > td {
       padding: 6px 4px;
     }
   }
@@ -76,16 +76,16 @@
 
 // 表单响应式优化
 @media (max-width: 768px) {
-  :global(.ant-form) {
-    :global(.ant-form-item) {
+  .ant-form {
+    .ant-form-item {
       margin-bottom: 12px;
     }
 
-    :global(.ant-form-item-label) {
+    .ant-form-item-label {
       padding-bottom: 4px;
     }
 
-    :global(.ant-form-item-label > label) {
+    .ant-form-item-label > label {
       font-size: 13px;
     }
   }
@@ -93,7 +93,7 @@
 
 // 按钮响应式优化
 @media (max-width: 768px) {
-  :global(.ant-btn) {
+  .ant-btn {
     font-size: 13px;
 
     &.ant-btn-lg {
@@ -112,22 +112,22 @@
 
 // 标签页响应式优化
 @media (max-width: 768px) {
-  :global(.ant-tabs) {
-    :global(.ant-tabs-tab) {
+  .ant-tabs {
+    .ant-tabs-tab {
       font-size: 13px;
       padding: 8px 12px;
       margin: 0 4px;
     }
 
-    :global(.ant-tabs-nav) {
+    .ant-tabs-nav {
       margin-bottom: 16px;
     }
   }
 }
 
 @media (max-width: 480px) {
-  :global(.ant-tabs) {
-    :global(.ant-tabs-tab) {
+  .ant-tabs {
+    .ant-tabs-tab {
       font-size: 12px;
       padding: 6px 8px;
       margin: 0 2px;
@@ -137,20 +137,20 @@
 
 // 统计卡片响应式优化
 @media (max-width: 768px) {
-  :global(.ant-statistic) {
-    :global(.ant-statistic-title) {
+  .ant-statistic {
+    .ant-statistic-title {
       font-size: 12px;
     }
 
-    :global(.ant-statistic-content) {
+    .ant-statistic-content {
       font-size: 18px;
     }
   }
 }
 
 @media (max-width: 480px) {
-  :global(.ant-statistic) {
-    :global(.ant-statistic-content) {
+  .ant-statistic {
+    .ant-statistic-content {
       font-size: 16px;
     }
   }
@@ -158,24 +158,24 @@
 
 // 布局容器响应式优化
 @media (max-width: 768px) {
-  :global(.ant-layout-content) {
+  .ant-layout-content {
     padding: 0;
   }
 
-  :global(.ant-pro-page-container) {
+  .ant-pro-page-container {
     padding: 0 8px;
   }
 }
 
 // 菜单响应式优化
 @media (max-width: 768px) {
-  :global(.ant-pro-sider) {
+  .ant-pro-sider {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 100% !important;
   }
 
-  :global(.ant-pro-sider-collapsed) {
+  .ant-pro-sider-collapsed {
     width: 0 !important;
     min-width: 0 !important;
   }
@@ -204,9 +204,9 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  :global(.ant-btn),
-  :global(.ant-card),
-  :global(.ant-tabs-tab) {
+  .ant-btn,
+  .ant-card,
+  .ant-tabs-tab {
     touch-action: manipulation;
   }
 }
