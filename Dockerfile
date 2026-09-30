@@ -52,20 +52,13 @@ ENV NGINX_ENVSUBST_FILTER='^BACKEND_URL$'
 
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
-# alpine 主配置的 pid 与各级 temp 目录默认在 /var 下，非 root 无权写，
-# 统一挪到 /tmp。sed 匹配不到时是静默成功的，所以逐条校验是否真的改了。
-RUN set -eux; \
-    sed -i 's#^pid .*#pid /tmp/nginx.pid;#' /etc/nginx/nginx.conf; \
-    grep -q '^pid /tmp/nginx.pid;' /etc/nginx/nginx.conf; \
-    for d in client_body proxy fastcgi uwsgi scgi; do \
-        sed -i "s#^${d}_temp_path .*#${d}_temp_path /tmp/${d}_temp;#" /etc/nginx/nginx.conf; \
-        grep -q "^${d}_temp_path /tmp/${d}_temp;" /etc/nginx/nginx.conf; \
-    done; \
-    mkdir -p /tmp/client_temp /tmp/proxy_temp /tmp/fastcgi_temp /tmp/uwsgi_temp /tmp/scgi_temp
-
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# 用 node 镜像自带的非 root 用户（nginx alpine 里没有这个用户）
+# 非 root 运行需要两处可写路径：
+# - /var/cache/nginx：各级 *_temp_path（client/proxy/fastcgi…）默认落在这里，
+#   nginx 启动时按需创建子目录，把父目录的属主给到 101 即可
+# - pid 文件：不用改配置文件（改 alpine 主配置太依赖其具体内容，sed 匹配
+#   不到时还会静默通过），改为在 CMD 的 -g 里用全局指令覆盖
 RUN chown -R 101:101 /usr/share/nginx/html /var/cache/nginx \
     && nginx -t
 
@@ -77,4 +70,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget -qO- http://127.0.0.1:8080/ >/dev/null || exit 1
 
-CMD ["nginx", "-g", "daemon off;"]
+# pid 指到 /tmp：/var/run 非 root 不可写
+CMD ["nginx", "-g", "daemon off; pid /tmp/nginx.pid;"]
