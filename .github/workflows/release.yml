@@ -97,10 +97,27 @@ jobs:
             -e BACKEND_URL=http://127.0.0.1:9 gcd-smoke:local
 
           # 等 nginx 起来
+          ready=0
           for i in $(seq 1 30); do
-            if curl -fsS -o /dev/null http://127.0.0.1:18080/; then break; fi
+            if curl -fsS -o /dev/null http://127.0.0.1:18080/; then ready=1; break; fi
+            # 容器提前退出就没必要继续等了，直接把原因打出来
+            if ! docker ps --filter name=gcd-smoke --format '{{.Names}}' | grep -q gcd-smoke; then
+              break
+            fi
             sleep 1
           done
+
+          if [ "$ready" != 1 ]; then
+            echo "::error::容器未能在 30s 内对外提供服务，诊断信息如下"
+            echo "--- 容器状态 ---"
+            docker inspect -f 'status={{.State.Status}} exit={{.State.ExitCode}} oom={{.State.OOMKilled}}' gcd-smoke || true
+            echo "--- 容器日志 ---"
+            docker logs gcd-smoke 2>&1 || true
+            echo "--- 容器内 nginx -t ---"
+            docker run --rm --entrypoint nginx gcd-smoke:local -t 2>&1 || true
+            docker rm -f gcd-smoke || true
+            exit 1
+          fi
 
           fail=0
           check() {
