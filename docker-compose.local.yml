@@ -1,0 +1,65 @@
+# 两个仓库保持为 /web/group-center 和 /web/group-center-dashboard。
+# 使用 .env.docker.local，不读取前端开发环境中的后端地址。
+name: group-center-local
+services:
+  backend:
+    build:
+      context: ../group-center
+      dockerfile: ../group-center-dashboard/docker/backend.Dockerfile
+    image: group-center-backend:local
+    ports:
+      - '127.0.0.1:${BACKEND_PORT:-15090}:15090'
+    environment:
+      TZ: Asia/Shanghai
+      RUN_IN_DOCKER: 'true'
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: ${LOCAL_DATABASE_URL:?请在 .env.docker.local 设置现有数据库 JDBC URL}
+      SPRING_DATASOURCE_USERNAME: ${LOCAL_DATABASE_USERNAME:?请设置数据库用户名}
+      SPRING_DATASOURCE_PASSWORD: ${LOCAL_DATABASE_PASSWORD:?请设置数据库密码}
+      # 连接现有数据库时禁止自动执行建表 SQL。
+      SPRING_SQL_INIT_MODE: never
+      REALTIME_AGENT_BASE_URL: ${LOCAL_AGENT_BASE_URL:?请设置真实 Agent 的入口地址}
+      CONFIG_MACHINE_PATH: ${LOCAL_MACHINE_CONFIG:-./Config/Machine/real.yaml}
+      CONFIG_DASHBOARD_SITE_PATH: ${LOCAL_SITE_CONFIG:-./Config/Dashboard/Site/real.yaml}
+      CONFIG_USER_PATH: ${LOCAL_USER_CONFIG:-}
+      # 不加载生产密钥文件，避免其优先级覆盖下面的通知开关。
+      FILE_ENV_PATH: /app/local-test-disabled/FileEnv.toml
+      BOT_CONFIG_FILE: /app/local-test-disabled/bot-groups.yaml
+      REPORT_DAILY_ENABLE: 'false'
+      REPORT_WEEKLY_ENABLE: 'false'
+      REPORT_MONTHLY_ENABLE: 'false'
+      REPORT_YEARLY_ENABLE: 'false'
+    volumes:
+      - type: bind
+        source: ../group-center/Config
+        target: /app/Config
+        read_only: true
+        bind:
+          create_host_path: false
+      - backend-cache:/app/Cache
+      - backend-logs:/app/logs
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1:15090/version']
+      interval: 10s
+      timeout: 3s
+      start_period: 60s
+      retries: 12
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: group-center-dashboard:local
+    ports:
+      - '127.0.0.1:${WEB_PORT:-8080}:8080'
+    environment:
+      BACKEND_URL: http://backend:15090
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  backend-cache:
+  backend-logs:

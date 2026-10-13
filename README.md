@@ -76,6 +76,14 @@ pnpm build
 
 ## Docker
 
+本次飞牛前后端测试使用候选镜像 `group-center:1.8.10-rc.1` 与 `group-center-dashboard:1.8.16-rc.1`，见 [飞牛测试说明](Doc/飞牛Docker部署.md)。GitHub 模板不含测试库密码；本地 private Compose 可直接用于已有飞牛测试项目。
+
+现有 Li-Node01 服务器使用 nginx 直接托管 `dist`：见 [Li-Node01 部署说明](Doc/Li-Node01部署.md)。专用 `docker-compose.li-node01.yml` 只构建并导出静态文件。
+
+前后端一起在本机部署：见 [本地 Docker 部署](Doc/本地Docker部署.md)。使用 `docker-compose.local.yml`；下面的原有命令仅部署前端。
+
+飞牛 NAS 只上传 Compose、直接拉取 GitHub Packages 镜像：使用 `docker-compose.fnos.yml`，见 [飞牛部署说明](Doc/飞牛Docker部署.md)。无需上传源码或额外配置文件。
+
 产物是纯静态 SPA，镜像用 nginx 托管，多阶段构建后以非 root 运行。
 
 ```bash

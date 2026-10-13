@@ -1,0 +1,24 @@
+# Li-Node01 由现有 nginx 托管 dist；本服务只构建并导出静态文件。
+name: group-center-dashboard-assets
+services:
+  assets:
+    image: group-center-dashboard-assets:li-node01
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    network_mode: none
+    volumes:
+      - type: bind
+        source: ${DASHBOARD_DIST_DIR:-/home/important/Data/Web/group-center-dashboard/dist}
+        target: /output
+        bind:
+          create_host_path: false
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        test -s /app/dist/index.html
+        cp -R /app/dist/. /output/
+        find /output -type d -exec chmod 755 {} \;
+        find /output -type f -exec chmod 644 {} \;
+    restart: "no"

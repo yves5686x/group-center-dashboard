@@ -1,0 +1,11 @@
+# 白名单：真实配置、密钥、数据库、缓存、Git 历史不进入构建上下文。
+*
+!gradlew
+!build.gradle.kts
+!settings.gradle.kts
+!gradle
+!gradle/**
+!src
+!src/**
+!Scripts
+!Scripts/**

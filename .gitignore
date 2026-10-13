@@ -8,6 +8,9 @@ package-lock.json
 yarn.lock
 
 /.env.local
+/.env.docker.local
+/docker-compose.fnos.private.yml
+/.env.li-node01
 /.umirc.local.ts
 /config/config.local.ts
 
@@ -20,6 +23,7 @@ yarn.lock
 /.umi-test
 
 /dist
+/preview-dist
 
 /.mfsu
 .swc

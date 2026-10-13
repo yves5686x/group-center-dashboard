@@ -1,0 +1,322 @@
+# 飞牛单文件部署：只拉已发布的 GHCR 镜像，无需源码和额外配置文件。
+# 172.22.22.1:3306 是用户确认的飞牛专用测试数据库；沿用现有账号。
+# 仅可信内网测试；前端镜像当前要求 x86-64/amd64。
+name: group-center-fnos
+services:
+  backend:
+    image: ghcr.io/yves5686x/group-center:1.8.10-rc.1
+    environment:
+      TZ: Asia/Shanghai
+      RUN_IN_DOCKER: 'true'
+      SPRING_DATASOURCE_URL: jdbc:mysql://172.22.22.1:3306/group_center?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: '请填写飞牛测试库密码'
+      SPRING_SQL_INIT_MODE: never
+      REALTIME_AGENT_BASE_URL: http://g.329509.xyz
+      CONFIG_MACHINE_PATH: ./Config/Machine/fnos.yaml
+      CONFIG_DASHBOARD_SITE_PATH: ./Config/Dashboard/Site/fnos.yaml
+      FILE_ENV_PATH: /usr/local/group-center/local-test-disabled/FileEnv.toml
+      BOT_CONFIG_FILE: /usr/local/group-center/local-test-disabled/bot-groups.yaml
+      REPORT_DAILY_ENABLE: 'false'
+      REPORT_WEEKLY_ENABLE: 'false'
+      REPORT_MONTHLY_ENABLE: 'false'
+      REPORT_YEARLY_ENABLE: 'false'
+      ALARM_PING_FAILURE_ENABLE: 'false'
+      ALARM_AGENT_OFFLINE_ENABLE: 'false'
+      ALARM_TIME_SYNC_ENABLE: 'false'
+      LOCAL_MACHINE_YAML: |
+        version: 200
+        enable: true
+        machineList:
+        - name: 3090 + 1080Ti
+          nameEng: '3090'
+          host: 3090.329509.xyz
+          apiUrl: /gpu/3090
+          apiKeyWords:
+          - /3090
+          position: 科研楼509
+          isGpu: true
+          password: ''
+          webhook:
+            silentMode:
+              enable: false
+              startTime: 00:00
+              endTime: 00:00
+            lark:
+              enable: false
+              groupBotId: ''
+              groupBotKey: ''
+            weCom:
+              enable: false
+              groupBotKey: ''
+        - name: 2080Ti x 2
+          nameEng: '2082'
+          host: 2082.329509.xyz
+          apiUrl: /gpu/2082
+          apiKeyWords:
+          - /2082
+          position: 科研楼509
+          isGpu: true
+          password: ''
+          webhook:
+            silentMode:
+              enable: false
+              startTime: 00:00
+              endTime: 00:00
+            lark:
+              enable: false
+              groupBotId: ''
+              groupBotKey: ''
+            weCom:
+              enable: false
+              groupBotKey: ''
+        - name: 2080Ti x 4
+          nameEng: '2084'
+          host: 2084.329509.xyz
+          apiUrl: /gpu/2084
+          apiKeyWords:
+          - /2084
+          position: 科研楼309
+          isGpu: true
+          password: ''
+          webhook:
+            silentMode:
+              enable: false
+              startTime: 00:00
+              endTime: 00:00
+            lark:
+              enable: false
+              groupBotId: ''
+              groupBotKey: ''
+            weCom:
+              enable: false
+              groupBotKey: ''
+        - name: 1 x 4090A
+          nameEng: 4090a
+          host: 4090a.329509.xyz
+          apiUrl: /gpu/4090a
+          apiKeyWords:
+          - /4090a
+          position: 科研楼509
+          isGpu: true
+          password: ''
+          webhook:
+            silentMode:
+              enable: false
+              startTime: 00:00
+              endTime: 00:00
+            lark:
+              enable: false
+              groupBotId: ''
+              groupBotKey: ''
+            weCom:
+              enable: false
+              groupBotKey: ''
+        - name: 1 x 4090B
+          nameEng: 4090b
+          host: 4090b.329509.xyz
+          apiUrl: /gpu/4090b
+          apiKeyWords:
+          - /4090b
+          position: 科研楼509
+          isGpu: true
+          password: ''
+          webhook:
+            silentMode:
+              enable: false
+              startTime: 00:00
+              endTime: 00:00
+            lark:
+              enable: false
+              groupBotId: ''
+              groupBotKey: ''
+            weCom:
+              enable: false
+              groupBotKey: ''
+        - name: 8 x 4098A
+          nameEng: 4098a
+          host: 4098a.329509.xyz
+          apiUrl: /gpu/4098a
+          apiKeyWords:
+          - /4098a
+          position: 图书馆B710
+          isGpu: true
+          password: ''
+          webhook:
+            silentMode:
+              enable: false
+              startTime: 00:00
+              endTime: 00:00
+            lark:
+              enable: false
+              groupBotId: ''
+              groupBotKey: ''
+            weCom:
+              enable: false
+              groupBotKey: ''
+        - name: 8 x 4098B
+          nameEng: 4098b
+          host: 4098b.329509.xyz
+          apiUrl: /gpu/4098b
+          apiKeyWords:
+          - /4098b
+          position: 图书馆B710
+          isGpu: true
+          password: ''
+          webhook:
+            silentMode:
+              enable: false
+              startTime: 00:00
+              endTime: 00:00
+            lark:
+              enable: false
+              groupBotId: ''
+              groupBotKey: ''
+            weCom:
+              enable: false
+              groupBotKey: ''
+      LOCAL_SITE_YAML: |
+        version: 200
+        enable: true
+        siteList:
+        - className: Basic
+          classIconUrl: http://g.329509.xyz/favicon.ico
+          position: default
+          index: 1
+          sites:
+          - name: GitHub
+            url: https://github.com
+            iconUrl: https://github.com/favicon.ico
+            supportQrCode: true
+          - name: 中科大测速
+            url: https://test.ustc.edu.cn/
+            iconUrl: http://speed.329509.xyz/favicon.ico
+            supportQrCode: true
+          - name: 科研楼509测速
+            url: http://speed.329509.xyz
+            iconUrl: http://speed.329509.xyz/favicon.ico
+            supportQrCode: true
+        - className: 课题组(仅内网)
+          classIconUrl: http://guide.329509.xyz/Assets/Dashboard/avatar.jpg
+          position: default
+          index: 2
+          sites:
+          - name: Gitea
+            url: http://git.329509.xyz
+            iconUrl: http://329509.xyz/favicon.ico
+            supportQrCode: true
+          - name: 白皮书
+            url: http://guide.329509.xyz
+            iconUrl: http://guide.329509.xyz/Assets/Images/logo.png
+            supportQrCode: true
+          - name: 旧GPU看板(不推荐)
+            url: http://gpu.329509.xyz
+            iconUrl: http://guide.329509.xyz/Assets/Dashboard/nvidia-color-modify.svg
+            supportQrCode: true
+        - className: 上海海事大学
+          classIconUrl: http://guide.329509.xyz/Assets/Dashboard/smu_logo.ico
+          position: default
+          index: 3
+          sites:
+          - name: 研究生系统
+            url: https://yjsxt.shmtu.edu.cn/tp/view?m=up
+            iconUrl: http://guide.329509.xyz/Assets/Dashboard/smu_logo.ico
+            supportQrCode: true
+          - name: 数字海大
+            url: https://portal.shmtu.edu.cn/
+            iconUrl: http://guide.329509.xyz/Assets/Dashboard/smu_logo.ico
+            supportQrCode: true
+          - name: 官网
+            url: https://www.shmtu.edu.cn/
+            iconUrl: http://guide.329509.xyz/Assets/Dashboard/smu_logo.ico
+            supportQrCode: true
+          - name: 常用信息
+            url: https://jwc.shmtu.edu.cn/zhfw/list.htm
+            iconUrl: http://guide.329509.xyz/Assets/Dashboard/smu_logo.ico
+            supportQrCode: true
+        - className: LaTeX
+          classIconUrl: http://g.329509.xyz/favicon.ico
+          position: default
+          index: 4
+          sites:
+          - name: 表格转换1
+            url: https://www.tablesgenerator.com/
+            iconUrl: http://g.329509.xyz/favicon.ico
+            supportQrCode: true
+          - name: 表格转换2
+            url: https://tableconvert.com/zh-cn/csv-to-latex
+            iconUrl: http://g.329509.xyz/favicon.ico
+            supportQrCode: true
+          - name: LaTeX公式编辑器
+            url: https://www.latexlive.com/
+            iconUrl: http://g.329509.xyz/favicon.ico
+            supportQrCode: true
+        - className: Tools
+          classIconUrl: http://g.329509.xyz/favicon.ico
+          position: default
+          index: 5
+          sites:
+          - name: RGB-16进制
+            url: https://www.sioe.cn/yingyong/yanse-rgb-16/
+            iconUrl: http://guide.329509.xyz/Assets/Images/logo.png
+            supportQrCode: true
+          - name: 机场订阅转换1
+            url: https://suburl.v1.mk/
+            iconUrl: http://guide.329509.xyz/Assets/Images/logo.png
+            supportQrCode: true
+          - name: 机场订阅转换2
+            url: https://suburl.ljctkp.top/
+            iconUrl: http://guide.329509.xyz/Assets/Images/logo.png
+            supportQrCode: true
+          - name: 机场订阅转换3
+            url: https://sub-store.usuc.cc/
+            iconUrl: http://guide.329509.xyz/Assets/Images/logo.png
+            supportQrCode: true
+        - className: Resource
+          classIconUrl: http://g.329509.xyz/favicon.ico
+          position: default
+          index: 5
+          sites:
+          - name: 免费计算机电子书
+            url: https://www.jb51.net/books/
+            iconUrl: http://guide.329509.xyz/Assets/Images/logo.png
+            supportQrCode: true
+    volumes:
+      - backend-config:/usr/local/group-center/Config
+      - backend-cache:/usr/local/group-center/Cache
+      - backend-logs:/usr/local/group-center/logs
+    healthcheck:
+      test:
+        - CMD
+        - python3
+        - -c
+        - import urllib.request; urllib.request.urlopen("http://127.0.0.1:15090/version", timeout=3).close()
+      interval: 10s
+      timeout: 3s
+      start_period: 60s
+      retries: 12
+    restart: unless-stopped
+    entrypoint:
+      - /bin/bash
+      - -ec
+    command:
+      - |
+        test "$$SPRING_DATASOURCE_PASSWORD" != "请填写飞牛测试库密码" || { echo "请先填写飞牛测试库密码"; exit 1; }
+        mkdir -p "$$BASE_PATH/Config/Machine" "$$BASE_PATH/Config/Dashboard/Site"
+        printf '%s\n' "$$LOCAL_MACHINE_YAML" > "$$BASE_PATH/Config/Machine/fnos.yaml"
+        printf '%s\n' "$$LOCAL_SITE_YAML" > "$$BASE_PATH/Config/Dashboard/Site/fnos.yaml"
+        exec "$$BASE_PATH/docker.start.sh"
+  web:
+    image: ghcr.io/yves5686x/group-center-dashboard:1.8.16-rc.1
+    ports:
+      - 8080:8080
+    environment:
+      BACKEND_URL: http://backend:15090
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  backend-config: null
+  backend-cache: null
+  backend-logs: null

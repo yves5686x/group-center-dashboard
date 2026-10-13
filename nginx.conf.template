@@ -12,7 +12,7 @@ server {
 
     # ---------------------------------------------------------------------
     # 后端地址由容器启动时的环境变量注入：
-    #   docker run -e BACKEND_URL=http://backend:8080 ...
+    #   docker run -e BACKEND_URL=http://backend:15090 ...
     # 或在 docker-compose.yml 的 environment 里配。
     # nginx 官方镜像启动时会对 /etc/nginx/templates/*.template 执行 envsubst，
     # 下面 ${BACKEND_URL} 会被替换成实际地址。
