@@ -76,7 +76,7 @@ pnpm build
 
 ## Docker
 
-本次飞牛前后端测试使用候选镜像 `group-center:1.8.10-rc.1` 与 `group-center-dashboard:1.8.16-rc.1`，见 [飞牛测试说明](Doc/飞牛Docker部署.md)。GitHub 模板不含测试库密码；本地 private Compose 可直接用于已有飞牛测试项目。
+本次飞牛前后端测试使用候选镜像 `group-center:1.8.10-rc.3` 与 `group-center-dashboard:1.8.16-rc.1`，见 [飞牛测试说明](Doc/飞牛Docker部署.md)。GitHub 模板不含测试库密码；本地 private Compose 可直接用于已有飞牛测试项目。
 
 现有 Li-Node01 服务器使用 nginx 直接托管 `dist`：见 [Li-Node01 部署说明](Doc/Li-Node01部署.md)。专用 `docker-compose.li-node01.yml` 只构建并导出静态文件。
 

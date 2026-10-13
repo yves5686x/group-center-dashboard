@@ -4,7 +4,7 @@
 name: group-center-fnos
 services:
   backend:
-    image: ghcr.io/yves5686x/group-center:1.8.10-rc.1
+    image: ghcr.io/yves5686x/group-center:1.8.10-rc.3
     environment:
       TZ: Asia/Shanghai
       RUN_IN_DOCKER: 'true'

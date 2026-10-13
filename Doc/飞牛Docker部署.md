@@ -6,14 +6,14 @@
 
 | 服务 | 镜像                                                   |
 | ---- | ------------------------------------------------------ |
-| 后端 | `ghcr.io/yves5686x/group-center:1.8.10-rc.1`           |
+| 后端 | `ghcr.io/yves5686x/group-center:1.8.10-rc.3`           |
 | 前端 | `ghcr.io/yves5686x/group-center-dashboard:1.8.16-rc.1` |
 
 2026-10-13 两个测试版均已完成构建和发布，匿名镜像清单读取返回 HTTP 200。前端支持 linux/amd64；后端支持 linux/amd64、linux/arm64。前端 CI 的容器启动、SPA 路由与健康检查通过；后端 JAR 编译和镜像打包通过。飞牛实际数据库与业务联调由下列步骤继续验证。
 
-- [后端发布](https://github.com/yves5686x/group-center/releases/tag/v1.8.10-rc.1)
-- [前端发布与 Compose 下载](https://github.com/yves5686x/group-center-dashboard/releases/tag/v1.8.16-rc.1)
-- [后端构建记录](https://github.com/yves5686x/group-center/actions/runs/38366883373)
+- [后端发布与新版 Compose 下载](https://github.com/yves5686x/group-center/releases/tag/v1.8.10-rc.3)
+- [前端发布](https://github.com/yves5686x/group-center-dashboard/releases/tag/v1.8.16-rc.1)
+- [后端构建记录](https://github.com/yves5686x/group-center/actions/runs/38376450546)
 - [前端构建与启动检查记录](https://github.com/yves5686x/group-center-dashboard/actions/runs/38366931404)
 
 测试版本不会替换稳定版本的 `latest`、`1.8` 或 `1` 标签。后端包含旧 1.8.9 标签之后的实时查询修复；前端包含本次 Docker 入口适配。
@@ -51,7 +51,7 @@ docker compose -f docker-compose.fnos.yml exec -T backend \
   python3 -c 'import urllib.request; print(urllib.request.urlopen("http://127.0.0.1:15090/version", timeout=5).read().decode())'
 ```
 
-应返回 `1.8.10-rc.1`。首页、导航、7 台 GPU 实时数据、历史任务和统计页面均应能正常访问，刷新 `/gpu-dashboard` 等页面不应报 404。最后重启容器检查数据和设置是否仍在。
+应返回 `1.8.10-rc.3`。首页、导航、7 台 GPU 实时数据、历史任务和统计页面均应能正常访问，刷新 `/gpu-dashboard` 等页面不应报 404。最后重启容器检查数据和设置是否仍在。
 
 ## 与服务器同步了哪些内容
 
@@ -70,9 +70,33 @@ docker compose -f docker-compose.fnos.yml exec -T backend \
 
 测试通过后记录两个镜像摘要，作为后续生产更新依据。本阶段没有更新生产服务器。
 
+## GPU 列表与统计页面故障修复
+
+直接读取飞牛接口确认：旧后端 rc.1 正常加载 7 台 GPU，但 JSON 返回 `isGpu=true`，前端筛选的是 `gpu=true`，机器全部被过滤掉。后端现已固定公开字段名为 `gpu`。
+
+报告和活动时间分布的 HTTP 500 来自日期类型无法序列化。新后端注册 JavaTimeModule，将 `LocalDate`、`LocalDateTime` 返回为 ISO 日期/时间字符串，前端版本保持不变。
+
+数据库连接拒绝的日志与 MySQL 重启时间吻合：上海时间 2026-10-13 16:24:16 收到关闭信号，16:25:41 重新 ready；后端错误发生在 16:25:39 至 16:25:41。核对时 3306 已返回 MySQL 8.0.46 握手，GPU 统计接口返回 HTTP 200。保留现有地址和数据卷，无需因旧日志更换数据库或修改目录权限。
+
+新后端完成发布后，只更新 backend：
+
+```bash
+docker compose -f docker-compose.fnos.yml pull backend
+docker compose -f docker-compose.fnos.yml up -d --no-deps --force-recreate backend
+```
+
+检查以下地址：
+
+- `/version`：应为 `1.8.10-rc.3`。
+- `/web/open/realtime/machines`：GPU 项应为 `gpu: true`，共有 7 台。
+- `/web/dashboard/statistics/reports/24hour`：返回 JSON，日期为字符串。
+- `/web/dashboard/statistics/user-activity-time-distribution`：返回正常 JSON。
+
+最后刷新 GPU 看板和统计页面。`agentOnline=false` 表示测试实例未收到生产心跳，与实时数据能否经原 Agent 拉取相互独立。
+
 本次发布的镜像摘要：
 
 ```text
-后端 sha256:f6a195d2ff343fb5a239a81eac27d99cbabf655865642ad2e095b4aa6a8b8c97
+后端 sha256:54210324ee4675733ca1220598cc54c4c0fdd84682dd13d34d5a9754749a1dd3
 前端 sha256:159a02aad3fe71c301f153c341f36b242cb5d7df13b538a8144476dde2ed6908
 ```
