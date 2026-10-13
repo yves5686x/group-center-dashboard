@@ -9,7 +9,14 @@
 | 后端 | `ghcr.io/yves5686x/group-center:1.8.10-rc.1`           |
 | 前端 | `ghcr.io/yves5686x/group-center-dashboard:1.8.16-rc.1` |
 
-两个都是测试版，只有对应 GitHub Actions 成功并发布镜像后才能拉取。测试版本不会替换稳定版本的 `latest`、`1.8` 或 `1` 标签。后端包含旧 1.8.9 标签之后的实时查询修复；前端包含本次 Docker 入口适配。
+2026-10-13 两个测试版均已完成构建和发布，匿名镜像清单读取返回 HTTP 200。前端支持 linux/amd64；后端支持 linux/amd64、linux/arm64。前端 CI 的容器启动、SPA 路由与健康检查通过；后端 JAR 编译和镜像打包通过。飞牛实际数据库与业务联调由下列步骤继续验证。
+
+- [后端发布](https://github.com/yves5686x/group-center/releases/tag/v1.8.10-rc.1)
+- [前端发布与 Compose 下载](https://github.com/yves5686x/group-center-dashboard/releases/tag/v1.8.16-rc.1)
+- [后端构建记录](https://github.com/yves5686x/group-center/actions/runs/38366883373)
+- [前端构建与启动检查记录](https://github.com/yves5686x/group-center-dashboard/actions/runs/38366931404)
+
+测试版本不会替换稳定版本的 `latest`、`1.8` 或 `1` 标签。后端包含旧 1.8.9 标签之后的实时查询修复；前端包含本次 Docker 入口适配。
 
 ## 使用哪个文件
 
@@ -20,7 +27,7 @@ Compose 只启动 backend、web 两个服务，直接拉取发布镜像，不要
 
 ## 飞牛界面操作
 
-1. 等待前后端测试版镜像发布成功。
+1. 取得本地 private Compose，或从前端发布页面下载公开模板并填写密码。
 2. 在飞牛 Docker 的 Compose 管理中打开现有测试项目。
 3. 用本地 private 文件替换该项目的 Compose 内容；公开模板则先填数据库密码。
 4. 拉取新镜像并重新创建项目容器。保留原项目名称和已有数据卷。
@@ -62,3 +69,10 @@ docker compose -f docker-compose.fnos.yml exec -T backend \
 - 页面显示旧版本：重新创建容器并强制刷新浏览器。
 
 测试通过后记录两个镜像摘要，作为后续生产更新依据。本阶段没有更新生产服务器。
+
+本次发布的镜像摘要：
+
+```text
+后端 sha256:f6a195d2ff343fb5a239a81eac27d99cbabf655865642ad2e095b4aa6a8b8c97
+前端 sha256:159a02aad3fe71c301f153c341f36b242cb5d7df13b538a8144476dde2ed6908
+```
