@@ -1,5 +1,6 @@
 import VShow from '@/components/Vue/V-Show';
 import { convertFromMBToGB, getMemoryString } from '@/utils/Convert/MemorySize';
+import { getMachineDisplayName } from '@/utils/machinePresentation';
 import { getTimeStrFromTimestamp } from '@/utils/Time/DateTimeUtils';
 import { Divider } from 'antd';
 import styles from './QueryTaskDetail.less';
@@ -219,18 +220,13 @@ const TaskDetailContent: React.FC<Props> = (props) => {
         </div>
 
         <div>
-          <b>任务类型: </b>
-          {taskInfo.taskType}
-        </div>
-
-        <div>
-          <b>GPU设备: </b>
+          <b>显卡型号: </b>
           {taskInfo.taskGpuName} (ID: {taskInfo.taskGpuId})
         </div>
 
         <div>
           <b>服务器: </b>
-          {taskInfo.serverName}
+          {getMachineDisplayName(taskInfo)}
         </div>
 
         <VShow v-show={taskInfo.isDebugMode}>

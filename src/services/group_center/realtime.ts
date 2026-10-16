@@ -9,6 +9,7 @@
  * 本模块负责把信封拆开，只把 result 交给上层；失败时抛错，由调用方的
  * 轮询 hook 保留上一次成功的数据（客户端侧的 last-known-good）。
  */
+import { getMachineDisplayName } from '@/utils/machinePresentation';
 import { request } from '@umijs/max';
 
 /** Kotlin 的 isSucceed 可能被 Jackson 序列化成 succeed，两者都认 */
@@ -52,7 +53,12 @@ export async function getRealtimeMachines(options?: { [key: string]: any }) {
   });
 
   const machines = unwrap(envelope, endpoint);
-  return Array.isArray(machines) ? machines : [];
+  return Array.isArray(machines)
+    ? machines.map((machine) => ({
+        ...machine,
+        serverName: getMachineDisplayName(machine),
+      }))
+    : [];
 }
 
 /**

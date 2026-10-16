@@ -2,6 +2,18 @@
 /* eslint-disable */
 import { request } from '@umijs/max';
 
+export type TaskQueryOptions = {
+  users: string[];
+  servers: { serverNameEng: string; serverName: string }[];
+};
+
+export async function getTaskQueryOptions() {
+  return request<API.ClientResponse & { result?: TaskQueryOptions }>(
+    '/web/open/gpu-tasks/options',
+    { method: 'GET' },
+  );
+}
+
 /** Get Total Task Count Retrieve the total number of GPU tasks in the database GET /web/open/gpu-tasks/count */
 export async function getTotalTaskCount(options?: { [key: string]: any }) {
   return request<API.ClientResponse>('/web/open/gpu-tasks/count', {

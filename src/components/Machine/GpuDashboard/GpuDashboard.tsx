@@ -136,7 +136,15 @@ const GpuDashboard: React.FC<Props> = (props) => {
     }
 
     return (
-      <div className={styles.gpuInfoList}>
+      <div
+        className={styles.gpuInfoList}
+        style={
+          {
+            '--gpu-columns': Math.min(visibleCards.length, 4),
+            '--compact-gpu-columns': Math.min(visibleCards.length, 2),
+          } as React.CSSProperties
+        }
+      >
         {visibleCards.map((card) => (
           <div key={card.gpuId} className={styles.gpuInfoItem}>
             <GpuDevice card={card} />
@@ -279,7 +287,10 @@ const GpuDashboard: React.FC<Props> = (props) => {
   };
 
   return (
-    <div id={`device-${machine.serverNameEng}`}>
+    <div
+      id={`device-${machine.serverNameEng}`}
+      className={styles.machineDashboard}
+    >
       <ContextMenu
         anchorPoint={contextMenuAnchorPoint}
         state={isContextMenuOpen ? 'open' : 'closed'}

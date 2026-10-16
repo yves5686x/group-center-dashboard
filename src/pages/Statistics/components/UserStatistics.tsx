@@ -29,6 +29,8 @@ interface UserStat {
   totalRuntime: number;
   averageRuntime: number;
   favoriteGpu: string;
+  favoriteServer?: string;
+  gpuModels?: string[];
   favoriteProject: string;
   formattedAverageRuntime: number;
 }
@@ -118,12 +120,14 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
       runtime: user.totalRuntime,
       tasks: user.totalTasks,
       favoriteGpu: user.favoriteGpu,
+      favoriteServer: user.favoriteServer,
     }));
 
     return mergeTopKWithOther(allData, topK, (remaining) => ({
       runtime: remaining.reduce((sum, item) => sum + item.runtime, 0),
       tasks: remaining.reduce((sum, item) => sum + item.tasks, 0),
       favoriteGpu: '',
+      favoriteServer: '',
     }));
   };
 
@@ -168,9 +172,14 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
           formatter: (datum: any) => `${datum.tasks}个`,
         },
         {
-          name: '常用GPU',
+          name: '常用显卡型号',
           field: 'favoriteGpu',
           formatter: (datum: any) => datum.favoriteGpu || 'N/A',
+        },
+        {
+          name: '常用服务器',
+          field: 'favoriteServer',
+          formatter: (datum: any) => datum.favoriteServer || 'N/A',
         },
       ],
     },
@@ -372,7 +381,7 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
                         {user.userName}
                       </span>
                       <span style={{ color: '#666', fontSize: '12px' }}>
-                        常用GPU: {user.favoriteGpu || 'N/A'}
+                        常用显卡型号: {user.favoriteGpu || 'N/A'}
                       </span>
                     </div>
 
@@ -404,6 +413,27 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
                       <span>常用项目: {user.favoriteProject || 'N/A'}</span>
                       <span>
                         平均运行时间: {formatRuntime(user.averageRuntime)}
+                      </span>
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: '4px 16px',
+                        fontSize: 12,
+                        color: 'var(--ant-color-text-secondary)',
+                        marginBottom: 4,
+                      }}
+                    >
+                      <span>
+                        常用服务器: {user.favoriteServer || '暂无数据'}
+                      </span>
+                      <span>
+                        使用过的显卡型号:{' '}
+                        {user.gpuModels?.join('、') ||
+                          user.favoriteGpu ||
+                          '暂无数据'}
                       </span>
                     </div>
 

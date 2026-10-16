@@ -46,11 +46,8 @@ const TaskQueryPage: React.FC = () => {
         params.deviceName = deviceName;
       }
 
-      // 解析任务类型
-      const taskType = searchParams.get('taskType');
-      if (taskType) {
-        params.taskType = taskType as any;
-      }
+      const serverNameEng = searchParams.get('serverNameEng');
+      if (serverNameEng) params.serverNameEng = serverNameEng;
 
       // 解析多GPU任务
       const isMultiGpu = searchParams.get('isMultiGpu');
@@ -82,7 +79,7 @@ const TaskQueryPage: React.FC = () => {
 
       // 检查是否有实际的查询条件（除了默认的分页和排序参数）
       const hasActualQueryParams =
-        userName || projectName || deviceName || taskType || isMultiGpu;
+        userName || projectName || deviceName || serverNameEng || isMultiGpu;
 
       // 如果有URL参数，设置表单字段值并自动执行查询
       if (hasActualQueryParams) {
@@ -92,8 +89,8 @@ const TaskQueryPage: React.FC = () => {
         const formValues: any = {};
         if (userName) formValues.userName = userName;
         if (projectName) formValues.projectName = projectName;
-        if (deviceName) formValues.deviceName = deviceName;
-        if (taskType) formValues.taskType = taskType;
+        if (serverNameEng || deviceName)
+          formValues.serverNameEng = serverNameEng || deviceName;
         if (isMultiGpu) formValues.isMultiGpu = isMultiGpu === 'true';
         if (page) formValues.page = parseInt(page, 10);
         if (pageSize) formValues.pageSize = parseInt(pageSize, 10);
@@ -130,7 +127,7 @@ const TaskQueryPage: React.FC = () => {
       !params.userName &&
       !params.projectName &&
       !params.deviceName &&
-      !params.taskType &&
+      !params.serverNameEng &&
       !params.startTime &&
       !params.endTime &&
       params.isMultiGpu === undefined;

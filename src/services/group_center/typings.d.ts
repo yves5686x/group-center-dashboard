@@ -397,6 +397,8 @@ declare namespace API {
   };
 
   type queryGpuTasksSimpleParams = {
+    /** Exact server identifier, e.g. 4098a */
+    serverNameEng?: string;
     /** Username for filtering tasks */
     userName?: string;
     /** Project name (supports fuzzy matching) */

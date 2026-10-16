@@ -1,6 +1,6 @@
 {
   "name": "group-center-dashboard",
-  "version": "1.8.16-rc.1",
+  "version": "1.8.16-rc.2",
   "private": true,
   "author": "Haomin Kong <a645162@qq.com>",
   "scripts": {

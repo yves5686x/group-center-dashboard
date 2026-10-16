@@ -1,5 +1,15 @@
+import {
+  getTaskQueryOptions,
+  TaskQueryOptions,
+} from '@/services/group_center/gpuTaskQuery';
+import {
+  getMachineDisplayName,
+  sortGpuMachines,
+} from '@/utils/machinePresentation';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
+  Alert,
+  AutoComplete,
   Button,
   Card,
   Col,
@@ -31,6 +41,33 @@ const TaskQueryForm: React.FC<TaskQueryFormProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [options, setOptions] = useState<TaskQueryOptions>({
+    users: [],
+    servers: [],
+  });
+  const [optionsError, setOptionsError] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    getTaskQueryOptions()
+      .then((response) => {
+        if (!active) return;
+        if (
+          !(response.isSucceed ?? (response as any).succeed) ||
+          !response.result
+        ) {
+          setOptionsError(true);
+          return;
+        }
+        setOptions(response.result);
+      })
+      .catch(() => {
+        if (active) setOptionsError(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // 当initialValues变化时，设置表单值
   useEffect(() => {
@@ -49,13 +86,12 @@ const TaskQueryForm: React.FC<TaskQueryFormProps> = ({
     const params: API.queryGpuTasksSimpleParams = {
       userName: values.userName,
       projectName: values.projectName,
-      deviceName: values.deviceName,
-      taskType: values.taskType,
+      serverNameEng: values.serverNameEng,
       isMultiGpu: values.isMultiGpu,
       page: 1,
-      pageSize: 20,
-      sortBy: 'TASK_START_TIME',
-      sortOrder: 'DESC',
+      pageSize: values.pageSize ?? 20,
+      sortBy: values.sortBy ?? 'TASK_START_TIME',
+      sortOrder: values.sortOrder ?? 'DESC',
     };
 
     // 处理时间范围
@@ -74,6 +110,15 @@ const TaskQueryForm: React.FC<TaskQueryFormProps> = ({
 
   return (
     <Card title="任务查询" size="small">
+      {optionsError && (
+        <Alert
+          type="warning"
+          showIcon
+          title="用户和服务器列表加载失败"
+          description="请确认后端已更新后刷新页面。用户名和项目名称仍可输入关键词查询。"
+          style={{ marginBottom: 16 }}
+        />
+      )}
       <Form
         form={form}
         layout="vertical"
@@ -87,31 +132,39 @@ const TaskQueryForm: React.FC<TaskQueryFormProps> = ({
       >
         <Row gutter={16}>
           {/* 基础查询条件 */}
-          <Col xs={24} sm={12} md={6}>
+          <Col xs={24} sm={12} md={8}>
             <Form.Item label="用户名" name="userName">
-              <Input placeholder="输入用户名" allowClear />
+              <AutoComplete
+                placeholder="选择用户或输入部分用户名"
+                allowClear
+                options={options.users.map((name) => ({ value: name }))}
+                filterOption={(input, option) =>
+                  (option?.value ?? '')
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              />
             </Form.Item>
           </Col>
 
-          <Col xs={24} sm={12} md={6}>
+          <Col xs={24} sm={12} md={8}>
             <Form.Item label="项目名称" name="projectName">
-              <Input placeholder="输入项目名称" allowClear />
+              <Input placeholder="输入项目名称关键词（模糊查询）" allowClear />
             </Form.Item>
           </Col>
 
-          <Col xs={24} sm={12} md={6}>
-            <Form.Item label="设备名称" name="deviceName">
-              <Input placeholder="输入设备名称" allowClear />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} sm={12} md={6}>
-            <Form.Item label="任务类型" name="taskType">
-              <Select placeholder="选择任务类型" allowClear>
-                <Option value="TRAINING">训练任务</Option>
-                <Option value="INFERENCE">推理任务</Option>
-                <Option value="TESTING">测试任务</Option>
-              </Select>
+          <Col xs={24} sm={12} md={8}>
+            <Form.Item label="服务器名称" name="serverNameEng">
+              <Select
+                placeholder="全部服务器"
+                allowClear
+                showSearch
+                optionFilterProp="label"
+                options={sortGpuMachines(options.servers).map((server) => ({
+                  value: server.serverNameEng,
+                  label: getMachineDisplayName(server),
+                }))}
+              />
             </Form.Item>
           </Col>
         </Row>

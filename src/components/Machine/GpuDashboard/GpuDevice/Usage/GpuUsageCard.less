@@ -1,7 +1,6 @@
 .gpuUsageCard {
-  width: auto;
-  min-width: 280px;
-  max-width: 280px;
+  width: 100%;
+  min-width: 0;
   border-radius: 10px;
   border: 1px solid var(--ant-color-border-secondary);
   transition: all 0.3s ease;
@@ -18,13 +17,15 @@
 
 .space {
   display: flex;
-  width: auto;
+  min-width: 0;
   justify-content: center;
 }
 
 .innerLine {
-  width: auto;
+  min-width: 0;
   display: flex;
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
   justify-content: center;
   align-items: center;
 }

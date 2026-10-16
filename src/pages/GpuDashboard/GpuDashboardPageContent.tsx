@@ -13,6 +13,7 @@ import { useGpuTaskFilterMultiGpuStore } from '@/data/store/modules/filter/GpuTa
 import { useGpuTaskFilterProjectNameStore } from '@/data/store/modules/filter/GpuTaskFilterProjectName';
 import { useGpuTaskFilterUserNameStore } from '@/data/store/modules/filter/GpuTaskFilterUserName';
 import { useRealtimeMachineList } from '@/hooks/useRealtime';
+import { groupGpuMachines, sortGpuMachines } from '@/utils/machinePresentation';
 import { parseGpuIds, parseGpuRange } from '@/utils/urlParams';
 import styles from './GpuDashboardPageContent.less';
 
@@ -32,7 +33,8 @@ const useGpuMachineList = () => {
   const { data, loading, error } = useRealtimeMachineList();
 
   const machineList = useMemo(
-    () => (data ?? []).filter((machine) => machine.gpu === true),
+    () =>
+      sortGpuMachines((data ?? []).filter((machine) => machine.gpu === true)),
     [data],
   );
 
@@ -176,10 +178,24 @@ const GpuDashboardWithNoContent: React.FC<GpuDashboardWithNoContentProps> = ({
         </>
       )}
 
-      <div className={styles.machineDiv}>
-        {machineList.map((machine) => (
-          <div key={machine.serverNameEng} className={styles.machineItem}>
-            <GpuDashboard machine={machine} />
+      <div
+        className={`${styles.machineDiv} ${showAnchor ? styles.withAnchor : ''}`}
+      >
+        {groupGpuMachines(machineList).map((row) => (
+          <div
+            key={row.map((machine) => machine.serverNameEng).join('-')}
+            className={styles.machineRow}
+          >
+            {row.map((machine) => (
+              <div
+                key={machine.serverNameEng}
+                className={
+                  row.length === 1 ? styles.fullRowMachine : styles.machineItem
+                }
+              >
+                <GpuDashboard machine={machine} />
+              </div>
+            ))}
           </div>
         ))}
       </div>

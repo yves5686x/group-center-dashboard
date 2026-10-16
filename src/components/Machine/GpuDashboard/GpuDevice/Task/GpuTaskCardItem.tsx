@@ -343,7 +343,7 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
         projectName={taskInfo.projectName}
       />
 
-      <Space direction="vertical" size={16}>
+      <Space direction="vertical" size={16} style={{ width: '100%' }}>
         <DisableSelectDiv>
           <Card
             className={styles.taskItemCard}

@@ -23,21 +23,36 @@
 }
 
 .gpuInfoList {
-  width: auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--gpu-columns, 4), minmax(0, 1fr));
+  align-items: start;
   gap: 16px;
 }
 
 .gpuInfoItem {
-  width: min-content;
+  min-width: 0;
   margin: 0;
 }
 
-@media (max-width: 768px) {
+@container gpu-machine (max-width: 839px) {
   .gpuInfoList {
-    flex-direction: column;
+    grid-template-columns: repeat(
+      var(--compact-gpu-columns, 2),
+      minmax(0, 1fr)
+    );
     gap: 12px;
+  }
+}
+
+.machineDashboard {
+  min-width: 0;
+  container: gpu-machine / inline-size;
+  scroll-margin-top: 80px;
+}
+
+@container gpu-machine (max-width: 359px) {
+  .gpuInfoList {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

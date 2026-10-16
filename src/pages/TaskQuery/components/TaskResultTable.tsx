@@ -1,3 +1,4 @@
+import { getMachineDisplayName } from '@/utils/machinePresentation';
 import { EyeOutlined } from '@ant-design/icons';
 import { Card, Table, Tag, Tooltip, Typography } from 'antd';
 import React, { useRef } from 'react';
@@ -88,17 +89,6 @@ const TaskResultTable: React.FC<TaskResultTableProps> = ({
     return <Tag color={colorMap[status] || 'default'}>{status}</Tag>;
   };
 
-  const getTaskTypeTag = (task: API.GpuTaskInfo) => {
-    const type = task.taskType;
-    const colorMap: Record<string, string> = {
-      TRAINING: 'purple',
-      INFERENCE: 'cyan',
-      TESTING: 'gold',
-    };
-
-    return <Tag color={colorMap[type] || 'default'}>{type}</Tag>;
-  };
-
   const columns = [
     {
       title: '任务ID',
@@ -132,9 +122,11 @@ const TaskResultTable: React.FC<TaskResultTableProps> = ({
       dataIndex: 'serverName',
       key: 'serverName',
       width: 120,
+      render: (_: string, record: API.GpuTaskInfo) =>
+        getMachineDisplayName(record),
     },
     {
-      title: 'GPU设备',
+      title: '显卡型号',
       dataIndex: 'taskGpuName',
       key: 'taskGpuName',
       width: 100,
@@ -146,13 +138,6 @@ const TaskResultTable: React.FC<TaskResultTableProps> = ({
           </div>
         </div>
       ),
-    },
-    {
-      title: '任务类型',
-      dataIndex: 'taskType',
-      key: 'taskType',
-      width: 100,
-      render: (text: string, record: API.GpuTaskInfo) => getTaskTypeTag(record),
     },
     {
       title: '状态',
