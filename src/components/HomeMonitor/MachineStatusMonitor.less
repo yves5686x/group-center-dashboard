@@ -39,7 +39,7 @@
 
     &:hover {
       box-shadow: none;
-      border-color: var(--ant-color-primary);
+      border-color: var(--gc-color-accent-text, var(--ant-color-text));
     }
 
     .cardHeader {
@@ -54,7 +54,7 @@
       .machineName {
         font-weight: 600;
         font-size: 14px;
-        color: var(--ant-color-primary);
+        color: var(--gc-color-accent-text, var(--ant-color-text));
       }
 
       .machinePosition {
@@ -100,7 +100,7 @@
 
     // 状态颜色样式
     &.success {
-      border-left: 2px solid var(--ant-color-success);
+      border-left: 2px solid var(--gc-color-success);
       background: linear-gradient(
         90deg,
         var(--ant-color-success-bg) 0%,
@@ -109,7 +109,7 @@
     }
 
     &.warning {
-      border-left: 2px solid var(--ant-color-warning);
+      border-left: 2px solid var(--gc-color-warning);
       background: linear-gradient(
         90deg,
         var(--ant-color-warning-bg) 0%,
@@ -118,7 +118,7 @@
     }
 
     &.error {
-      border-left: 2px solid var(--ant-color-error);
+      border-left: 2px solid var(--gc-color-error);
       background: linear-gradient(
         90deg,
         var(--ant-color-error-bg) 0%,

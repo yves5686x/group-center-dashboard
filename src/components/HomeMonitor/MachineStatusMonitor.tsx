@@ -1,9 +1,11 @@
+import Tag from '@/components/UI/ReadableTag';
+import { useReadableColors } from '@/hooks/useReadableColors';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { Alert, Button, Card, Space, Statistic, Tag, Tooltip } from 'antd';
+import { Alert, Button, Card, Space, Statistic, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -19,6 +21,7 @@ interface MachineStatusMonitorProps {
 const MachineStatusMonitor: React.FC<MachineStatusMonitorProps> = ({
   refreshInterval = 30000,
 }) => {
+  const colors = useReadableColors();
   const [machineStatus, setMachineStatus] = useState<
     API.MachineStatusResponse[]
   >([]);
@@ -71,11 +74,11 @@ const MachineStatusMonitor: React.FC<MachineStatusMonitorProps> = ({
 
   const getPingStatusTag = (machine: API.MachineStatusResponse) => {
     const pingTag = machine.pingStatus ? (
-      <Tag color="green" icon={<CheckCircleOutlined />}>
+      <Tag color="success" icon={<CheckCircleOutlined />}>
         Ping正常
       </Tag>
     ) : (
-      <Tag color="red" icon={<CloseCircleOutlined />}>
+      <Tag color="error" icon={<CloseCircleOutlined />}>
         Ping失败
       </Tag>
     );
@@ -92,11 +95,11 @@ const MachineStatusMonitor: React.FC<MachineStatusMonitorProps> = ({
 
   const getAgentStatusTag = (machine: API.MachineStatusResponse) => {
     const agentTag = machine.agentStatus ? (
-      <Tag color="blue" icon={<CheckCircleOutlined />}>
+      <Tag color="success" icon={<CheckCircleOutlined />}>
         Agent在线
       </Tag>
     ) : (
-      <Tag color="orange" icon={<CloseCircleOutlined />}>
+      <Tag color="error" icon={<CloseCircleOutlined />}>
         Agent离线
       </Tag>
     );
@@ -163,7 +166,12 @@ const MachineStatusMonitor: React.FC<MachineStatusMonitorProps> = ({
             </Button>
           </Tooltip>
           {lastUpdate && (
-            <span style={{ fontSize: '12px', color: '#666' }}>
+            <span
+              style={{
+                fontSize: '12px',
+                color: 'var(--ant-color-text-secondary)',
+              }}
+            >
               最后更新: {lastUpdate.toLocaleTimeString('zh-CN')}
               {refreshing && ' (刷新中...)'}
             </span>
@@ -188,22 +196,22 @@ const MachineStatusMonitor: React.FC<MachineStatusMonitorProps> = ({
             <Statistic
               title="总服务器数"
               value={machineStatus.length}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: colors.primary }}
             />
             <Statistic
               title="在线服务器"
               value={machineStatus.filter((m) => m.pingStatus).length}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: colors.success }}
             />
             <Statistic
               title="Agent在线"
               value={machineStatus.filter((m) => m.agentStatus).length}
-              valueStyle={{ color: '#722ed1' }}
+              valueStyle={{ color: colors.success }}
             />
             <Statistic
               title="GPU服务器"
               value={machineStatus.filter((m) => m.isGpu).length}
-              valueStyle={{ color: '#fa8c16' }}
+              valueStyle={{ color: colors.primary }}
             />
           </Space>
         </div>

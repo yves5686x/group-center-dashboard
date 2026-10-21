@@ -1,5 +1,6 @@
+import Tag from '@/components/UI/ReadableTag';
 import { LinkOutlined, QrcodeOutlined } from '@ant-design/icons';
-import { Avatar, Button, Card, Popover, QRCode, Tag } from 'antd';
+import { Avatar, Button, Card, Popover, QRCode } from 'antd';
 import React from 'react';
 
 import VShow from '@/components/Vue/V-Show';

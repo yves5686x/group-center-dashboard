@@ -1,8 +1,10 @@
+import Tag from '@/components/UI/ReadableTag';
+import { useUsageColor } from '@/hooks/useUsageColor';
 import {
   CloseCircleOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import { Card, Progress, Tag, theme } from 'antd';
+import { Card, Progress } from 'antd';
 import styles from './DiskUsageCard.less';
 
 interface Props {
@@ -10,7 +12,7 @@ interface Props {
 }
 
 const DiskUsageCard: React.FC<Props> = ({ diskUsage }) => {
-  const { token } = theme.useToken();
+  const usageColor = useUsageColor();
   const percent = Number.isFinite(diskUsage.usedPercentage)
     ? Math.max(0, Math.min(100, diskUsage.usedPercentage))
     : 0;
@@ -39,13 +41,7 @@ const DiskUsageCard: React.FC<Props> = ({ diskUsage }) => {
         size="small"
         strokeWidth={5}
         showInfo={false}
-        strokeColor={
-          percent >= 80
-            ? token.colorError
-            : percent >= 40
-              ? token.colorWarning
-              : token.colorSuccess
-        }
+        strokeColor={usageColor(percent)}
         aria-label="磁盘空间使用率"
       />
       <div className={styles.capacityRow}>

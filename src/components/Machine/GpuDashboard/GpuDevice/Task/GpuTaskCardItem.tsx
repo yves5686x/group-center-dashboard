@@ -1,8 +1,10 @@
 import { ProjectSubscriptionModal } from '@/components/ProjectSubscription';
 import RunTimeComponent from '@/components/Time/RunTimeComponent';
+import Tag from '@/components/UI/ReadableTag';
 import VShow from '@/components/Vue/V-Show';
 import { useGpuTaskFilterProjectNameStore } from '@/data/store/modules/filter/GpuTaskFilterProjectName';
 import { useGpuTaskFilterUserNameStore } from '@/data/store/modules/filter/GpuTaskFilterUserName';
+import { useReadableColors } from '@/hooks/useReadableColors';
 import { convertFromMBToGB, getMemoryString } from '@/utils/Convert/MemorySize';
 import {
   BugOutlined,
@@ -28,7 +30,6 @@ import {
   Popconfirm,
   Popover,
   Space,
-  Tag,
 } from 'antd';
 import React, { useRef, useState } from 'react';
 import GpuTaskDetailModal, {
@@ -57,6 +58,7 @@ interface Props {
 }
 
 const GpuTaskCardItem: React.FC<Props> = (props) => {
+  const colors = useReadableColors();
   const { index, taskInfo, shouldRender } = props;
 
   const [openStartTimePopConfirm, setOpenStartTimePopConfirm] = useState(false);
@@ -352,10 +354,10 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
             extra={<MoreMenu />}
             styles={{
               header: {
-                color: isZombieProcess ? '#ff4d4f' : undefined,
+                color: isZombieProcess ? colors.error : undefined,
               },
               body: {
-                color: isZombieProcess ? '#ff4d4f' : undefined,
+                color: isZombieProcess ? colors.error : undefined,
               },
             }}
             onContextMenu={(e) => {
@@ -370,7 +372,7 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
               setContextMenuOpen(true);
             }}
           >
-            <div style={{ color: isZombieProcess ? '#ff4d4f' : undefined }}>
+            <div style={{ color: isZombieProcess ? colors.error : undefined }}>
               <div
                 style={{
                   display: 'flex',
@@ -394,7 +396,11 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
                     description={setUserFilterPopConfirmText}
                     okText="好的!"
                     cancelText="什么都不做"
-                    icon={<QuestionCircleOutlined style={{ color: 'gray' }} />}
+                    icon={
+                      <QuestionCircleOutlined
+                        style={{ color: colors.secondary }}
+                      />
+                    }
                     open={openUserFilterPopConfirm}
                     onConfirm={handleSetUserFilter}
                     onCancel={() => {
@@ -435,7 +441,11 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
                     description={startTimeString}
                     okText="复制"
                     cancelText="我知道了"
-                    icon={<QuestionCircleOutlined style={{ color: 'gray' }} />}
+                    icon={
+                      <QuestionCircleOutlined
+                        style={{ color: colors.secondary }}
+                      />
+                    }
                     open={openStartTimePopConfirm}
                     onConfirm={handleCopyStartTimeString}
                     onCancel={() => {
@@ -462,7 +472,9 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
                   <Tag
                     icon={<DatabaseOutlined />}
                     color="default"
-                    style={{ color: isZombieProcess ? '#ff4d4f' : undefined }}
+                    style={{
+                      color: isZombieProcess ? colors.error : undefined,
+                    }}
                   >
                     {currentGpuMemoryString}GB
                   </Tag>
@@ -489,7 +501,9 @@ const GpuTaskCardItem: React.FC<Props> = (props) => {
                     <Tag
                       icon={<ForkOutlined />}
                       color="default"
-                      style={{ color: isZombieProcess ? '#ff4d4f' : undefined }}
+                      style={{
+                        color: isZombieProcess ? colors.error : undefined,
+                      }}
                     >
                       Spawn
                     </Tag>

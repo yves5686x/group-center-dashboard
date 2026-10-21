@@ -33,13 +33,13 @@
       padding: 4px 8px;
       height: auto;
       font-size: 12px;
-      color: #1890ff;
+      color: var(--gc-color-accent-text, var(--ant-color-text));
       border-radius: 4px;
       transition: all 0.2s ease;
 
       &:hover {
-        color: #40a9ff;
-        background-color: rgba(24, 144, 255, 10%);
+        color: var(--gc-color-accent-text, var(--ant-color-text));
+        background-color: var(--ant-color-primary-bg);
       }
     }
   }
@@ -80,14 +80,15 @@
       }
 
       &.selected {
-        background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
-        color: white;
+        background: var(--ant-color-primary-bg);
+        color: var(--gc-color-accent-text, var(--ant-color-text));
+        border: 1px solid var(--ant-color-primary-border);
         font-weight: 500;
         box-shadow: 0 2px 8px rgba(24, 144, 255, 30%);
         transform: translateY(-1px);
 
         &:hover {
-          background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+          background: var(--ant-color-primary-bg-hover);
           box-shadow: 0 4px 12px rgba(24, 144, 255, 40%);
           transform: translateY(-2px);
         }
@@ -156,58 +157,6 @@
         font-size: 11px;
         height: 30px;
         padding: 0 6px;
-      }
-    }
-  }
-}
-
-// 暗色主题支持
-[data-theme='dark'] {
-  .gpuServerFilter {
-    background: linear-gradient(
-      135deg,
-      var(--ant-color-bg-layout) 0%,
-      var(--ant-color-bg-container) 100%
-    );
-    border-color: var(--ant-color-border);
-
-    .filterHeader {
-      .filterTitle {
-        color: #e8e8e8;
-      }
-
-      .actionButton {
-        color: #177ddc;
-
-        &:hover {
-          color: #3c9ae8;
-        }
-      }
-    }
-
-    .machineButtons {
-      .machineButton {
-        &.selected {
-          border-color: var(--ant-primary-color);
-          background-color: var(--ant-primary-color);
-
-          &:hover {
-            border-color: var(--ant-primary-color-hover);
-            background-color: var(--ant-primary-color-hover);
-          }
-        }
-
-        &.unselected {
-          border-color: var(--ant-color-border);
-          background-color: var(--ant-color-bg-container);
-          color: #8c8c8c;
-
-          &:hover {
-            border-color: var(--ant-color-border-secondary);
-            background-color: var(--ant-color-bg-container-hover);
-            color: #bfbfbf;
-          }
-        }
       }
     }
   }

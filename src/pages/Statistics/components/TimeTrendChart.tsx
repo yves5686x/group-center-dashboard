@@ -1,5 +1,6 @@
+import { useReadableChartTheme } from '@/hooks/useReadableChartTheme';
+import { useReadableColors } from '@/hooks/useReadableColors';
 import { getTimeTrendStatistics } from '@/services/group_center/dashboardStatistics';
-import { GetIsDarkMode } from '@/utils/AntD5/AntD5DarkMode';
 import { calculateDateRange, getTimeRangeDisplayName } from '@/utils/dateRange';
 import { Line } from '@ant-design/charts';
 import {
@@ -44,6 +45,7 @@ interface TimeTrendData {
 }
 
 const TimeTrendChart: React.FC<TimeTrendChartProps> = ({ timePeriod }) => {
+  const colors = useReadableColors();
   const [trendData, setTrendData] = useState<TimeTrendData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,23 +92,25 @@ const TimeTrendChart: React.FC<TimeTrendChartProps> = ({ timePeriod }) => {
     }));
   };
 
-  const isDark = GetIsDarkMode();
+  const chartTheme = useReadableChartTheme();
+  const isDark = chartTheme.type === 'dark';
 
   const lineConfig = {
     data: getTaskTrendData(),
     xField: 'date',
     yField: 'tasks',
     autoFit: true,
-    theme: isDark ? 'dark' : 'light',
+    theme: chartTheme,
     point: {
       size: 5,
       shape: 'diamond',
     },
     label: {
-      style: {
-        fill: '#aaa',
-        fontSize: 12,
-      },
+      text: 'tasks',
+      fill: colors.secondary,
+      fontSize: 12,
+      dy: -8,
+      textBaseline: 'bottom',
     },
     tooltip: {
       title: 'date',
@@ -178,7 +182,10 @@ const TimeTrendChart: React.FC<TimeTrendChartProps> = ({ timePeriod }) => {
         type="error"
         showIcon
         action={
-          <a onClick={fetchTimeTrendStatistics} style={{ color: '#1890ff' }}>
+          <a
+            onClick={fetchTimeTrendStatistics}
+            style={{ color: colors.primary }}
+          >
             重试
           </a>
         }
@@ -214,7 +221,7 @@ const TimeTrendChart: React.FC<TimeTrendChartProps> = ({ timePeriod }) => {
             <Statistic
               title="总任务数"
               value={trendData.totalTasks}
-              valueStyle={{ color: 'var(--ant-color-primary)' }}
+              valueStyle={{ color: colors.primary }}
             />
           </Card>
         </Col>
@@ -223,7 +230,7 @@ const TimeTrendChart: React.FC<TimeTrendChartProps> = ({ timePeriod }) => {
             <Statistic
               title="总运行时间"
               value={formatRuntime(trendData.totalRuntime)}
-              valueStyle={{ color: 'var(--ant-color-success)' }}
+              valueStyle={{ color: colors.success }}
             />
           </Card>
         </Col>
@@ -232,7 +239,7 @@ const TimeTrendChart: React.FC<TimeTrendChartProps> = ({ timePeriod }) => {
             <Statistic
               title="活跃用户数"
               value={trendData.totalUsers}
-              valueStyle={{ color: 'var(--ant-color-warning)' }}
+              valueStyle={{ color: colors.warning }}
             />
           </Card>
         </Col>
@@ -248,15 +255,30 @@ const TimeTrendChart: React.FC<TimeTrendChartProps> = ({ timePeriod }) => {
               alignItems: 'flex-end',
             }}
           >
-            <span style={{ color: '#666', fontSize: '12px' }}>
+            <span
+              style={{
+                color: 'var(--ant-color-text-secondary)',
+                fontSize: '12px',
+              }}
+            >
               时间范围: {getTimeRangeDisplayName(timePeriod)}
             </span>
-            <span style={{ color: '#666', fontSize: '12px', marginTop: '2px' }}>
+            <span
+              style={{
+                color: 'var(--ant-color-text-secondary)',
+                fontSize: '12px',
+                marginTop: '2px',
+              }}
+            >
               {calculateDateRange(timePeriod)}
             </span>
             {trendData.refreshTime && (
               <span
-                style={{ color: '#999', fontSize: '11px', marginTop: '2px' }}
+                style={{
+                  color: 'var(--ant-color-text-secondary)',
+                  fontSize: '11px',
+                  marginTop: '2px',
+                }}
               >
                 统计时间: {trendData.refreshTime}
               </span>

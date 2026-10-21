@@ -1,5 +1,7 @@
+import ReadableTag from '@/components/UI/ReadableTag';
+import { useReadableChartTheme } from '@/hooks/useReadableChartTheme';
+import { useReadableColors } from '@/hooks/useReadableColors';
 import { getProjectStatistics } from '@/services/group_center/dashboardStatistics';
-import { GetIsDarkMode } from '@/utils/AntD5/AntD5DarkMode';
 import { calculateDateRange, getTimeRangeDisplayName } from '@/utils/dateRange';
 import { Pie } from '@ant-design/charts';
 import {
@@ -12,7 +14,6 @@ import {
   Select,
   Spin,
   Statistic,
-  Tag,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { formatRuntime, mergeTopKWithOther } from '../utils';
@@ -44,6 +45,7 @@ interface ProjectStatisticsData {
 const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
   timePeriod,
 }) => {
+  const colors = useReadableColors();
   const [projectData, setProjectData] = useState<ProjectStatisticsData | null>(
     null,
   );
@@ -139,7 +141,7 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
     setPageSize(size);
   };
 
-  const isDark = GetIsDarkMode();
+  const chartTheme = useReadableChartTheme();
 
   const projectTimePieConfig = {
     data: getProjectTimeDistributionData(),
@@ -147,7 +149,7 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
     colorField: 'type',
     radius: 0.8,
     autoFit: true,
-    theme: isDark ? 'dark' : 'light',
+    theme: chartTheme,
     label: {
       text: 'type',
       position: 'outside' as const,
@@ -214,7 +216,7 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
         type="error"
         showIcon
         action={
-          <a onClick={fetchProjectStatistics} style={{ color: '#1890ff' }}>
+          <a onClick={fetchProjectStatistics} style={{ color: colors.primary }}>
             重试
           </a>
         }
@@ -245,12 +247,12 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
             <Statistic
               title="总项目数"
               value={projectData.totalProjects}
-              valueStyle={{ color: 'var(--ant-color-primary)' }}
+              valueStyle={{ color: colors.primary }}
             />
             <Statistic
               title="活跃项目"
               value={projectData.activeProjects}
-              valueStyle={{ color: 'var(--ant-color-success)' }}
+              valueStyle={{ color: colors.success }}
             />
             <Statistic
               title="项目活跃率"
@@ -258,13 +260,13 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
                 (projectData.activeProjects / projectData.totalProjects) *
                 100
               ).toFixed(1)}
-              valueStyle={{ color: 'var(--ant-color-warning)' }}
+              valueStyle={{ color: colors.warning }}
               suffix="%"
             />
             <Statistic
               title="项目平均任务数"
               value={projectData.averageTasksPerProject.toFixed(1)}
-              valueStyle={{ color: 'var(--ant-color-info)' }}
+              valueStyle={{ color: colors.info }}
               precision={1}
             />
           </div>
@@ -282,7 +284,14 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
           >
             <span>项目时间占比分布</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: '12px', color: '#666' }}>显示前</span>
+              <span
+                style={{
+                  fontSize: '12px',
+                  color: 'var(--ant-color-text-secondary)',
+                }}
+              >
+                显示前
+              </span>
               <Select
                 value={topK}
                 onChange={setTopK}
@@ -296,7 +305,12 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
                 <Option value={25}>25</Option>
                 <Option value={null}>无限制</Option>
               </Select>
-              <span style={{ fontSize: '12px', color: '#666' }}>
+              <span
+                style={{
+                  fontSize: '12px',
+                  color: 'var(--ant-color-text-secondary)',
+                }}
+              >
                 个项目 {topK ? '' : '(显示全部)'} (共{' '}
                 {projectData.topProjects.length} 个)
               </span>
@@ -320,15 +334,30 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
               alignItems: 'flex-end',
             }}
           >
-            <span style={{ color: '#666', fontSize: '12px' }}>
+            <span
+              style={{
+                color: 'var(--ant-color-text-secondary)',
+                fontSize: '12px',
+              }}
+            >
               时间范围: {getTimeRangeDisplayName(timePeriod)}
             </span>
-            <span style={{ color: '#666', fontSize: '11px', marginTop: '2px' }}>
+            <span
+              style={{
+                color: 'var(--ant-color-text-secondary)',
+                fontSize: '11px',
+                marginTop: '2px',
+              }}
+            >
               {calculateDateRange(timePeriod)}
             </span>
             {projectData.refreshTime && (
               <span
-                style={{ color: '#999', fontSize: '11px', marginTop: '2px' }}
+                style={{
+                  color: 'var(--ant-color-text-secondary)',
+                  fontSize: '11px',
+                  marginTop: '2px',
+                }}
               >
                 统计时间: {projectData.refreshTime}
               </span>
@@ -354,8 +383,8 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
                   }}
                 >
                   <div style={{ width: 40, textAlign: 'center' }}>
-                    <Tag
-                      color={
+                    <ReadableTag
+                      accentColor={
                         globalIndex < 3
                           ? '#f50'
                           : globalIndex < 5
@@ -364,7 +393,7 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
                       }
                     >
                       #{globalIndex + 1}
-                    </Tag>
+                    </ReadableTag>
                   </div>
 
                   <div style={{ flex: 1, margin: '0 16px' }}>
@@ -378,7 +407,12 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
                       <span style={{ fontWeight: 'bold' }}>
                         {project.projectName}
                       </span>
-                      <span style={{ color: '#666', fontSize: '12px' }}>
+                      <span
+                        style={{
+                          color: 'var(--ant-color-text-secondary)',
+                          fontSize: '12px',
+                        }}
+                      >
                         活跃用户: {project.activeUsersCount}人
                       </span>
                     </div>
@@ -388,7 +422,7 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
                         display: 'flex',
                         justifyContent: 'space-between',
                         fontSize: '12px',
-                        color: '#666',
+                        color: 'var(--ant-color-text-secondary)',
                         marginBottom: 4,
                       }}
                     >
@@ -404,7 +438,7 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
                         display: 'flex',
                         justifyContent: 'space-between',
                         fontSize: '12px',
-                        color: '#666',
+                        color: 'var(--ant-color-text-secondary)',
                         marginBottom: 4,
                       }}
                     >

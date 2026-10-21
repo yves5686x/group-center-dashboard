@@ -1,8 +1,9 @@
+import Tag from '@/components/UI/ReadableTag';
 import {
   formatFreshness,
   getTimeStrFromSecondsTimestamp,
 } from '@/utils/Time/DateTimeUtils';
-import { Space, Tag, Tooltip } from 'antd';
+import { Space, Tooltip } from 'antd';
 import React from 'react';
 
 interface Props {

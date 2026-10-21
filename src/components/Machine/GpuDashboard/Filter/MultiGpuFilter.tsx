@@ -102,7 +102,13 @@ const MultiGpuFilter: React.FC = () => {
             <Option value="multi">只显示多卡任务</Option>
           </Select>
 
-          <div style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+          <div
+            style={{
+              fontSize: '12px',
+              color: 'var(--ant-color-text-secondary)',
+              marginTop: '8px',
+            }}
+          >
             {selectedFilter === 'none' && '• 显示所有任务（单卡和多卡）'}
             {selectedFilter === 'single' && '• 仅显示单GPU卡运行的任务'}
             {selectedFilter === 'multi' && '• 仅显示多GPU卡并行运行的任务'}

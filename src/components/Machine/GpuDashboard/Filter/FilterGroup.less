@@ -39,19 +39,20 @@
     flex-wrap: nowrap;
   }
 
-  .ant-btn {
+  :global(.ant-btn) {
     border-radius: 8px;
     height: 36px;
     padding: 0 16px;
     font-size: 13px;
     font-weight: 500;
-    background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
-    border: none;
+    background: var(--ant-color-primary-bg);
+    border: 1px solid var(--ant-color-primary-border);
+    color: var(--gc-color-accent-text, var(--ant-color-text));
     box-shadow: 0 2px 8px rgba(24, 144, 255, 30%);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
-      background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+      background: var(--ant-color-primary-bg-hover);
       box-shadow: 0 4px 12px rgba(24, 144, 255, 40%);
       transform: translateY(-2px);
     }
@@ -142,7 +143,7 @@
   &::before {
     content: '•';
     font-size: 14px;
-    color: #1890ff;
+    color: var(--gc-color-accent-text, var(--ant-color-text));
   }
 }
 
@@ -155,7 +156,7 @@
   .filterToggle {
     margin-bottom: 12px;
 
-    .ant-btn {
+    :global(.ant-btn) {
       height: 32px;
       font-size: 12px;
       padding: 0 12px;
@@ -196,7 +197,7 @@
   .filterToggle {
     margin-bottom: 8px;
 
-    .ant-btn {
+    :global(.ant-btn) {
       height: 30px;
       font-size: 11px;
       padding: 0 10px;

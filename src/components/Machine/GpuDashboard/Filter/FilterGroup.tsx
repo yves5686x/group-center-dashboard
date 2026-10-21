@@ -70,6 +70,11 @@ const FilterGroup: React.FC<FilterGroupProps> = ({
         <Space size="small">
           <Button
             type="primary"
+            style={{
+              background: 'var(--ant-color-primary-bg)',
+              color: 'var(--gc-color-accent-text, var(--ant-color-text))',
+              borderColor: 'var(--ant-color-primary-border)',
+            }}
             icon={<FilterOutlined />}
             onClick={() => setShowFilters(!showFilters)}
             size="small"

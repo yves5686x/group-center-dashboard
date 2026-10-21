@@ -1,3 +1,5 @@
+import { useReadableColors } from '@/hooks/useReadableColors';
+import { useUsageColor } from '@/hooks/useUsageColor';
 import { convertFromMBToGB, getMemoryString } from '@/utils/Convert/MemorySize';
 import { Card, Progress, Tooltip, theme } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -44,6 +46,8 @@ const useGpuMemoryDetail = (gpuMemoryTotalMB: number, memoryUsage: number) => {
 const GpuUsageCard: React.FC<Props> = (props) => {
   const { gpuIndex, card } = props;
   const { token } = theme.useToken();
+  const colors = useReadableColors(token.colorBgElevated);
+  const usageColor = useUsageColor();
 
   // 聚合层的字段名与旧 agent 不同：gpuMemoryTotalMB→memoryTotalMb、
   // gpuPowerUsage→powerUsage、gpuTDP→tdp、gpuTemperature→temperature。
@@ -72,17 +76,17 @@ const GpuUsageCard: React.FC<Props> = (props) => {
   const powerRatio = tdp > 0 ? powerUsage / tdp : 0;
   const powerColor =
     powerRatio > 0.7
-      ? token.colorError
+      ? colors.error
       : powerRatio > 0.3
-        ? token.colorWarning
-        : token.colorSuccess;
+        ? colors.warning
+        : colors.success;
 
   const temperatureColor =
     temperature > 70
-      ? token.colorError
+      ? colors.error
       : temperature > 50
-        ? token.colorWarning
-        : token.colorSuccess;
+        ? colors.warning
+        : colors.success;
 
   const gpuMemoryUsageFormatted = getMemoryString(gpuMemoryUsageGiB);
   const gpuMemoryTotalFormatted = getMemoryString(gpuMemoryTotalGiB);
@@ -184,16 +188,11 @@ const GpuUsageCard: React.FC<Props> = (props) => {
     </div>
   );
 
-  const renderMetric = (label: string, value: number, baseColor: string) => {
+  const renderMetric = (label: string, value: number) => {
     const percent = Number.isFinite(value)
       ? Math.max(0, Math.min(100, Math.floor(value)))
       : 0;
-    const color =
-      percent >= 80
-        ? token.colorError
-        : percent >= 40
-          ? token.colorWarning
-          : baseColor;
+    const color = usageColor(percent);
 
     return (
       <div className={styles.metricRow}>
@@ -246,8 +245,8 @@ const GpuUsageCard: React.FC<Props> = (props) => {
           </div>
         </Tooltip>
         <div className={styles.metrics}>
-          {renderMetric('显存', memoryUsage, token.colorPrimary)}
-          {renderMetric('核心', coreUsage, token.colorSuccess)}
+          {renderMetric('显存', memoryUsage)}
+          {renderMetric('核心', coreUsage)}
         </div>
         {/* hasData=false：后端标记这张卡没取到数据，数值不可信，必须显式提示 */}
         {card.hasData === false ? (
@@ -255,7 +254,7 @@ const GpuUsageCard: React.FC<Props> = (props) => {
             style={{
               marginTop: 8,
               fontSize: 12,
-              color: token.colorTextTertiary,
+              color: token.colorTextSecondary,
             }}
           >
             该卡未取到数据

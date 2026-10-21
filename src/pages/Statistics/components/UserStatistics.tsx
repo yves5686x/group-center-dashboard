@@ -1,5 +1,7 @@
+import ReadableTag from '@/components/UI/ReadableTag';
+import { useReadableChartTheme } from '@/hooks/useReadableChartTheme';
+import { useReadableColors } from '@/hooks/useReadableColors';
 import { getUserStatistics } from '@/services/group_center/dashboardStatistics';
-import { GetIsDarkMode } from '@/utils/AntD5/AntD5DarkMode';
 import { calculateDateRange, getTimeRangeDisplayName } from '@/utils/dateRange';
 import { Pie } from '@ant-design/charts';
 import {
@@ -12,7 +14,6 @@ import {
   Select,
   Spin,
   Statistic,
-  Tag,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { formatRuntime, mergeTopKWithOther } from '../utils';
@@ -44,6 +45,7 @@ interface UserStatisticsData {
 }
 
 const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
+  const colors = useReadableColors();
   const [userData, setUserData] = useState<UserStatisticsData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -136,7 +138,7 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
     setPageSize(size);
   };
 
-  const isDark = GetIsDarkMode();
+  const chartTheme = useReadableChartTheme();
 
   const userTimePieConfig = {
     data: getUserTimeDistributionData(),
@@ -144,7 +146,7 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
     colorField: 'type',
     radius: 0.8,
     autoFit: true,
-    theme: isDark ? 'dark' : 'light',
+    theme: chartTheme,
     label: {
       text: 'type',
       position: 'outside' as const,
@@ -216,7 +218,7 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
         type="error"
         showIcon
         action={
-          <a onClick={fetchUserStatistics} style={{ color: '#1890ff' }}>
+          <a onClick={fetchUserStatistics} style={{ color: colors.primary }}>
             重试
           </a>
         }
@@ -247,12 +249,12 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
             <Statistic
               title="总用户数"
               value={userData.totalUsers}
-              valueStyle={{ color: 'var(--ant-color-primary)' }}
+              valueStyle={{ color: colors.primary }}
             />
             <Statistic
               title="活跃用户"
               value={userData.activeUsers}
-              valueStyle={{ color: 'var(--ant-color-success)' }}
+              valueStyle={{ color: colors.success }}
             />
             <Statistic
               title="用户活跃率"
@@ -260,13 +262,13 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
                 (userData.activeUsers / userData.totalUsers) *
                 100
               ).toFixed(1)}
-              valueStyle={{ color: 'var(--ant-color-warning)' }}
+              valueStyle={{ color: colors.warning }}
               suffix="%"
             />
             <Statistic
               title="人均任务数"
               value={userData.averageTasksPerUser.toFixed(1)}
-              valueStyle={{ color: 'var(--ant-color-info)' }}
+              valueStyle={{ color: colors.info }}
               precision={1}
             />
           </div>
@@ -284,7 +286,14 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
           >
             <span>用户时间占比分布</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: '12px', color: '#666' }}>显示前</span>
+              <span
+                style={{
+                  fontSize: '12px',
+                  color: 'var(--ant-color-text-secondary)',
+                }}
+              >
+                显示前
+              </span>
               <Select
                 value={topK}
                 onChange={setTopK}
@@ -298,7 +307,12 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
                 <Option value={25}>25</Option>
                 <Option value={null}>无限制</Option>
               </Select>
-              <span style={{ fontSize: '12px', color: '#666' }}>
+              <span
+                style={{
+                  fontSize: '12px',
+                  color: 'var(--ant-color-text-secondary)',
+                }}
+              >
                 个用户 {topK ? '' : '(显示全部)'} (共 {userData.topUsers.length}{' '}
                 个)
               </span>
@@ -322,15 +336,30 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
               alignItems: 'flex-end',
             }}
           >
-            <span style={{ color: '#666', fontSize: '12px' }}>
+            <span
+              style={{
+                color: 'var(--ant-color-text-secondary)',
+                fontSize: '12px',
+              }}
+            >
               时间范围: {getTimeRangeDisplayName(timePeriod)}
             </span>
-            <span style={{ color: '#666', fontSize: '11px', marginTop: '2px' }}>
+            <span
+              style={{
+                color: 'var(--ant-color-text-secondary)',
+                fontSize: '11px',
+                marginTop: '2px',
+              }}
+            >
               {calculateDateRange(timePeriod)}
             </span>
             {userData.refreshTime && (
               <span
-                style={{ color: '#999', fontSize: '11px', marginTop: '2px' }}
+                style={{
+                  color: 'var(--ant-color-text-secondary)',
+                  fontSize: '11px',
+                  marginTop: '2px',
+                }}
               >
                 统计时间: {userData.refreshTime}
               </span>
@@ -356,8 +385,8 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
                   }}
                 >
                   <div style={{ width: 40, textAlign: 'center' }}>
-                    <Tag
-                      color={
+                    <ReadableTag
+                      accentColor={
                         globalIndex < 3
                           ? '#f50'
                           : globalIndex < 5
@@ -366,7 +395,7 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
                       }
                     >
                       #{globalIndex + 1}
-                    </Tag>
+                    </ReadableTag>
                   </div>
 
                   <div style={{ flex: 1, margin: '0 16px' }}>
@@ -380,7 +409,12 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
                       <span style={{ fontWeight: 'bold' }}>
                         {user.userName}
                       </span>
-                      <span style={{ color: '#666', fontSize: '12px' }}>
+                      <span
+                        style={{
+                          color: 'var(--ant-color-text-secondary)',
+                          fontSize: '12px',
+                        }}
+                      >
                         常用显卡型号: {user.favoriteGpu || 'N/A'}
                       </span>
                     </div>
@@ -390,7 +424,7 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
                         display: 'flex',
                         justifyContent: 'space-between',
                         fontSize: '12px',
-                        color: '#666',
+                        color: 'var(--ant-color-text-secondary)',
                         marginBottom: 4,
                       }}
                     >
@@ -406,7 +440,7 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
                         display: 'flex',
                         justifyContent: 'space-between',
                         fontSize: '12px',
-                        color: '#666',
+                        color: 'var(--ant-color-text-secondary)',
                         marginBottom: 4,
                       }}
                     >

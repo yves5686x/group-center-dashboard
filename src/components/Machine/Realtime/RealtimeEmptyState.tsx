@@ -31,7 +31,11 @@ const RealtimeEmptyState: React.FC<Props> = (props) => {
           <div>{title}</div>
           {description ? (
             <div
-              style={{ marginTop: 4, opacity: 0.65, wordBreak: 'break-all' }}
+              style={{
+                marginTop: 4,
+                color: 'var(--ant-color-text-secondary)',
+                wordBreak: 'break-all',
+              }}
             >
               {description}
             </div>

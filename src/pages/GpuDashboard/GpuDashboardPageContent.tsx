@@ -551,7 +551,12 @@ const GpuDashboardPageContent: React.FC<Props> = () => {
           description={
             <div style={{ fontSize: 13 }}>
               <div>没有可用的 GPU 服务器</div>
-              <div style={{ marginTop: 4, opacity: 0.65 }}>
+              <div
+                style={{
+                  marginTop: 4,
+                  color: 'var(--ant-color-text-secondary)',
+                }}
+              >
                 {error ??
                   '后端 /web/open/realtime/machines 没有返回 gpu=true 的机器'}
               </div>
@@ -577,7 +582,12 @@ const GpuDashboardPageContent: React.FC<Props> = () => {
           description={
             <div style={{ fontSize: 13 }}>
               <div>已清空机器选择</div>
-              <div style={{ marginTop: 4, opacity: 0.65 }}>
+              <div
+                style={{
+                  marginTop: 4,
+                  color: 'var(--ant-color-text-secondary)',
+                }}
+              >
                 在上方「GPU服务器筛选」里点「全选」或勾选任意机器
               </div>
             </div>

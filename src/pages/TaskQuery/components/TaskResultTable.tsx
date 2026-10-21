@@ -1,6 +1,7 @@
+import Tag from '@/components/UI/ReadableTag';
 import { getMachineDisplayName } from '@/utils/machinePresentation';
 import { EyeOutlined } from '@ant-design/icons';
-import { Card, Table, Tag, Tooltip, Typography } from 'antd';
+import { Card, Table, Tooltip, Typography } from 'antd';
 import React, { useRef } from 'react';
 import TaskDetailModal, { TaskDetailModalHandles } from './TaskDetailModal';
 
@@ -136,7 +137,7 @@ const TaskResultTable: React.FC<TaskResultTableProps> = ({
           <div
             style={{
               fontSize: '12px',
-              color: 'var(--ant-color-text-tertiary)',
+              color: 'var(--ant-color-text-secondary)',
             }}
           >
             ID: {record.taskGpuId}
@@ -186,7 +187,7 @@ const TaskResultTable: React.FC<TaskResultTableProps> = ({
           <div
             style={{
               fontSize: '12px',
-              color: 'var(--ant-color-text-tertiary)',
+              color: 'var(--ant-color-text-secondary)',
             }}
           >
             {record.gpuMemoryPercent}%
@@ -203,7 +204,7 @@ const TaskResultTable: React.FC<TaskResultTableProps> = ({
       render: (_: any, record: API.GpuTaskInfo) => (
         <Tooltip title="查看详情">
           <EyeOutlined
-            style={{ color: '#1890ff', cursor: 'pointer' }}
+            style={{ cursor: 'pointer' }}
             onClick={() => handleViewDetail(record)}
           />
         </Tooltip>

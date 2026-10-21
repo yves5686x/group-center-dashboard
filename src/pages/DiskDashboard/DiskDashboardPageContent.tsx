@@ -34,7 +34,9 @@ const DiskDashboardPageContent: React.FC<Props> = () => {
         description={
           <div style={{ fontSize: 13 }}>
             <div>没有可用的服务器</div>
-            <div style={{ marginTop: 4, opacity: 0.65 }}>
+            <div
+              style={{ marginTop: 4, color: 'var(--ant-color-text-secondary)' }}
+            >
               {error ?? '后端 /web/open/realtime/machines 没有返回任何机器'}
             </div>
           </div>

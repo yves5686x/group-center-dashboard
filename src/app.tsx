@@ -1,9 +1,11 @@
 // 运行时配置
 import logoImg from '@/assets/logo.svg';
+import { STATUS_COLORS } from '@/utils/StatusColors';
 import type { RuntimeAntdConfig, RunTimeLayoutConfig } from '@umijs/max';
 import { theme } from 'antd';
 import RouteContentBoundary from './components/RouteContentBoundary';
 import ThemeSwitch from './components/UI/ThemeSwitch';
+import WorkspaceSurface from './components/UI/WorkspaceSurface';
 import { GetSystemTheme } from './utils/AntD5/AntD5DarkMode';
 
 // 全局响应式样式（移动端优化）。
@@ -32,6 +34,9 @@ export const antd: RuntimeAntdConfig = (memo) => {
     borderRadiusLG: 12,
     controlHeight: 34,
     fontSize: 14,
+    colorSuccess: STATUS_COLORS.success,
+    colorWarning: STATUS_COLORS.warning,
+    colorError: STATUS_COLORS.error,
   };
   memo.theme.components = {
     ...memo.theme.components,
@@ -64,9 +69,9 @@ export const layout: RunTimeLayoutConfig = () => {
     childrenRender: (children) => {
       // if (initialState?.loading) return <PageLoading />;
       return (
-        <div className="app-workspace">
+        <WorkspaceSurface>
           <RouteContentBoundary>{children}</RouteContentBoundary>
-        </div>
+        </WorkspaceSurface>
       );
     },
   };

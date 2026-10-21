@@ -1,3 +1,4 @@
+import { useReadableColors } from '@/hooks/useReadableColors';
 import { PageContainer } from '@ant-design/pro-components';
 import { Alert, Card, Col, Row, Select, Spin, Statistic, Tabs } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -28,6 +29,7 @@ const timePeriodOptions = [
 ];
 
 const StatisticsPage: React.FC = () => {
+  const colors = useReadableColors();
   const [timePeriod, setTimePeriod] = useState<string>('ONE_WEEK');
   const [activeTab, setActiveTab] = useState<string>('gpu');
   const [overviewStats, setOverviewStats] = useState<OverviewStats | null>(
@@ -94,7 +96,7 @@ const StatisticsPage: React.FC = () => {
           showIcon
           style={{ marginBottom: 24 }}
           action={
-            <a onClick={fetchOverviewStats} style={{ color: '#1890ff' }}>
+            <a onClick={fetchOverviewStats} style={{ color: colors.primary }}>
               重试
             </a>
           }
@@ -109,7 +111,7 @@ const StatisticsPage: React.FC = () => {
             <Statistic
               title="总任务数"
               value={overviewStats?.totalTasks || 0}
-              valueStyle={{ color: 'var(--ant-color-primary)' }}
+              valueStyle={{ color: colors.primary }}
               suffix="个"
             />
           </Card>
@@ -119,7 +121,7 @@ const StatisticsPage: React.FC = () => {
             <Statistic
               title="活跃用户"
               value={overviewStats?.activeUsers || 0}
-              valueStyle={{ color: 'var(--ant-color-success)' }}
+              valueStyle={{ color: colors.success }}
               suffix="人"
             />
           </Card>
@@ -129,7 +131,7 @@ const StatisticsPage: React.FC = () => {
             <Statistic
               title="平均GPU使用率"
               value={overviewStats?.averageGpuUsage || 0}
-              valueStyle={{ color: 'var(--ant-color-warning)' }}
+              valueStyle={{ color: colors.warning }}
               suffix="%"
             />
           </Card>
@@ -139,7 +141,7 @@ const StatisticsPage: React.FC = () => {
             <Statistic
               title="项目数量"
               value={overviewStats?.projectCount || 0}
-              valueStyle={{ color: 'var(--ant-color-info)' }}
+              valueStyle={{ color: colors.info }}
               suffix="个"
             />
           </Card>

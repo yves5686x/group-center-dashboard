@@ -33,7 +33,7 @@ ENV GROUP_CENTER_URL=""
 ENV ENABLE_PROXY=false
 ENV DISABLE_PROXY=true
 
-RUN pnpm run build
+RUN pnpm run check:contrast && pnpm run build
 
 
 ########################################

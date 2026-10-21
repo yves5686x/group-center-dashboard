@@ -10,6 +10,9 @@ import {
   useRealtimeDiskSnapshot,
   useRealtimeGpuSnapshot,
 } from '@/hooks/useRealtime';
+import { useUsageColor } from '@/hooks/useUsageColor';
+import { GetIsDarkMode } from '@/utils/AntD5/AntD5DarkMode';
+import { getReadableTextColor } from '@/utils/Convert/Contrast';
 import { convertFromMBToGB, getMemoryString } from '@/utils/Convert/MemorySize';
 import { Tooltip, theme } from 'antd';
 import React, { useState } from 'react';
@@ -31,20 +34,11 @@ interface Props {
   machine: API.RealtimeMachine;
 }
 
-/** 内存条的颜色分档，物理内存与虚拟内存共用 */
-const memoryBarColor = (
-  percent: number,
-  token: ReturnType<typeof theme.useToken>['token'],
-  baseColor: string,
-) => {
-  if (percent > 80) return token.colorError;
-  if (percent > 60) return token.colorWarning;
-  return baseColor;
-};
-
 const GpuDashboard: React.FC<Props> = (props) => {
   const { machine } = props;
   const { token } = theme.useToken();
+  const usageColor = useUsageColor();
+  const isDark = GetIsDarkMode();
 
   // 右键菜单状态
   const [isContextMenuOpen, setContextMenuOpen] = useState(false);
@@ -180,12 +174,7 @@ const GpuDashboard: React.FC<Props> = (props) => {
     alignItems: 'center',
   };
 
-  const renderMemoryBar = (
-    label: string,
-    usedMb: number,
-    totalMb: number,
-    baseColor: string,
-  ) => {
+  const renderMemoryBar = (label: string, usedMb: number, totalMb: number) => {
     const percent = getMemoryPercent(usedMb, totalMb);
 
     return (
@@ -204,7 +193,10 @@ const GpuDashboard: React.FC<Props> = (props) => {
             style={{
               fontWeight: 'bold',
               fontSize: '13px',
-              color: baseColor,
+              color: getReadableTextColor(
+                usageColor(percent),
+                token.colorBgElevated,
+              ),
             }}
           >
             {percent}%
@@ -215,7 +207,7 @@ const GpuDashboard: React.FC<Props> = (props) => {
             style={{
               width: `${percent}%`,
               height: '100%',
-              backgroundColor: memoryBarColor(percent, token, baseColor),
+              backgroundColor: usageColor(percent),
               borderRadius: 4,
               transition: 'all 0.3s ease',
             }}
@@ -226,7 +218,7 @@ const GpuDashboard: React.FC<Props> = (props) => {
             {getMemoryString(convertFromMBToGB(usedMb))} /{' '}
             {getMemoryString(convertFromMBToGB(totalMb))} GB
           </span>
-          <span style={{ fontSize: '11px', color: token.colorTextTertiary }}>
+          <span style={{ fontSize: '11px', color: token.colorTextSecondary }}>
             可用: {getMemoryString(convertFromMBToGB(totalMb - usedMb))} GB
           </span>
         </div>
@@ -253,13 +245,11 @@ const GpuDashboard: React.FC<Props> = (props) => {
           '物理内存',
           machineSystemInfo.memoryPhysicUsedMb,
           machineSystemInfo.memoryPhysicTotalMb,
-          token.colorPrimary,
         )}
         {renderMemoryBar(
           '虚拟内存',
           machineSystemInfo.memorySwapUsedMb,
           machineSystemInfo.memorySwapTotalMb,
-          token.colorSuccess,
         )}
       </div>
     </div>
@@ -297,7 +287,7 @@ const GpuDashboard: React.FC<Props> = (props) => {
         menuStyle={{
           zIndex: 1000,
         }}
-        theming={token.colorBgElevated === '#141414' ? 'dark' : undefined}
+        theming={isDark ? 'dark' : undefined}
         direction="right"
         onClose={() => setContextMenuOpen(false)}
       >

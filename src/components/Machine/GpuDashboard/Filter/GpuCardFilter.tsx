@@ -225,7 +225,14 @@ const GpuCardFilter: React.FC = () => {
                   </Select>
                 </div>
 
-                <div style={{ fontSize: '12px', color: '#666' }}>或</div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'var(--ant-color-text-secondary)',
+                  }}
+                >
+                  或
+                </div>
 
                 <div>
                   <span style={{ marginRight: 8 }}>卡号范围:</span>
@@ -248,7 +255,12 @@ const GpuCardFilter: React.FC = () => {
                   </Space>
                 </div>
 
-                <div style={{ fontSize: '12px', color: '#666' }}>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'var(--ant-color-text-secondary)',
+                  }}
+                >
                   {selectedGpuIds.length > 0 &&
                     `• 将显示卡号 ${selectedGpuIds.join(', ')} 的任务`}
                   {gpuIdRange &&
@@ -300,7 +312,12 @@ const GpuCardFilter: React.FC = () => {
                   </Space>
                 </div>
 
-                <div style={{ fontSize: '12px', color: '#666' }}>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: 'var(--ant-color-text-secondary)',
+                  }}
+                >
                   {gpuName && `• 将显示GPU卡名称包含 "${gpuName}" 的任务`}
                   {!gpuName && '• 请输入GPU卡名称进行筛选'}
                 </div>
@@ -308,7 +325,13 @@ const GpuCardFilter: React.FC = () => {
             )}
           </div>
 
-          <div style={{ fontSize: '12px', color: '#999', marginTop: 16 }}>
+          <div
+            style={{
+              fontSize: '12px',
+              color: 'var(--ant-color-text-secondary)',
+              marginTop: 16,
+            }}
+          >
             提示：两种筛选模式可以同时使用，采用AND逻辑
           </div>
         </Space>

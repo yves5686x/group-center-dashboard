@@ -1,5 +1,6 @@
+import { useReadableChartTheme } from '@/hooks/useReadableChartTheme';
+import { useReadableColors } from '@/hooks/useReadableColors';
 import { getGpuStatistics } from '@/services/group_center/dashboardStatistics';
-import { GetIsDarkMode } from '@/utils/AntD5/AntD5DarkMode';
 import { calculateDateRange, getTimeRangeDisplayName } from '@/utils/dateRange';
 import { Column, Pie } from '@ant-design/charts';
 import { Alert, Card, Col, Empty, Row, Select, Spin, Statistic } from 'antd';
@@ -33,6 +34,7 @@ interface GpuStatisticsData {
 }
 
 const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
+  const colors = useReadableColors();
   const [gpuData, setGpuData] = useState<GpuStatisticsData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -159,11 +161,17 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
       }
     });
 
-    const result: Array<{ gpu: string; server: string; tasks: number }> = [];
+    const result: Array<{
+      gpu: string;
+      server: string;
+      tasks: number;
+      category: string;
+    }> = [];
     serverMap.forEach((serverList, gpuModel) => {
       serverList.forEach((serverData) => {
         result.push({
           gpu: gpuModel,
+          category: JSON.stringify([gpuModel, serverData.server]),
           server: serverData.server,
           tasks: serverData.tasks,
         });
@@ -172,7 +180,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
     return result;
   };
 
-  const isDark = GetIsDarkMode();
+  const chartTheme = useReadableChartTheme();
 
   const pieConfig = {
     data: getPieChartData(),
@@ -180,10 +188,11 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
     colorField: 'type',
     radius: 0.8,
     autoFit: true,
-    theme: isDark ? 'dark' : 'light',
+    theme: chartTheme,
     label: {
       text: 'type',
       position: 'outside' as const,
+      fill: colors.secondary,
       formatter: (text: string, item: any) => {
         return `${text}\n${item?.value || 0}个 (${item?.percentage || '0'}%)`;
       },
@@ -219,69 +228,55 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
     },
   };
 
+  const columnData = getColumnChartData();
   const columnConfig = {
-    data: getColumnChartData(),
-    xField: 'gpu',
+    data: columnData,
+    xField: 'category',
     yField: 'tasks',
-    seriesField: 'server',
-    isGroup: true,
+    colorField: 'server',
     autoFit: true,
-    theme: isDark ? 'dark' : 'light',
-    columnStyle: {
-      radius: [4, 4, 0, 0],
-    },
+    height: 360,
+    paddingTop: 32,
+    paddingBottom: 64,
+    theme: chartTheme,
+    style: { radiusTopLeft: 4, radiusTopRight: 4, maxWidth: 48 },
     label: {
+      text: (datum: { tasks: number }) => `${datum.tasks}个`,
       position: 'top',
-      offset: 10,
-      style: {
-        fill: '#000',
-        fontSize: 12,
-        fontWeight: 'bold',
+      fill: colors.secondary,
+      fontSize: 12,
+      fontWeight: 600,
+      dy: -8,
+      textBaseline: 'bottom',
+    },
+    axis: {
+      x: {
+        title: false,
+        labelFormatter: (category: string) => {
+          const item = columnData.find((datum) => datum.category === category);
+          return item ? `${item.server}\n${item.gpu}` : category;
+        },
+        labelAutoHide: false,
+        labelAutoRotate: false,
+        labelAutoEllipsis: false,
+        labelFill: colors.secondary,
+        labelFontSize: 12,
+        labelLineHeight: 18,
       },
-      formatter: (datum: any) => {
-        if (!datum) return '';
-        const tasks = datum.tasks || 0;
-        return tasks > 0 ? `${tasks}` : '';
+      y: {
+        title: '任务数',
+        labelFormatter: (value: number) => `${Math.round(value)}`,
+        labelFill: colors.secondary,
+        titleFill: colors.secondary,
       },
     },
     tooltip: {
-      title: 'gpu',
-      items: [
-        {
-          name: '任务数',
-          field: 'tasks',
-          valueFormatter: (value: any) => `${value || 0}个`,
-        },
-      ],
+      title: (datum: { server: string; gpu: string }) =>
+        `${datum.server} · ${datum.gpu}`,
+      items: [{ name: '任务数', field: 'tasks' }],
     },
-    xAxis: {
-      label: {
-        autoRotate: true,
-        formatter: (text: string) =>
-          text.length > 10 ? text.substring(0, 10) + '...' : text,
-      },
-    },
-    yAxis: {
-      label: {
-        formatter: (v: number) => `${Math.round(v)}`,
-      },
-      title: {
-        text: '任务数',
-      },
-    },
-    legend: {
-      position: 'bottom' as const,
-      itemName: {
-        formatter: (text: string) =>
-          text.length > 15 ? text.substring(0, 15) + '...' : text,
-      },
-    },
-    animation: {
-      appear: {
-        animation: 'scale-in-y',
-        duration: 800,
-      },
-    },
+    // The server and GPU model are printed under every bar; no colour lookup is needed.
+    legend: false as const,
   };
 
   if (loading) {
@@ -301,7 +296,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
         type="error"
         showIcon
         action={
-          <a onClick={fetchGpuStatistics} style={{ color: '#1890ff' }}>
+          <a onClick={fetchGpuStatistics} style={{ color: colors.primary }}>
             重试
           </a>
         }
@@ -326,7 +321,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
             <Statistic
               title="最受欢迎的GPU"
               value={gpuData.mostPopularGpu}
-              valueStyle={{ color: 'var(--ant-color-primary)' }}
+              valueStyle={{ color: colors.primary }}
             />
           </Card>
         </Col>
@@ -335,7 +330,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
             <Statistic
               title="最受欢迎GPU任务数"
               value={gpuData.mostPopularGpuTasks}
-              valueStyle={{ color: 'var(--ant-color-error)' }}
+              valueStyle={{ color: colors.error }}
             />
           </Card>
         </Col>
@@ -344,7 +339,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
             <Statistic
               title="总任务数"
               value={gpuData.totalTasks}
-              valueStyle={{ color: 'var(--ant-color-success)' }}
+              valueStyle={{ color: colors.success }}
             />
           </Card>
         </Col>
@@ -353,7 +348,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
             <Statistic
               title="活跃GPU数量"
               value={gpuData.activeGpus}
-              valueStyle={{ color: 'var(--ant-color-info)' }}
+              valueStyle={{ color: colors.info }}
             />
           </Card>
         </Col>
@@ -370,13 +365,22 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
               alignItems: 'flex-end',
             }}
           >
-            <span style={{ color: '#666', fontSize: '12px' }}>
+            <span
+              style={{
+                color: 'var(--ant-color-text-secondary)',
+                fontSize: '12px',
+              }}
+            >
               时间范围: {getTimeRangeDisplayName(timePeriod)}{' '}
               {calculateDateRange(timePeriod)}
             </span>
             {gpuData.refreshTime && (
               <span
-                style={{ color: '#999', fontSize: '11px', marginTop: '2px' }}
+                style={{
+                  color: 'var(--ant-color-text-secondary)',
+                  fontSize: '11px',
+                  marginTop: '2px',
+                }}
               >
                 统计时间: {gpuData.refreshTime}
               </span>
@@ -410,7 +414,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
                     <div
                       style={{
                         fontSize: '12px',
-                        color: '#666',
+                        color: 'var(--ant-color-text-secondary)',
                         marginBottom: 8,
                       }}
                     >
@@ -420,7 +424,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
                       style={{
                         fontSize: '24px',
                         fontWeight: 'bold',
-                        color: '#1890ff',
+                        color: colors.primary,
                       }}
                     >
                       {taskCount}
@@ -428,7 +432,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
                     <div
                       style={{
                         fontSize: '12px',
-                        color: '#666',
+                        color: 'var(--ant-color-text-secondary)',
                         marginTop: 4,
                       }}
                     >
@@ -455,7 +459,12 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
               >
                 <span>各服务器任务数分布</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: '12px', color: '#666' }}>
+                  <span
+                    style={{
+                      fontSize: '12px',
+                      color: 'var(--ant-color-text-secondary)',
+                    }}
+                  >
                     显示前
                   </span>
                   <Select
@@ -471,7 +480,12 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
                     <Option value={25}>25</Option>
                     <Option value={null}>无限制</Option>
                   </Select>
-                  <span style={{ fontSize: '12px', color: '#666' }}>
+                  <span
+                    style={{
+                      fontSize: '12px',
+                      color: 'var(--ant-color-text-secondary)',
+                    }}
+                  >
                     台服务器
                   </span>
                 </div>
@@ -494,8 +508,33 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
             title="GPU型号在各服务器的任务数对比"
             style={{ marginBottom: 16 }}
           >
-            {getColumnChartData().length > 0 ? (
-              <Column {...columnConfig} />
+            {columnData.length > 0 ? (
+              <div
+                role="region"
+                aria-label="各服务器 GPU 任务数柱状图，可横向滚动"
+                tabIndex={0}
+                style={{ overflowX: 'auto' }}
+              >
+                <div
+                  style={{
+                    minWidth: Math.max(
+                      320,
+                      columnData.length *
+                        Math.max(
+                          128,
+                          ...columnData.map(
+                            (item) =>
+                              Math.max(item.server.length, item.gpu.length) *
+                                8 +
+                              24,
+                          ),
+                        ),
+                    ),
+                  }}
+                >
+                  <Column {...columnConfig} />
+                </div>
+              </div>
             ) : (
               <Empty
                 description="暂无GPU设备数据"

@@ -1,11 +1,12 @@
 {
   "name": "group-center-dashboard",
-  "version": "1.8.16-rc.5",
+  "version": "1.8.16-rc.6",
   "private": true,
   "author": "Haomin Kong <a645162@qq.com>",
   "scripts": {
     "build": "max build",
     "check:compile": "tsc --noEmit",
+    "check:contrast": "node --experimental-strip-types --test scripts/verify-theme-contrast.test.mjs",
     "dev": "max dev",
     "dev:proxy": "cross-env ENABLE_PROXY=true MOCK=none max dev",
     "dev:pure": "cross-env MOCK=none max dev",

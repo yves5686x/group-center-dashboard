@@ -23,11 +23,11 @@
 
     &:hover {
       box-shadow: none;
-      border-color: var(--ant-color-primary);
+      border-color: var(--gc-color-accent-text, var(--ant-color-text));
     }
 
     &.available {
-      border-left: 2px solid var(--ant-color-success);
+      border-left: 2px solid var(--gc-color-success);
       background: linear-gradient(
         90deg,
         var(--ant-color-success-bg) 0%,
@@ -36,7 +36,7 @@
     }
 
     &.unavailable {
-      border-left: 2px solid var(--ant-color-error);
+      border-left: 2px solid var(--gc-color-error);
       background: linear-gradient(
         90deg,
         var(--ant-color-error-bg) 0%,
@@ -70,7 +70,7 @@
     .serverName {
       font-weight: 600;
       font-size: 14px;
-      color: var(--ant-color-primary);
+      color: var(--gc-color-accent-text, var(--ant-color-text));
     }
   }
 

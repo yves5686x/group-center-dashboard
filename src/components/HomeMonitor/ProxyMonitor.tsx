@@ -1,3 +1,6 @@
+import Tag from '@/components/UI/ReadableTag';
+import { useReadableColors } from '@/hooks/useReadableColors';
+import { STATUS_COLORS } from '@/utils/StatusColors';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -15,7 +18,6 @@ import {
   Progress,
   Space,
   Statistic,
-  Tag,
   Tooltip,
   message,
 } from 'antd';
@@ -45,6 +47,7 @@ interface ProxyMonitorProps {
 const ProxyMonitor: React.FC<ProxyMonitorProps> = ({
   refreshInterval = 30000,
 }) => {
+  const colors = useReadableColors();
   const [proxyServers, setProxyServers] = useState<API.ProxyServerInfo[]>([]);
   const [proxyStatus, setProxyStatus] = useState<API.ProxyStatusInfo | null>(
     null,
@@ -186,9 +189,11 @@ const ProxyMonitor: React.FC<ProxyMonitorProps> = ({
     }
   };
 
-  const parseSuccessRate = (rate: string): number => {
+  const parseSuccessRate = (
+    rate: string | number | undefined | null,
+  ): number => {
     // 去掉百分号并转换为数字，保留两位小数
-    const numericRate = parseFloat(rate.replace('%', ''));
+    const numericRate = parseFloat(String(rate ?? '').replace('%', ''));
     return isNaN(numericRate) ? 0 : parseFloat(numericRate.toFixed(2));
   };
 
@@ -241,9 +246,7 @@ const ProxyMonitor: React.FC<ProxyMonitorProps> = ({
                       <div>响应时间: {test.responseTime}ms</div>
                     )}
                     {test.statusCode && <div>状态码: {test.statusCode}</div>}
-                    {test.error && (
-                      <div style={{ color: '#ff4d4f' }}>错误: {test.error}</div>
-                    )}
+                    {test.error && <div>错误: {test.error}</div>}
                     <div>测试时间: {formatTime(test.testTime)}</div>
                   </div>
                 }
@@ -489,7 +492,12 @@ const ProxyMonitor: React.FC<ProxyMonitorProps> = ({
               </Button>
             </Tooltip>
             {lastUpdate && (
-              <span style={{ fontSize: '12px', color: '#666' }}>
+              <span
+                style={{
+                  fontSize: '12px',
+                  color: 'var(--ant-color-text-secondary)',
+                }}
+              >
                 最后更新: {lastUpdate.toLocaleTimeString('zh-CN')}
               </span>
             )}
@@ -513,17 +521,24 @@ const ProxyMonitor: React.FC<ProxyMonitorProps> = ({
               <Statistic
                 title="总代理数"
                 value={proxyStatus.totalProxies}
-                valueStyle={{ color: '#1890ff' }}
+                valueStyle={{ color: colors.primary }}
               />
               <Statistic
                 title="可用代理"
                 value={proxyStatus.availableProxies}
-                valueStyle={{ color: '#52c41a' }}
+                valueStyle={{ color: colors.success }}
               />
               <Statistic
                 title="可用率"
                 value={proxyStatus.availabilityRate}
-                valueStyle={{ color: '#faad14' }}
+                valueStyle={{
+                  color:
+                    parseSuccessRate(proxyStatus.availabilityRate) > 90
+                      ? colors.success
+                      : parseSuccessRate(proxyStatus.availabilityRate) > 70
+                        ? colors.warning
+                        : colors.error,
+                }}
               />
               {proxyStatus.averageResponseTime && (
                 <Statistic
@@ -531,9 +546,12 @@ const ProxyMonitor: React.FC<ProxyMonitorProps> = ({
                   value={proxyStatus.averageResponseTime}
                   suffix="ms"
                   valueStyle={{
-                    color: getResponseTimeColor(
-                      proxyStatus.averageResponseTime,
-                    ),
+                    color:
+                      proxyStatus.averageResponseTime < 100
+                        ? colors.success
+                        : proxyStatus.averageResponseTime < 500
+                          ? colors.warning
+                          : colors.error,
                   }}
                 />
               )}
@@ -594,7 +612,7 @@ const ProxyMonitor: React.FC<ProxyMonitorProps> = ({
                     <span className={styles.detailLabel}>错误信息:</span>
                     <span
                       className={styles.detailValue}
-                      style={{ color: '#ff4d4f' }}
+                      style={{ color: colors.error }}
                     >
                       {server.lastError}
                     </span>
@@ -617,10 +635,10 @@ const ProxyMonitor: React.FC<ProxyMonitorProps> = ({
                     size="small"
                     strokeColor={
                       parseSuccessRate(server.successRate) > 90
-                        ? '#52c41a'
+                        ? STATUS_COLORS.success
                         : parseSuccessRate(server.successRate) > 70
-                          ? '#faad14'
-                          : '#ff4d4f'
+                          ? STATUS_COLORS.warning
+                          : STATUS_COLORS.error
                     }
                     showInfo={false}
                   />

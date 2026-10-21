@@ -1,3 +1,4 @@
+import Tag from '@/components/UI/ReadableTag';
 import VShow from '@/components/Vue/V-Show';
 import { shortenVersion } from '@/utils/format';
 import {
@@ -7,7 +8,7 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
-import { Tag } from 'antd';
+
 import styles from './TaskDetail.less';
 
 interface Props {
