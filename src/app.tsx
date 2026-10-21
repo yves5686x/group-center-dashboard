@@ -2,6 +2,7 @@
 import logoImg from '@/assets/logo.svg';
 import type { RuntimeAntdConfig, RunTimeLayoutConfig } from '@umijs/max';
 import { theme } from 'antd';
+import RouteContentBoundary from './components/RouteContentBoundary';
 import ThemeSwitch from './components/UI/ThemeSwitch';
 import { GetSystemTheme } from './utils/AntD5/AntD5DarkMode';
 
@@ -48,7 +49,7 @@ export const layout: RunTimeLayoutConfig = () => {
     // footerRender: () => <Footer />,
     childrenRender: (children) => {
       // if (initialState?.loading) return <PageLoading />;
-      return <>{children}</>;
+      return <RouteContentBoundary>{children}</RouteContentBoundary>;
     },
   };
 };

@@ -73,9 +73,15 @@ server {
     }
 
     # 带 hash 的静态资源：可长期缓存
-    location ~* \.(?:js|css|woff2?|ttf|eot|svg|png|jpe?g|gif|ico|webp)$ {
+    location ~* "\.[0-9a-f]{8,}\.(?:js|css|woff2?|ttf|eot|svg|png|jpe?g|gif|ico|webp)$" {
         expires    1y;
         add_header Cache-Control "public, immutable";
+        try_files  $uri =404;
+    }
+
+    # Legacy, unhashed files must be re-requested after upgrades.
+    location ~* \.(?:js|css|woff2?|ttf|eot|svg|png|jpe?g|gif|ico|webp)$ {
+        add_header Cache-Control "no-store";
         try_files  $uri =404;
     }
 

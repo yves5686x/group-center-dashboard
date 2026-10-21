@@ -307,7 +307,7 @@ services:
         printf '%s\n' "$$LOCAL_SITE_YAML" > "$$BASE_PATH/Config/Dashboard/Site/fnos.yaml"
         exec "$$BASE_PATH/docker.start.sh"
   web:
-    image: ghcr.io/yves5686x/group-center-dashboard:1.8.16-rc.2
+    image: ghcr.io/yves5686x/group-center-dashboard:1.8.16-rc.3
     ports:
       - 8080:8080
     environment:

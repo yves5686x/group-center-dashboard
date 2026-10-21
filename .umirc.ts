@@ -3,6 +3,8 @@ import { defineConfig } from '@umijs/max';
 import childConfig from './config/config';
 
 export default defineConfig({
+  // Each release gets distinct entry, shared, page and preload-helper URLs.
+  hash: true,
   favicons: ['/favicon.ico'],
   // links: [{ rel: 'icon', href: '/assets/favicon.ico' }],
   plugins: ['@umijs/max-plugin-openapi'],

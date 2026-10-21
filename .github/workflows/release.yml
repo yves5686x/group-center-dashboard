@@ -155,9 +155,18 @@ jobs:
           check "/statistics"  200 "SPA fallback"
           check "/deep/unknown/route" 200 "SPA fallback"
           # 静态资源
-          check "/umi.js"      200 "主脚本"
-          check "/umi.css"     200 "主样式"
-          check "/preload_helper.js" 200 "预载脚本"
+          docker cp gcd-smoke:/usr/share/nginx/html "$RUNNER_TEMP/gcd-smoke-assets"
+          node --test scripts/verify-static-cache.test.mjs
+          node scripts/verify-static-cache.mjs "$RUNNER_TEMP/gcd-smoke-assets" --list > "$RUNNER_TEMP/gcd-smoke-assets.txt"
+          while IFS= read -r asset; do
+            check "$asset" 200 "带内容指纹的页面资源"
+            headers=$(curl -fsSI "http://127.0.0.1:18080${asset}")
+            printf '%s' "$headers" | grep -qi 'immutable' || { echo "FAIL 缺少指纹资源缓存头: $asset"; fail=1; }
+          done < "$RUNNER_TEMP/gcd-smoke-assets.txt"
+          # 旧的无指纹文件不能继续缓存一年。
+          docker exec gcd-smoke sh -c 'printf compatibility > /usr/share/nginx/html/cache-probe.js'
+          curl -fsSI http://127.0.0.1:18080/cache-probe.js | grep -qi 'Cache-Control: no-store' || fail=1
+          curl -fsSI http://127.0.0.1:18080/index.html | grep -qi 'no-store' || fail=1
           check "/not-exist.js" 404 "不存在的资源应为 404"
 
           # 容器健康状态。
