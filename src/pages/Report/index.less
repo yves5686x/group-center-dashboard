@@ -1,0 +1,30 @@
+.reportPage {
+  min-width: 0;
+
+  :global(.ant-col > .ant-card) {
+    height: 100%;
+  }
+
+  :global(.ant-card-small .ant-card-head) {
+    background: var(--ant-color-fill-quaternary);
+    font-size: 13px;
+  }
+
+  p {
+    margin-bottom: 8px;
+    color: var(--ant-color-text-secondary);
+    overflow-wrap: anywhere;
+    font-size: 13px;
+
+    strong {
+      font-weight: 500;
+      color: var(--ant-color-text);
+    }
+  }
+
+  @media (max-width: 768px) {
+    :global(.ant-card-body) {
+      padding: 16px 12px;
+    }
+  }
+}

@@ -133,7 +133,12 @@ const TaskResultTable: React.FC<TaskResultTableProps> = ({
       render: (text: string, record: API.GpuTaskInfo) => (
         <div>
           <div>{text}</div>
-          <div style={{ fontSize: '12px', color: '#666' }}>
+          <div
+            style={{
+              fontSize: '12px',
+              color: 'var(--ant-color-text-tertiary)',
+            }}
+          >
             ID: {record.taskGpuId}
           </div>
         </div>
@@ -178,7 +183,12 @@ const TaskResultTable: React.FC<TaskResultTableProps> = ({
       render: (memory: number, record: API.GpuTaskInfo) => (
         <div>
           <div>{formatMemory(memory * 1024)}</div>
-          <div style={{ fontSize: '12px', color: '#666' }}>
+          <div
+            style={{
+              fontSize: '12px',
+              color: 'var(--ant-color-text-tertiary)',
+            }}
+          >
             {record.gpuMemoryPercent}%
           </div>
         </div>

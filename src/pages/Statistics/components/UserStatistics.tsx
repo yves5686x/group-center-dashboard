@@ -247,12 +247,12 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
             <Statistic
               title="总用户数"
               value={userData.totalUsers}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: 'var(--ant-color-primary)' }}
             />
             <Statistic
               title="活跃用户"
               value={userData.activeUsers}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: 'var(--ant-color-success)' }}
             />
             <Statistic
               title="用户活跃率"
@@ -260,13 +260,13 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
                 (userData.activeUsers / userData.totalUsers) *
                 100
               ).toFixed(1)}
-              valueStyle={{ color: '#faad14' }}
+              valueStyle={{ color: 'var(--ant-color-warning)' }}
               suffix="%"
             />
             <Statistic
               title="人均任务数"
               value={userData.averageTasksPerUser.toFixed(1)}
-              valueStyle={{ color: '#722ed1' }}
+              valueStyle={{ color: 'var(--ant-color-info)' }}
               precision={1}
             />
           </div>

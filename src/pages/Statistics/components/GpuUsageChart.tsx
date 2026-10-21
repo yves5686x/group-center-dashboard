@@ -326,7 +326,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
             <Statistic
               title="最受欢迎的GPU"
               value={gpuData.mostPopularGpu}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: 'var(--ant-color-primary)' }}
             />
           </Card>
         </Col>
@@ -335,7 +335,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
             <Statistic
               title="最受欢迎GPU任务数"
               value={gpuData.mostPopularGpuTasks}
-              valueStyle={{ color: '#cf1322' }}
+              valueStyle={{ color: 'var(--ant-color-error)' }}
             />
           </Card>
         </Col>
@@ -344,7 +344,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
             <Statistic
               title="总任务数"
               value={gpuData.totalTasks}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: 'var(--ant-color-success)' }}
             />
           </Card>
         </Col>
@@ -353,7 +353,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
             <Statistic
               title="活跃GPU数量"
               value={gpuData.activeGpus}
-              valueStyle={{ color: '#722ed1' }}
+              valueStyle={{ color: 'var(--ant-color-info)' }}
             />
           </Card>
         </Col>

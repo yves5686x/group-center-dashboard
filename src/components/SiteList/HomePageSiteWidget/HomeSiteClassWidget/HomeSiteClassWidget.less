@@ -5,82 +5,23 @@
 .siteListDiv {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 8px;
-  padding: 4px 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 12px;
 }
 
 .siteItemDiv {
-  display: flex;
-  justify-content: center;
+  min-width: 0;
 }
 
-// 分类卡片样式优化 - 使用局部类名避免全局污染
 .siteCard {
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 8%);
-  border: 1px solid var(--ant-color-border);
-  transition: all 0.3s ease;
+  border-radius: 12px;
+  border: 1px solid var(--ant-color-border-secondary);
 
-  &:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 12%);
-    transform: translateY(-2px);
-  }
-
-  :global {
-    .ant-card-head {
-      border-bottom: 1px solid var(--ant-color-border);
-      padding: 16px 20px;
-
-      .ant-card-head-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--ant-color-text-heading);
-      }
-    }
-
-    .ant-card-body {
-      padding: 20px;
-    }
+  :global(.ant-card-body) {
+    padding: 16px;
   }
 }
 
 .avatar {
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 10%);
-  transition: transform 0.2s ease;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-}
-
-// 响应式设计
-@media (max-width: 768px) {
-  .siteListDiv {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .siteCard {
-    :global {
-      .ant-card-head {
-        padding: 12px 16px;
-
-        .ant-card-head-title {
-          font-size: 16px;
-        }
-      }
-
-      .ant-card-body {
-        padding: 16px;
-      }
-    }
-  }
-}
-
-@media (min-width: 1200px) {
-  .siteListDiv {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  }
+  border-radius: 8px;
 }

@@ -1,0 +1,131 @@
+.app-workspace {
+  min-width: 0;
+  color: var(--ant-color-text);
+  font-variant-numeric: tabular-nums;
+
+  .ant-pro-page-container {
+    max-width: 1440px;
+    margin-inline: auto;
+  }
+
+  .ant-pro-page-container-children-container {
+    margin: 0 24px 24px;
+    padding: 0;
+  }
+
+  .ant-page-header {
+    padding: 20px 24px 16px;
+  }
+
+  .ant-page-header-heading-title {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+
+  .ant-page-header-content {
+    padding-top: 6px;
+    color: var(--ant-color-text-secondary);
+    font-size: 13px;
+  }
+
+  .ant-card {
+    min-width: 0;
+    border-color: var(--ant-color-border-secondary);
+    box-shadow: none;
+  }
+
+  .ant-card-head {
+    min-height: 46px;
+    padding-inline: 16px;
+    border-bottom-color: var(--ant-color-border-secondary);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .ant-card-extra {
+    color: var(--ant-color-text-secondary);
+    font-size: 12px;
+  }
+
+  .ant-table-wrapper {
+    min-width: 0;
+  }
+
+  .ant-table-thead > tr > th {
+    color: var(--ant-color-text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .ant-form-item-label > label {
+    color: var(--ant-color-text-secondary);
+    font-size: 13px;
+  }
+
+  .ant-tabs-tab {
+    font-size: 13px;
+  }
+
+  .ant-statistic-content {
+    font-weight: 600;
+    letter-spacing: -0.4px;
+  }
+
+  .ant-statistic-content-suffix {
+    margin-inline-start: 6px;
+    color: var(--ant-color-text-tertiary);
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  @media (max-width: 768px) {
+    .ant-pro-page-container-children-container {
+      margin: 0 12px 16px;
+    }
+
+    .ant-page-header {
+      padding: 16px 12px 12px;
+    }
+
+    .ant-page-header-heading-title {
+      font-size: 20px;
+    }
+
+    .ant-page-header-heading-extra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .ant-card-head-wrapper {
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-block: 10px;
+    }
+
+    .ant-card-extra {
+      max-width: 100%;
+      margin-inline-start: 0;
+      white-space: normal;
+    }
+
+    .ant-table {
+      font-size: 12px;
+    }
+
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td {
+      padding: 8px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-workspace *,
+  .app-workspace *::before,
+  .app-workspace *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

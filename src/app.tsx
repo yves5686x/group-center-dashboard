@@ -9,6 +9,7 @@ import { GetSystemTheme } from './utils/AntD5/AntD5DarkMode';
 // 全局响应式样式（移动端优化）。
 // 在这里 import 而不是在 .umirc.ts 的 styles 里配，原因见 .umirc.ts 注释。
 import './global.less';
+import './styles/workspace.less';
 
 // 全局初始化数据配置，用于 Layout 用户信息和权限初始化
 // 更多信息见文档：https://umijs.org/docs/api/runtime-config#getinitialstate
@@ -24,6 +25,19 @@ export const antd: RuntimeAntdConfig = (memo) => {
   memo.theme.algorithm = [
     systemIsDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
   ];
+
+  memo.theme.token = {
+    ...memo.theme.token,
+    borderRadius: 8,
+    borderRadiusLG: 12,
+    controlHeight: 34,
+    fontSize: 14,
+  };
+  memo.theme.components = {
+    ...memo.theme.components,
+    Card: { headerHeight: 46, headerFontSize: 14, bodyPadding: 20 },
+    Form: { itemMarginBottom: 16 },
+  };
 
   // memo.appConfig = {
   // 	message: {
@@ -49,7 +63,11 @@ export const layout: RunTimeLayoutConfig = () => {
     // footerRender: () => <Footer />,
     childrenRender: (children) => {
       // if (initialState?.loading) return <PageLoading />;
-      return <RouteContentBoundary>{children}</RouteContentBoundary>;
+      return (
+        <div className="app-workspace">
+          <RouteContentBoundary>{children}</RouteContentBoundary>
+        </div>
+      );
     },
   };
 };

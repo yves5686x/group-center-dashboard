@@ -214,7 +214,7 @@ const TimeTrendChart: React.FC<TimeTrendChartProps> = ({ timePeriod }) => {
             <Statistic
               title="总任务数"
               value={trendData.totalTasks}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: 'var(--ant-color-primary)' }}
             />
           </Card>
         </Col>
@@ -223,7 +223,7 @@ const TimeTrendChart: React.FC<TimeTrendChartProps> = ({ timePeriod }) => {
             <Statistic
               title="总运行时间"
               value={formatRuntime(trendData.totalRuntime)}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: 'var(--ant-color-success)' }}
             />
           </Card>
         </Col>
@@ -232,7 +232,7 @@ const TimeTrendChart: React.FC<TimeTrendChartProps> = ({ timePeriod }) => {
             <Statistic
               title="活跃用户数"
               value={trendData.totalUsers}
-              valueStyle={{ color: '#faad14' }}
+              valueStyle={{ color: 'var(--ant-color-warning)' }}
             />
           </Card>
         </Col>

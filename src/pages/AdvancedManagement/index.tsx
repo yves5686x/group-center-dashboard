@@ -1,30 +1,13 @@
 import { SubscriptionManagementPanel } from '@/components/ProjectSubscription';
 import { PageContainer } from '@ant-design/pro-components';
-import { Card, Col, Row } from 'antd';
-import React from 'react';
 import styles from './index.less';
 
-const AdvancedManagement: React.FC = () => {
-  return (
-    <PageContainer ghost>
-      <div className={styles.container}>
-        <Row gutter={[16, 16]}>
-          <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-            <Card
-              title="高级管理"
-              style={{ minHeight: '400px' }}
-              styles={{ body: { padding: '16px' } }}
-              className={styles.responsiveCard}
-            >
-              <div className={styles.content}>
-                <SubscriptionManagementPanel />
-              </div>
-            </Card>
-          </Col>
-        </Row>
-      </div>
-    </PageContainer>
-  );
-};
+const AdvancedManagement: React.FC = () => (
+  <PageContainer ghost content="查看和管理用户的项目订阅">
+    <div className={styles.container}>
+      <SubscriptionManagementPanel />
+    </div>
+  </PageContainer>
+);
 
 export default AdvancedManagement;

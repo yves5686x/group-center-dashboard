@@ -13,6 +13,7 @@ const ThemeSwitch: React.FC = () => {
   return (
     <>
       <Switch
+        aria-label="切换深色模式"
         checked={GetIsDarkMode()}
         onChange={(data) => {
           // 此配置会与原配置深合并
@@ -25,8 +26,8 @@ const ThemeSwitch: React.FC = () => {
             };
           });
         }}
-        checkedChildren="Dark"
-        unCheckedChildren="Light"
+        checkedChildren="深色"
+        unCheckedChildren="浅色"
       />
     </>
   );

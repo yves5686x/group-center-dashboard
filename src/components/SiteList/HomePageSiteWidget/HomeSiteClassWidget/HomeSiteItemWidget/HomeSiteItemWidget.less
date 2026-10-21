@@ -1,6 +1,6 @@
 .card {
   // 固定宽度，确保排列整齐
-  width: 320px;
+  width: 100%;
   min-height: 60px;
 
   // 使用Ant Design默认样式，自动支持夜间模式
@@ -10,19 +10,17 @@
   cursor: pointer;
 
   // 边距
-  margin: 4px;
+  margin: 0;
   padding: 4px;
 
   // 防止内容溢出
   overflow: hidden;
 
   &:hover {
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 12%);
   }
 
   &:active {
-    transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 10%);
   }
 }
@@ -55,7 +53,7 @@
   position: absolute;
   bottom: -2px;
   right: -2px;
-  background: var(--ant-primary-color);
+  background: var(--ant-color-primary);
   border-radius: 50%;
   width: 14px;
   height: 14px;
@@ -82,7 +80,7 @@
   transition: color 0.2s ease;
 
   .card:hover & {
-    color: var(--ant-primary-color);
+    color: var(--ant-color-primary);
   }
 }
 
@@ -103,7 +101,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: var(--ant-primary-color);
+    background-color: var(--ant-color-primary);
     color: white;
     transform: scale(1.1);
   }

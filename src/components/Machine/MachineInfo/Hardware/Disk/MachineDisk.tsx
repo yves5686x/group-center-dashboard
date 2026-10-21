@@ -7,7 +7,7 @@ import {
   DISK_SNAPSHOT_POLL_INTERVAL,
   useRealtimeDiskSnapshot,
 } from '@/hooks/useRealtime';
-import { Card } from 'antd';
+import { getMachineDisplayName } from '@/utils/machinePresentation';
 import React from 'react';
 import DiskUsageCard from './DiskUsageCard';
 import styles from './MachineDisk.less';
@@ -44,59 +44,43 @@ const MachineDisk: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.deviceCardDiv}>
-      <Card
-        size="default"
-        title={
-          // 标题居中；数据状态徽标绝对定位到右侧，避免把标题挤偏
-          <div
-            style={{
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 12,
-            }}
-          >
-            <span style={{ textAlign: 'center' }}>{machine.serverName}</span>
-
-            <div style={{ position: 'absolute', right: 0 }}>
-              {snapshot ? (
-                <RealtimeStatusBadge
-                  stale={snapshot.stale}
-                  source={snapshot.source}
-                  freshness={snapshot.freshness}
-                  snapshotTime={snapshot.snapshotTime}
-                  error={snapshot.error}
-                />
-              ) : (
-                // 还没拿到快照时，先用机器列表里的过期标记顶上
-                <RealtimeStatusBadge
-                  stale={machine.stale}
-                  source="none"
-                  freshness={machine.freshness}
-                  snapshotTime={machine.snapshotTime}
-                />
-              )}
+      <div className={styles.machineHeader}>
+        <h2 className={styles.title}>{getMachineDisplayName(machine)}</h2>
+        <div className={styles.statusBadge}>
+          {snapshot ? (
+            <RealtimeStatusBadge
+              stale={snapshot.stale}
+              source={snapshot.source}
+              freshness={snapshot.freshness}
+              snapshotTime={snapshot.snapshotTime}
+              error={snapshot.error}
+            />
+          ) : (
+            // 还没拿到快照时，先用机器列表里的过期标记顶上
+            <RealtimeStatusBadge
+              stale={machine.stale}
+              source="none"
+              freshness={machine.freshness}
+              snapshotTime={machine.snapshotTime}
+            />
+          )}
+        </div>
+      </div>
+      {emptyState ? (
+        <RealtimeEmptyState
+          title={emptyState.title}
+          description={emptyState.description}
+          loading={diskState.loading && !snapshot}
+        />
+      ) : (
+        <div className={styles.diskList}>
+          {mountList.map((diskUsage) => (
+            <div key={diskUsage.mountPoint} className={styles.diskItem}>
+              <DiskUsageCard diskUsage={diskUsage} />
             </div>
-          </div>
-        }
-      >
-        {emptyState ? (
-          <RealtimeEmptyState
-            title={emptyState.title}
-            description={emptyState.description}
-            loading={diskState.loading && !snapshot}
-          />
-        ) : (
-          <div className={styles.diskList}>
-            {mountList.map((diskUsage) => (
-              <div key={diskUsage.mountPoint} className={styles.diskItem}>
-                <DiskUsageCard diskUsage={diskUsage} />
-              </div>
-            ))}
-          </div>
-        )}
-      </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

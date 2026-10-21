@@ -3,6 +3,8 @@ import React from 'react';
 
 import MachineDisk from '@/components/Machine/MachineInfo/Hardware/Disk/MachineDisk';
 import { useRealtimeMachineList } from '@/hooks/useRealtime';
+import { sortGpuMachines } from '@/utils/machinePresentation';
+import styles from './index.less';
 
 interface Props {
   name?: string;
@@ -19,7 +21,7 @@ interface Props {
 const DiskDashboardPageContent: React.FC<Props> = () => {
   const { data, loading, error } = useRealtimeMachineList();
 
-  const machineList = data ?? [];
+  const machineList = sortGpuMachines(data ?? []);
 
   if (loading && machineList.length === 0) {
     return <Skeleton active paragraph={{ rows: 6 }} />;
@@ -42,7 +44,7 @@ const DiskDashboardPageContent: React.FC<Props> = () => {
   }
 
   return (
-    <div>
+    <div className={styles.machineList}>
       {machineList.map((machine) => (
         <MachineDisk key={machine.serverNameEng} machine={machine} />
       ))}

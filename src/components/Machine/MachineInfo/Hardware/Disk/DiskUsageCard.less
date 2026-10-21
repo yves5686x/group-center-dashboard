@@ -1,19 +1,51 @@
-.cardParentDiv {
-  margin: 4px;
-}
-
 .card {
-  min-width: 200px;
+  height: 100%;
+  min-width: 0;
   border-radius: 10px;
   border: 1px solid var(--ant-color-border-secondary);
-  transition: all 0.3s ease;
 
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 8%);
-    border-color: var(--ant-color-primary);
+  :global(.ant-card-head) {
+    min-height: 68px;
+  }
+
+  :global(.ant-card-head-title) {
+    padding-block: 12px;
+    white-space: normal;
+  }
+
+  :global(.ant-card-body) {
+    padding: 12px 16px 16px;
   }
 }
 
+.mountPoint {
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.usageSummary,
+.capacityRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  color: var(--ant-color-text-secondary);
+  font-size: 12px;
+
+  strong {
+    color: var(--ant-color-text);
+    font-weight: 500;
+  }
+}
+
+.capacityRow {
+  margin-top: 8px;
+}
+
 .detailDiv {
-  padding-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
 }

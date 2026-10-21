@@ -1,68 +1,14 @@
 .container {
-  padding: 0 16px;
+  min-width: 0;
 }
 
 .content {
   width: 100%;
-  max-width: 100%;
-}
-
-.responsiveCard {
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 8%);
-  border: 1px solid var(--ant-color-border-secondary);
-  transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 12%);
-  }
-
-  :global(.ant-card-body) {
-    padding: 20px;
-  }
-}
-
-@media (min-width: 768px) {
-  .responsiveCard {
-    :global(.ant-card-body) {
-      padding: 24px;
-    }
-  }
+  min-width: 0;
 }
 
 @media (max-width: 768px) {
-  .container {
-    padding: 0 8px;
-  }
-
-  .responsiveCard {
-    :global(.ant-card-body) {
-      padding: 16px;
-    }
-  }
-
-  :global {
-    .ant-form-item {
-      margin-bottom: 16px;
-    }
-
-    .ant-input,
-    .ant-select-selector,
-    .ant-btn {
-      font-size: 16px;
-    }
-
-    .ant-table {
-      font-size: 14px;
-    }
-
-    .ant-table-thead > tr > th {
-      font-size: 14px;
-      padding: 8px;
-    }
-
-    .ant-table-tbody > tr > td {
-      padding: 8px;
-    }
+  .container :global(.ant-card-body) {
+    padding: 16px 12px;
   }
 }

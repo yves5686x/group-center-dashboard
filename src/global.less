@@ -1,220 +1,28 @@
-// 全局响应式样式
-// 移动端优化
-
-// 基础字体大小调整
-@media (max-width: 768px) {
-  html {
-    font-size: 14px;
-  }
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
-@media (max-width: 480px) {
-  html {
-    font-size: 13px;
-  }
+body {
+  -webkit-font-smoothing: antialiased;
 }
 
-// 全局卡片样式优化
-@media (max-width: 768px) {
-  .ant-card {
-    margin-bottom: 12px;
-
-    .ant-card-head {
-      padding: 12px 16px;
-
-      .ant-card-head-title {
-        font-size: 14px;
-      }
-    }
-
-    .ant-card-body {
-      padding: 16px;
-    }
-  }
+.ant-pro-sider .ant-menu-item,
+.ant-pro-sider .ant-menu-submenu-title {
+  border-radius: 8px;
 }
 
-@media (max-width: 480px) {
-  .ant-card {
-    .ant-card-head {
-      padding: 10px 12px;
-    }
-
-    .ant-card-body {
-      padding: 12px;
-    }
-  }
-}
-
-// 表格响应式优化
-@media (max-width: 768px) {
-  .ant-table {
-    font-size: 12px;
-
-    .ant-table-thead > tr > th {
-      padding: 8px;
-      font-size: 12px;
-    }
-
-    .ant-table-tbody > tr > td {
-      padding: 8px;
-      font-size: 12px;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .ant-table {
-    .ant-table-thead > tr > th {
-      padding: 6px 4px;
-    }
-
-    .ant-table-tbody > tr > td {
-      padding: 6px 4px;
-    }
-  }
-}
-
-// 表单响应式优化
-@media (max-width: 768px) {
-  .ant-form {
-    .ant-form-item {
-      margin-bottom: 12px;
-    }
-
-    .ant-form-item-label {
-      padding-bottom: 4px;
-    }
-
-    .ant-form-item-label > label {
-      font-size: 13px;
-    }
-  }
-}
-
-// 按钮响应式优化
-@media (max-width: 768px) {
-  .ant-btn {
-    font-size: 13px;
-
-    &.ant-btn-lg {
-      font-size: 14px;
-      height: 40px;
-      padding: 0 16px;
-    }
-
-    &.ant-btn-sm {
-      font-size: 12px;
-      height: 28px;
-      padding: 0 8px;
-    }
-  }
-}
-
-// 标签页响应式优化
-@media (max-width: 768px) {
-  .ant-tabs {
-    .ant-tabs-tab {
-      font-size: 13px;
-      padding: 8px 12px;
-      margin: 0 4px;
-    }
-
-    .ant-tabs-nav {
-      margin-bottom: 16px;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .ant-tabs {
-    .ant-tabs-tab {
-      font-size: 12px;
-      padding: 6px 8px;
-      margin: 0 2px;
-    }
-  }
-}
-
-// 统计卡片响应式优化
-@media (max-width: 768px) {
-  .ant-statistic {
-    .ant-statistic-title {
-      font-size: 12px;
-    }
-
-    .ant-statistic-content {
-      font-size: 18px;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .ant-statistic {
-    .ant-statistic-content {
-      font-size: 16px;
-    }
-  }
-}
-
-// 布局容器响应式优化
-@media (max-width: 768px) {
-  .ant-layout-content {
-    padding: 0;
-  }
-
-  .ant-pro-page-container {
-    padding: 0 8px;
-  }
-}
-
-// 菜单响应式优化
-@media (max-width: 768px) {
-  .ant-pro-sider {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 100% !important;
-  }
-
-  .ant-pro-sider-collapsed {
-    width: 0 !important;
-    min-width: 0 !important;
-  }
-}
-
-// 滚动条优化
-@media (max-width: 768px) {
-  ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 20%);
-    border-radius: 2px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 5%);
-  }
-}
-
-// 触摸优化
 @media (max-width: 768px) {
   * {
     -webkit-tap-highlight-color: transparent;
   }
 
   .ant-btn,
-  .ant-card,
   .ant-tabs-tab {
     touch-action: manipulation;
   }
-}
 
-// 防止页面缩放
-@media (max-width: 768px) {
-  body {
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
+  .ant-form-item {
+    margin-bottom: 16px;
   }
 }

@@ -1,3 +1,8 @@
+.usageContainer {
+  min-width: 0;
+  container: gpu-usage / inline-size;
+}
+
 .gpuUsageCard {
   width: 100%;
   min-width: 0;
@@ -11,6 +16,7 @@
   }
 
   :global(.ant-card-body) {
+    min-height: 122px;
     padding: 10px 12px;
   }
 }
@@ -99,4 +105,35 @@
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   text-align: right;
+}
+
+@container gpu-usage (min-width: 400px) {
+  .gpuUsageCard :global(.ant-card-body) {
+    display: grid;
+    grid-template-columns: minmax(164px, 0.95fr) minmax(0, 1.05fr);
+    align-content: center;
+    align-items: center;
+    column-gap: 16px;
+    row-gap: 4px;
+  }
+
+  .gpuHeader,
+  .memorySummary {
+    grid-column: 1;
+  }
+
+  .memorySummary {
+    margin-top: 0;
+  }
+
+  .metrics {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    gap: 8px;
+    margin-top: 0;
+    padding-top: 0;
+    padding-inline-start: 16px;
+    border-top: 0;
+    border-inline-start: 1px solid var(--ant-color-border-secondary);
+  }
 }

@@ -109,7 +109,7 @@ const StatisticsPage: React.FC = () => {
             <Statistic
               title="总任务数"
               value={overviewStats?.totalTasks || 0}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: 'var(--ant-color-primary)' }}
               suffix="个"
             />
           </Card>
@@ -119,7 +119,7 @@ const StatisticsPage: React.FC = () => {
             <Statistic
               title="活跃用户"
               value={overviewStats?.activeUsers || 0}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: 'var(--ant-color-success)' }}
               suffix="人"
             />
           </Card>
@@ -129,7 +129,7 @@ const StatisticsPage: React.FC = () => {
             <Statistic
               title="平均GPU使用率"
               value={overviewStats?.averageGpuUsage || 0}
-              valueStyle={{ color: '#faad14' }}
+              valueStyle={{ color: 'var(--ant-color-warning)' }}
               suffix="%"
             />
           </Card>
@@ -139,7 +139,7 @@ const StatisticsPage: React.FC = () => {
             <Statistic
               title="项目数量"
               value={overviewStats?.projectCount || 0}
-              valueStyle={{ color: '#722ed1' }}
+              valueStyle={{ color: 'var(--ant-color-info)' }}
               suffix="个"
             />
           </Card>

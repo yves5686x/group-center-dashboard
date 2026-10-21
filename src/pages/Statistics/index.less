@@ -1,154 +1,61 @@
 .statisticsPage {
-  padding: 0;
+  min-width: 0;
 
-  :global(.ant-card) {
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 8%);
-    border: 1px solid var(--ant-color-border-secondary);
-    transition: all 0.3s ease;
-
-    &:hover {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 12%);
-      transform: translateY(-2px);
-    }
+  :global(.ant-tabs-nav) {
+    margin-bottom: 16px;
   }
 
-  :global(.ant-tabs) {
-    :global(.ant-tabs-content) {
-      padding: 0;
-    }
-
-    :global(.ant-tabs-tab) {
-      font-weight: 500;
-      font-size: 14px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      transition: all 0.2s ease;
-
-      &:hover {
-        color: var(--ant-color-primary);
-        background: var(--ant-color-bg-container);
-      }
-    }
-
-    :global(.ant-tabs-tab-active) {
-      font-weight: 600;
-      color: var(--ant-color-primary);
-    }
-
-    :global(.ant-tabs-nav) {
-      margin-bottom: 24px;
-    }
+  :global(.ant-tabs-tab) {
+    padding: 10px 4px;
+    font-weight: 500;
   }
 
-  :global(.ant-statistic) {
-    :global(.ant-statistic-title) {
-      font-size: 14px;
-      color: var(--ant-color-text-secondary);
-      margin-bottom: 8px;
-    }
-
-    :global(.ant-statistic-content) {
-      font-size: 24px;
-      font-weight: 600;
-    }
+  :global(.ant-statistic-title) {
+    margin-bottom: 8px;
+    color: var(--ant-color-text-secondary);
+    font-size: 12px;
   }
 
-  :global(.ant-card-body) {
-    padding: 20px;
+  :global(.ant-statistic-content) {
+    font-size: 24px;
   }
 
-  .chartContainer {
-    min-height: 300px;
+  :global(.ant-col > .ant-card) {
+    height: 100%;
   }
 
   :global(.ant-list-item) {
-    padding: 16px 0;
-    border-bottom: 1px solid var(--ant-color-border);
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-
-  :global(.ant-progress) {
-    margin-top: 8px;
-  }
-
-  :global(.ant-tag) {
-    font-weight: 500;
-    border-radius: 4px;
+    padding: 12px 0;
+    border-bottom-color: var(--ant-color-border-secondary);
   }
 }
 
-// 响应式设计
+.chartContainer {
+  min-height: 300px;
+}
+
 @media (max-width: 768px) {
   .statisticsPage {
-    padding: 0 8px;
-
     :global(.ant-row) {
-      margin-bottom: 16px !important;
-    }
-
-    :global(.ant-col) {
-      margin-bottom: 8px;
-    }
-
-    :global(.ant-card) {
-      margin-bottom: 12px;
+      row-gap: 12px;
     }
 
     :global(.ant-card-body) {
-      padding: 16px;
+      padding: 16px 12px;
     }
 
-    // 图表容器优化
-    .chartContainer {
-      min-height: 250px;
-    }
-
-    // 标签页优化
-    :global(.ant-tabs-nav) {
-      margin-bottom: 16px;
+    :global(.ant-statistic-content) {
+      font-size: 20px;
+      overflow-wrap: anywhere;
     }
 
     :global(.ant-tabs-tab) {
-      margin: 0 4px;
-    }
-
-    // 统计卡片优化
-    :global(.ant-statistic-title) {
+      padding: 10px 0;
       font-size: 12px;
     }
   }
-}
 
-@media (max-width: 480px) {
-  .statisticsPage {
-    padding: 0 4px;
-
-    :global(.ant-card-body) {
-      padding: 12px;
-    }
-
-    :global(.ant-tabs-tab) {
-      font-size: 11px;
-      padding: 6px 8px;
-      margin: 0 2px;
-    }
-
-    .chartContainer {
-      min-height: 200px;
-    }
-
-    :global(.ant-select) {
-      width: 100px !important;
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  :global(.ant-tabs-content-holder) {
-    overflow-x: auto;
+  .chartContainer {
+    min-height: 240px;
   }
 }

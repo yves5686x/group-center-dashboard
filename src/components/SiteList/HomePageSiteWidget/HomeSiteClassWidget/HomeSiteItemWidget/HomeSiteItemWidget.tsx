@@ -26,7 +26,13 @@ const HomeSiteItemWidget: React.FC<Props> = (props) => {
         bordered={false}
         size={200}
       />
-      <div style={{ marginTop: 8, fontSize: 12, color: '#666' }}>
+      <div
+        style={{
+          marginTop: 8,
+          fontSize: 12,
+          color: 'var(--ant-color-text-secondary)',
+        }}
+      >
         扫描二维码访问
       </div>
     </div>

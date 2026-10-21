@@ -1,98 +1,17 @@
 .taskQueryPage {
-  padding: 0 16px;
-
-  .queryFormSection {
-    margin-bottom: 24px;
-
-    :global(.ant-card) {
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 8%);
-      border: 1px solid var(--ant-color-border-secondary);
-      transition: all 0.3s ease;
-
-      &:hover {
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 12%);
-      }
-    }
-  }
-
-  .resultSection {
-    :global(.ant-card) {
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 8%);
-      border: 1px solid var(--ant-color-border-secondary);
-      transition: all 0.3s ease;
-
-      &:hover {
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 12%);
-      }
-    }
-  }
+  min-width: 0;
 }
 
-// 响应式设计
+.queryFormSection {
+  margin-bottom: 16px;
+}
+
+.resultSection {
+  min-width: 0;
+}
+
 @media (max-width: 768px) {
-  .taskQueryPage {
-    padding: 0 8px;
-
-    .queryFormSection,
-    .resultSection {
-      margin-bottom: 12px;
-    }
-
-    :global(.ant-card) {
-      margin-bottom: 12px;
-    }
-
-    :global(.ant-card-body) {
-      padding: 16px;
-    }
-
-    // 表格响应式优化
-    :global(.ant-table) {
-      font-size: 12px;
-    }
-
-    :global(.ant-table-thead > tr > th) {
-      padding: 8px;
-      font-size: 12px;
-    }
-
-    :global(.ant-table-tbody > tr > td) {
-      padding: 8px;
-      font-size: 12px;
-    }
-
-    // 表单响应式优化
-    :global(.ant-form-item) {
-      margin-bottom: 12px;
-    }
-
-    :global(.ant-form-item-label) {
-      padding-bottom: 4px;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .taskQueryPage {
-    padding: 0 4px;
-
-    :global(.ant-card-body) {
-      padding: 12px;
-    }
-
-    :global(.ant-table-thead > tr > th) {
-      padding: 6px 4px;
-    }
-
-    :global(.ant-table-tbody > tr > td) {
-      padding: 6px 4px;
-    }
-
-    // 隐藏不必要的列
-    :global(.ant-table-column-has-sorters) {
-      min-width: 60px;
-    }
+  .taskQueryPage :global(.ant-card-body) {
+    padding: 16px 12px;
   }
 }

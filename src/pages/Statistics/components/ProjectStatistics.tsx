@@ -245,12 +245,12 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
             <Statistic
               title="总项目数"
               value={projectData.totalProjects}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: 'var(--ant-color-primary)' }}
             />
             <Statistic
               title="活跃项目"
               value={projectData.activeProjects}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: 'var(--ant-color-success)' }}
             />
             <Statistic
               title="项目活跃率"
@@ -258,13 +258,13 @@ const ProjectStatistics: React.FC<ProjectStatisticsProps> = ({
                 (projectData.activeProjects / projectData.totalProjects) *
                 100
               ).toFixed(1)}
-              valueStyle={{ color: '#faad14' }}
+              valueStyle={{ color: 'var(--ant-color-warning)' }}
               suffix="%"
             />
             <Statistic
               title="项目平均任务数"
               value={projectData.averageTasksPerProject.toFixed(1)}
-              valueStyle={{ color: '#722ed1' }}
+              valueStyle={{ color: 'var(--ant-color-info)' }}
               precision={1}
             />
           </div>

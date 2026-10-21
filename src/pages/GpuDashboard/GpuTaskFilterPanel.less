@@ -4,11 +4,7 @@
   gap: 12px;
   align-items: center;
   padding: 12px;
-  background: linear-gradient(
-    135deg,
-    var(--ant-color-bg-layout) 0%,
-    var(--ant-color-bg-container) 100%
-  );
+  background: var(--ant-color-bg-container);
   border-radius: 12px;
   border: 1px solid var(--ant-color-border);
   width: 100%;
@@ -37,7 +33,6 @@
       background: var(--ant-color-bg-layout);
       border-color: var(--ant-color-border);
       color: var(--ant-color-text);
-      transform: translateY(-1px);
       box-shadow: 0 2px 6px rgba(0, 0, 0, 8%);
     }
 
@@ -50,7 +45,6 @@
       &:hover {
         background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
         box-shadow: 0 4px 12px rgba(24, 144, 255, 40%);
-        transform: translateY(-2px);
       }
     }
   }

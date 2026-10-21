@@ -11,7 +11,7 @@ import {
   useRealtimeGpuSnapshot,
 } from '@/hooks/useRealtime';
 import { convertFromMBToGB, getMemoryString } from '@/utils/Convert/MemorySize';
-import { Card, Tooltip, theme } from 'antd';
+import { Tooltip, theme } from 'antd';
 import React, { useState } from 'react';
 import GpuDevice from './GpuDevice';
 
@@ -319,61 +319,43 @@ const GpuDashboard: React.FC<Props> = (props) => {
         </ContextMenuItem>
       </ContextMenu>
 
-      <Card
-        style={{
-          marginBottom: 16,
-          cursor: 'context-menu',
-          backgroundColor: token.colorBgContainer,
-          border: `1px solid ${token.colorBorderSecondary}`,
-        }}
-        styles={{ body: { padding: '12px 16px' } }}
-        onContextMenu={handleContextMenu}
-      >
-        {/* 标题居中；数据状态徽标绝对定位到右侧，避免把标题挤偏 */}
-        <div
-          style={{
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 12,
-          }}
+      <div className={styles.machineHeader} onContextMenu={handleContextMenu}>
+        <Tooltip
+          title={memoryTooltipContent}
+          placement="top"
+          color={token.colorBgElevated}
         >
-          <Tooltip
-            title={memoryTooltipContent}
-            placement="top"
-            color={token.colorBgElevated}
-          >
-            <h1
-              className={styles.title}
-              style={{ cursor: 'help', margin: 0, textAlign: 'center' }}
-            >
-              {machine.serverName}
-            </h1>
-          </Tooltip>
+          <h1 className={styles.title}>{machine.serverName}</h1>
+        </Tooltip>
 
-          <div style={{ position: 'absolute', right: 0 }}>
-            {snapshot ? (
-              <RealtimeStatusBadge
-                stale={snapshot.stale}
-                source={snapshot.source}
-                freshness={snapshot.freshness}
-                snapshotTime={snapshot.snapshotTime}
-                error={snapshot.error}
-              />
-            ) : (
-              // 还没拿到快照时，先用机器列表里的过期标记顶上
-              <RealtimeStatusBadge
-                stale={machine.stale}
-                source="none"
-                freshness={machine.freshness}
-                snapshotTime={machine.snapshotTime}
-              />
-            )}
-          </div>
+        <div className={styles.statusBadge}>
+          {snapshot ? (
+            <RealtimeStatusBadge
+              stale={snapshot.stale}
+              source={snapshot.source}
+              freshness={snapshot.freshness}
+              snapshotTime={snapshot.snapshotTime}
+              error={snapshot.error}
+            />
+          ) : (
+            // 还没拿到快照时，先用机器列表里的过期标记顶上
+            <RealtimeStatusBadge
+              stale={machine.stale}
+              source="none"
+              freshness={machine.freshness}
+              snapshotTime={machine.snapshotTime}
+            />
+          )}
         </div>
-      </Card>
+      </div>
       {gpuInfoContent()}
+      {!emptyState &&
+      snapshot &&
+      visibleCards.length === 1 &&
+      visibleCards[0].hasData !== false &&
+      !visibleCards[0].tasks?.length ? (
+        <div className={styles.emptyTaskState}>暂无任务记录</div>
+      ) : null}
     </div>
   );
 };

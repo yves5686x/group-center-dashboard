@@ -13,7 +13,7 @@ const HomePage: React.FC = () => {
   return (
     <PageContainer ghost>
       <div className={styles.container}>
-        <Row gutter={[24, 24]}>
+        <Row gutter={[16, 16]}>
           <Col span={24}>
             <Card className={styles.welcomeCard} bordered={false}>
               <div className={styles.welcomeContent}>
@@ -40,7 +40,7 @@ const HomePage: React.FC = () => {
 
           {/* 监视面板 */}
           <Col span={24}>
-            <Row gutter={[24, 24]} className={styles.monitorContainer}>
+            <Row gutter={[16, 16]} className={styles.monitorContainer}>
               <Col xs={24} lg={12}>
                 <div className={styles.monitorPanel}>
                   <MachineStatusMonitor refreshInterval={30000} />

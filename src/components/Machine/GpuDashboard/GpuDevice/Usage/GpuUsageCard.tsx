@@ -219,7 +219,7 @@ const GpuUsageCard: React.FC<Props> = (props) => {
   );
 
   return (
-    <div>
+    <div className={styles.usageContainer}>
       <Card className={styles.gpuUsageCard}>
         <Tooltip
           title={gpuTooltipContent}

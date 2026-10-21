@@ -1,10 +1,10 @@
 .pageContentDiv {
   justify-items: center;
-  padding: 0 16px;
+  padding: 0;
 
   // 移动端优化
   @media (max-width: 768px) {
-    padding: 0 8px;
+    padding: 0;
   }
 }
 
@@ -38,7 +38,7 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   container: gpu-board / inline-size;
 }
 
@@ -46,7 +46,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .withAnchor {

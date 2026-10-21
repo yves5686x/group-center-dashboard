@@ -15,7 +15,7 @@ const prodRoutes = [
     name: 'GPU看板',
     path: '/gpu-dashboard',
     component: './GpuDashboard',
-    icon: 'PythonOutlined',
+    icon: 'DashboardOutlined',
   },
   {
     name: '硬盘看板',
@@ -45,7 +45,7 @@ const prodRoutes = [
     name: '反馈报告',
     path: '/report',
     component: './Report',
-    icon: 'DatabaseOutlined',
+    icon: 'FileTextOutlined',
   },
 ];
 

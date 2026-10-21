@@ -213,10 +213,9 @@ const SubscriptionManagementPanel: React.FC = () => {
           width: '100%',
           maxWidth: '100%',
         }}
-        styles={{ body: { padding: '24px' } }}
         extra={<Text type="secondary">查看和管理用户的项目订阅</Text>}
       >
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
           <div>
             <Text strong style={{ fontSize: '16px' }}>
               选择用户:
@@ -227,7 +226,7 @@ const SubscriptionManagementPanel: React.FC = () => {
                 marginTop: 12,
                 maxWidth: '400px',
               }}
-              size="large"
+              size="middle"
               placeholder="请选择用户"
               value={selectedUser || undefined}
               onChange={handleUserChange}
@@ -263,7 +262,8 @@ const SubscriptionManagementPanel: React.FC = () => {
                       <List.Item
                         style={{
                           padding: '16px 0',
-                          borderBottom: '1px solid #f0f0f0',
+                          borderBottom:
+                            '1px solid var(--ant-color-border-secondary)',
                         }}
                         actions={[
                           <Button

@@ -9,7 +9,7 @@
 
   .proxyCardsContainer {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
     gap: 16px;
     margin-top: 16px;
   }
@@ -22,13 +22,12 @@
     overflow: hidden;
 
     &:hover {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 12%);
-      transform: translateY(-4px);
-      border-color: var(--ant-primary-color);
+      box-shadow: none;
+      border-color: var(--ant-color-primary);
     }
 
     &.available {
-      border-left: 4px solid var(--ant-color-success);
+      border-left: 2px solid var(--ant-color-success);
       background: linear-gradient(
         90deg,
         var(--ant-color-success-bg) 0%,
@@ -37,7 +36,7 @@
     }
 
     &.unavailable {
-      border-left: 4px solid var(--ant-color-error);
+      border-left: 2px solid var(--ant-color-error);
       background: linear-gradient(
         90deg,
         var(--ant-color-error-bg) 0%,
@@ -46,7 +45,7 @@
     }
 
     &.disabled {
-      border-left: 4px solid var(--ant-color-text-disabled);
+      border-left: 2px solid var(--ant-color-text-disabled);
       background: linear-gradient(
         90deg,
         var(--ant-color-fill-disabled) 0%,
@@ -64,13 +63,13 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
-    padding: 12px 16px;
+    padding: 0;
     border-bottom: 1px solid var(--ant-color-border);
     background: transparent;
 
     .serverName {
       font-weight: 600;
-      font-size: 16px;
+      font-size: 14px;
       color: var(--ant-color-primary);
     }
   }
