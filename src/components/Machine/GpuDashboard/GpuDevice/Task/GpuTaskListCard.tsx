@@ -1,4 +1,3 @@
-import VShow from '@/components/Vue/V-Show';
 import React from 'react';
 import { useFilter } from './Filter';
 import GpuTaskCardItem from './GpuTaskCardItem';
@@ -24,20 +23,20 @@ const GpuTaskListCard: React.FC<Props> = (props) => {
     checkFilter(taskInfo),
   );
 
+  if (filteredTaskList.length === 0) return null;
+
   return (
-    <div>
-      <VShow v-show={filteredTaskList.length > 0}>
-        {filteredTaskList.map((taskInfo, i) => (
-          <div className={styles.gpuTaskItemDiv} key={taskInfo.pid ?? i}>
-            <GpuTaskCardItem
-              index={i}
-              taskInfo={taskInfo}
-              shouldRender={true}
-            />
-          </div>
-        ))}
-      </VShow>
-    </div>
+    <section aria-label="GPU任务">
+      <div className={styles.taskHeading}>
+        <span>任务</span>
+        <span className={styles.taskCount}>{filteredTaskList.length}</span>
+      </div>
+      {filteredTaskList.map((taskInfo, i) => (
+        <div className={styles.gpuTaskItemDiv} key={taskInfo.pid ?? i}>
+          <GpuTaskCardItem index={i} taskInfo={taskInfo} shouldRender={true} />
+        </div>
+      ))}
+    </section>
   );
 };
 

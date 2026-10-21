@@ -1,58 +1,102 @@
 .gpuUsageCard {
   width: 100%;
   min-width: 0;
-  border-radius: 10px;
   border: 1px solid var(--ant-color-border-secondary);
-  transition: all 0.3s ease;
+  border-radius: 10px;
+  background: var(--ant-color-bg-container);
+  transition: border-color 0.2s ease;
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 8%);
-    border-color: var(--ant-color-primary);
+    border-color: var(--ant-color-border);
   }
 
   :global(.ant-card-body) {
-    padding: 16px;
+    padding: 10px 12px;
   }
 }
 
-.space {
+.gpuHeader {
   display: flex;
-  min-width: 0;
-  justify-content: center;
-}
-
-.innerLine {
-  min-width: 0;
-  display: flex;
-  flex-wrap: wrap;
-  overflow-wrap: anywhere;
-  justify-content: center;
   align-items: center;
+  gap: 8px;
+  min-width: 0;
+  cursor: help;
 }
 
-.progressTitle {
-  padding-left: 8px;
-  margin-right: 8px;
-  white-space: nowrap;
-  font-weight: 500;
+.gpuIndex {
+  flex-shrink: 0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--ant-color-fill-tertiary);
   color: var(--ant-color-text-secondary);
+  font-size: 11px;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
 }
 
-.gpuUsagePercent {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.gpuUsagePercentText {
-  padding-left: 4px;
-  font-weight: 600;
+.gpuName {
+  min-width: 0;
+  overflow: hidden;
   color: var(--ant-color-text);
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-  .gpuUsageCard {
-    min-width: auto;
-    max-width: 100%;
-  }
+.memorySummary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 5px;
+  cursor: help;
+}
+
+.memoryLabel {
+  flex-shrink: 0;
+  color: var(--ant-color-text-tertiary);
+  font-size: 11px;
+}
+
+.memoryValue {
+  color: var(--ant-color-text-secondary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px solid var(--ant-color-border-secondary);
+}
+
+.metricRow {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 8px;
+}
+
+.metricLabel {
+  color: var(--ant-color-text-secondary);
+  font-size: 12px;
+}
+
+.metricBar {
+  min-width: 0;
+  margin: 0;
+  line-height: 1;
+}
+
+.metricValue {
+  color: var(--ant-color-text);
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
 }

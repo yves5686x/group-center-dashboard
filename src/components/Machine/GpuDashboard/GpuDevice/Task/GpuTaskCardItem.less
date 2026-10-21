@@ -8,7 +8,22 @@
   overflow-wrap: anywhere;
   border-radius: 10px;
   border: 1px solid var(--ant-color-border-secondary);
+  border-inline-start: 2px solid
+    color-mix(
+      in srgb,
+      var(--ant-color-primary) 25%,
+      var(--ant-color-border-secondary)
+    );
+  background: color-mix(
+    in srgb,
+    var(--ant-color-bg-container) 96%,
+    var(--ant-color-primary) 4%
+  );
   transition: all 0.3s ease;
+
+  :global(.ant-card-head) {
+    background: var(--ant-color-fill-quaternary);
+  }
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 8%);

@@ -1,8 +1,5 @@
-import DisableSelectDiv from '@/components/Public/Layout/DisableSelectDiv';
-import LinerDividerLayout from '@/components/Public/Layout/LinerDividerLayout';
 import { convertFromMBToGB, getMemoryString } from '@/utils/Convert/MemorySize';
-import { green, orange, red } from '@ant-design/colors';
-import { Card, Progress, Space, Tooltip, theme } from 'antd';
+import { Card, Progress, Tooltip, theme } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import styles from './GpuUsageCard.less';
@@ -42,72 +39,6 @@ const useGpuMemoryDetail = (gpuMemoryTotalMB: number, memoryUsage: number) => {
 
   // 返回三个 useState 的结果
   return { gpuMemoryTotalGiB, gpuMemoryUsageGiB, gpuMemoryFreeGiB };
-};
-
-const ProgressComponent = (percent: number) => {
-  // 转换为整数
-  let finalPercentage = Math.floor(percent ?? 0);
-  if (finalPercentage > 100) {
-    finalPercentage = 100;
-  }
-  if (finalPercentage < 0) {
-    finalPercentage = 0;
-  }
-
-  const calculateColorIndex = (
-    percent: number,
-    max: number = 8,
-    min: number = 3,
-  ) => {
-    const maxValue = max > min ? max : min;
-    const minValue = max > min ? min : max;
-
-    return Math.floor(((maxValue - minValue) * percent) / 100 + minValue);
-  };
-  const computeColor = (percent: number) => {
-    const threshold1 = 40,
-      threshold2 = 80;
-    if (percent < threshold1) {
-      return green[calculateColorIndex(percent / threshold1, 8, 3)];
-    } else if (percent >= threshold1 && percent < threshold2) {
-      return orange[
-        calculateColorIndex(
-          (percent - threshold1) / (threshold2 - threshold1),
-          8,
-          5,
-        )
-      ];
-    } else {
-      return red[
-        calculateColorIndex((percent - threshold2) / (100 - threshold2), 8, 5)
-      ];
-    }
-  };
-
-  const getPercentageString = (percent: number | undefined) => {
-    if (percent === undefined) {
-      return '0%';
-    }
-
-    return `${percent}`.padStart(2, '0') + '%';
-  };
-
-  // format = {(percent) => `${percent} Days`}
-  return (
-    <div className={styles.gpuUsagePercent}>
-      <Progress
-        percent={finalPercentage}
-        steps={10}
-        size="small"
-        strokeColor={computeColor(finalPercentage)}
-        format={(finalPercentage) => getPercentageString(finalPercentage)}
-        showInfo={false}
-      />
-      <div className={styles.gpuUsagePercentText}>
-        <div>{getPercentageString(finalPercentage)}</div>
-      </div>
-    </div>
-  );
 };
 
 const GpuUsageCard: React.FC<Props> = (props) => {
@@ -253,58 +184,71 @@ const GpuUsageCard: React.FC<Props> = (props) => {
     </div>
   );
 
-  const leftContent = (
-    <Space className={styles.space} direction="vertical" size="middle">
-      {/* 左上 */}
-      <div className={styles.innerLine}>
-        <Tooltip
-          title={gpuTooltipContent}
-          placement="topLeft"
-          styles={{ root: { maxWidth: 300 } }}
-          color={token.colorBgElevated}
-        >
-          <span style={{ cursor: 'help' }}>
-            [{gpuIndex}]{card.gpuName || ''}
-          </span>
-        </Tooltip>
+  const renderMetric = (label: string, value: number, baseColor: string) => {
+    const percent = Number.isFinite(value)
+      ? Math.max(0, Math.min(100, Math.floor(value)))
+      : 0;
+    const color =
+      percent >= 80
+        ? token.colorError
+        : percent >= 40
+          ? token.colorWarning
+          : baseColor;
+
+    return (
+      <div className={styles.metricRow}>
+        <span className={styles.metricLabel}>{label}</span>
+        <Progress
+          className={styles.metricBar}
+          percent={percent}
+          size="small"
+          strokeWidth={5}
+          strokeColor={color}
+          trailColor={token.colorFillSecondary}
+          showInfo={false}
+          aria-label={`${label}使用率`}
+        />
+        <span className={styles.metricValue}>{percent}%</span>
       </div>
+    );
+  };
 
-      {/* 左下 */}
-      <Tooltip
-        title={memoryTooltipContent}
-        placement="topLeft"
-        styles={{ root: { maxWidth: 250 } }}
-        color={token.colorBgElevated}
-      >
-        <div className={styles.innerLine} style={{ cursor: 'help' }}>
-          {gpuMemoryUsageFormatted}/{gpuMemoryTotalFormatted}GiB
-        </div>
-      </Tooltip>
-    </Space>
-  );
-
-  const rightContent = (
-    <DisableSelectDiv>
-      <Space className={styles.space} direction="vertical" size="middle">
-        {/* 右上 */}
-        <div className={styles.innerLine}>
-          <div className={styles.progressTitle}>显存</div>
-          {ProgressComponent(memoryUsage)}
-        </div>
-
-        {/* 右下 */}
-        <div className={styles.innerLine}>
-          <div className={styles.progressTitle}>核心</div>
-          {ProgressComponent(coreUsage)}
-        </div>
-      </Space>
-    </DisableSelectDiv>
+  const displayName = (card.gpuName || '未知显卡').replace(
+    /^NVIDIA\s+(?:GeForce\s+)?/i,
+    '',
   );
 
   return (
     <div>
       <Card className={styles.gpuUsageCard}>
-        <LinerDividerLayout leftChild={leftContent} rightChild={rightContent} />
+        <Tooltip
+          title={gpuTooltipContent}
+          placement="topLeft"
+          color={token.colorBgElevated}
+        >
+          <div className={styles.gpuHeader}>
+            <span className={styles.gpuIndex}>GPU {gpuIndex}</span>
+            <span className={styles.gpuName} title={card.gpuName}>
+              {displayName}
+            </span>
+          </div>
+        </Tooltip>
+        <Tooltip
+          title={memoryTooltipContent}
+          placement="topLeft"
+          color={token.colorBgElevated}
+        >
+          <div className={styles.memorySummary}>
+            <span className={styles.memoryLabel}>显存占用</span>
+            <span className={styles.memoryValue}>
+              {gpuMemoryUsageFormatted} / {gpuMemoryTotalFormatted} GiB
+            </span>
+          </div>
+        </Tooltip>
+        <div className={styles.metrics}>
+          {renderMetric('显存', memoryUsage, token.colorPrimary)}
+          {renderMetric('核心', coreUsage, token.colorSuccess)}
+        </div>
         {/* hasData=false：后端标记这张卡没取到数据，数值不可信，必须显式提示 */}
         {card.hasData === false ? (
           <div
