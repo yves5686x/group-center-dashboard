@@ -9,14 +9,23 @@ export const GPU_MACHINE_ROWS = [
 
 const machineOrder: readonly string[] = GPU_MACHINE_ROWS.flat();
 
+/** Format labels only; stable IDs and API parameters retain their original case. */
+export const formatServerName = (name?: string) =>
+  (name ?? '').replace(
+    /\b(409[08])([ab])\b/gi,
+    (_, model, suffix) => `${model}${suffix.toUpperCase()}`,
+  );
+
 export const getMachineDisplayName = (machine: {
   serverNameEng?: string;
   serverName?: string;
 }) => {
   const id = machine.serverNameEng?.trim().toLowerCase();
   return id && machineOrder.includes(id)
-    ? id
-    : machine.serverName || machine.serverNameEng || '未知服务器';
+    ? id.toUpperCase()
+    : formatServerName(
+        machine.serverName || machine.serverNameEng || '未知服务器',
+      );
 };
 
 export const sortGpuMachines = <T extends { serverNameEng: string }>(

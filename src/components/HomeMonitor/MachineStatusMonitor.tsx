@@ -1,5 +1,6 @@
 import Tag from '@/components/UI/ReadableTag';
 import { useReadableColors } from '@/hooks/useReadableColors';
+import { getMachineDisplayName } from '@/utils/machinePresentation';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -226,7 +227,12 @@ const MachineStatusMonitor: React.FC<MachineStatusMonitorProps> = ({
             className={`${styles.machineCard} ${styles[getMachineStatusColor(machine)]}`}
           >
             <div className={styles.cardHeader}>
-              <span className={styles.machineName}>{machine.name}</span>
+              <span className={styles.machineName}>
+                {getMachineDisplayName({
+                  serverNameEng: machine.nameEng,
+                  serverName: machine.name,
+                })}
+              </span>
               <span className={styles.machinePosition}>{machine.position}</span>
             </div>
 

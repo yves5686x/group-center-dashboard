@@ -2,6 +2,7 @@ import { useReadableChartTheme } from '@/hooks/useReadableChartTheme';
 import { useReadableColors } from '@/hooks/useReadableColors';
 import { getGpuStatistics } from '@/services/group_center/dashboardStatistics';
 import { calculateDateRange, getTimeRangeDisplayName } from '@/utils/dateRange';
+import { formatServerName } from '@/utils/machinePresentation';
 import { Column, Pie } from '@ant-design/charts';
 import { Alert, Card, Col, Empty, Row, Select, Spin, Statistic } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -105,7 +106,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
 
     const map = new Map<string, number>();
     gpuData.usageByDevice.forEach((gpu) => {
-      const server = gpu.serverName || '未知服务器';
+      const server = formatServerName(gpu.serverName) || '未知服务器';
       const currentCount = map.get(server) || 0;
       map.set(server, currentCount + (gpu.totalUsageCount || 0));
     });
@@ -118,7 +119,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
   const serverGpuModels = useMemo(() => {
     const map = new Map<string, Set<string>>();
     gpuData?.usageByDevice.forEach((gpu) => {
-      const server = gpu.serverName || '未知服务器';
+      const server = formatServerName(gpu.serverName) || '未知服务器';
       const model = gpu.gpuName || '未知GPU';
       if (!map.has(server)) map.set(server, new Set());
       map.get(server)!.add(model);
@@ -145,7 +146,7 @@ const GpuUsageChart: React.FC<GpuUsageChartProps> = ({ timePeriod }) => {
 
     gpuData.usageByDevice.forEach((gpu) => {
       const gpuModel = gpu.gpuName || '未知GPU';
-      const server = gpu.serverName || '未知服务器';
+      const server = formatServerName(gpu.serverName) || '未知服务器';
       const tasks = gpu.totalUsageCount || 0;
 
       if (!serverMap.has(gpuModel)) {

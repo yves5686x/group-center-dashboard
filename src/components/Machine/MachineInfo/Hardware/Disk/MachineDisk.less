@@ -1,3 +1,5 @@
+@import '../../../ServerPanelHeader.less';
+
 .deviceCardDiv {
   width: 100%;
   min-width: 0;
@@ -13,22 +15,11 @@
 }
 
 .machineHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--ant-color-border-secondary);
+  .server-panel-header();
 }
 
 .title {
-  min-width: 0;
-  margin: 0;
-  color: var(--ant-color-text);
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 24px;
+  .server-panel-title();
 }
 
 .statusBadge {

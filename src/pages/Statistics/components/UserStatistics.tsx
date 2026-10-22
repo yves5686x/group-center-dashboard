@@ -3,6 +3,7 @@ import { useReadableChartTheme } from '@/hooks/useReadableChartTheme';
 import { useReadableColors } from '@/hooks/useReadableColors';
 import { getUserStatistics } from '@/services/group_center/dashboardStatistics';
 import { calculateDateRange, getTimeRangeDisplayName } from '@/utils/dateRange';
+import { formatServerName } from '@/utils/machinePresentation';
 import { Pie } from '@ant-design/charts';
 import {
   Alert,
@@ -122,7 +123,7 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
       runtime: user.totalRuntime,
       tasks: user.totalTasks,
       favoriteGpu: user.favoriteGpu,
-      favoriteServer: user.favoriteServer,
+      favoriteServer: formatServerName(user.favoriteServer),
     }));
 
     return mergeTopKWithOther(allData, topK, (remaining) => ({
@@ -461,7 +462,8 @@ const UserStatistics: React.FC<UserStatisticsProps> = ({ timePeriod }) => {
                       }}
                     >
                       <span>
-                        常用服务器: {user.favoriteServer || '暂无数据'}
+                        常用服务器:{' '}
+                        {formatServerName(user.favoriteServer) || '暂无数据'}
                       </span>
                       <span>
                         使用过的显卡型号:{' '}

@@ -1,21 +1,14 @@
+@import '../ServerPanelHeader.less';
+
 .machineHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--ant-color-border-secondary);
+  .server-panel-header();
+
   cursor: context-menu;
 }
 
 .title {
-  min-width: 0;
-  margin: 0;
-  color: var(--ant-color-text);
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
+  .server-panel-title();
+
   cursor: help;
 }
 
