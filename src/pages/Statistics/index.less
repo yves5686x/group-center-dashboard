@@ -34,6 +34,31 @@
   min-height: 300px;
 }
 
+.statisticsModes {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: 10px;
+  background: var(--ant-color-bg-container);
+
+  :global(.ant-segmented) {
+    width: 100%;
+    max-width: 460px;
+  }
+
+  :global(.ant-segmented-item-label) {
+    padding: 3px 16px;
+    font-weight: 500;
+  }
+
+  p {
+    margin: 10px 0 0;
+    color: var(--ant-color-text-secondary);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+}
+
 @media (max-width: 768px) {
   .statisticsPage {
     :global(.ant-row) {

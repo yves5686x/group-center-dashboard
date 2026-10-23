@@ -1,6 +1,17 @@
 import { useReadableColors } from '@/hooks/useReadableColors';
 import { PageContainer } from '@ant-design/pro-components';
-import { Alert, Card, Col, Row, Select, Spin, Statistic, Tabs } from 'antd';
+import { history, useLocation } from '@umijs/max';
+import {
+  Alert,
+  Card,
+  Col,
+  Row,
+  Segmented,
+  Select,
+  Spin,
+  Statistic,
+  Tabs,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import { get24HourReport } from '@/services/group_center/dashboardStatistics';
@@ -28,7 +39,9 @@ const timePeriodOptions = [
   { value: 'ONE_YEAR', label: '1年' },
 ];
 
-const StatisticsPage: React.FC = () => {
+const LegacyStatisticsPage: React.FC<{ modeControl?: React.ReactNode }> = ({
+  modeControl,
+}) => {
   const colors = useReadableColors();
   const [timePeriod, setTimePeriod] = useState<string>('ONE_WEEK');
   const [activeTab, setActiveTab] = useState<string>('gpu');
@@ -172,6 +185,7 @@ const StatisticsPage: React.FC = () => {
       ghost
     >
       <div className={styles.statisticsPage}>
+        {modeControl}
         <Tabs
           activeKey={activeTab}
           onChange={(key) => {
@@ -211,6 +225,77 @@ const StatisticsPage: React.FC = () => {
         />
       </div>
     </PageContainer>
+  );
+};
+
+const GpuHoursStatistics = React.lazy(
+  () => import('./gpuHours/GpuHoursStatistics'),
+);
+const StatisticsPage: React.FC = () => {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  // Keep links from the approved local preview working after release.
+  const hoursMode =
+    (params.get('mode') ?? params.get('preview')) === 'gpu-hours';
+  const [visitedTasks, setVisitedTasks] = useState(!hoursMode);
+  const [visitedHours, setVisitedHours] = useState(hoursMode);
+
+  useEffect(() => {
+    if (hoursMode) setVisitedHours(true);
+    else setVisitedTasks(true);
+    // Charts kept in the other view need to measure their visible container again.
+    const frame = window.requestAnimationFrame(() =>
+      window.dispatchEvent(new Event('resize')),
+    );
+    return () => window.cancelAnimationFrame(frame);
+  }, [hoursMode]);
+
+  const modeControl = (
+    <div className={styles.statisticsModes}>
+      <Segmented
+        block
+        aria-label="切换统计方式"
+        value={hoursMode ? 'gpu-hours' : 'tasks'}
+        options={[
+          { label: '任务统计', value: 'tasks' },
+          { label: 'GPU 卡时统计', value: 'gpu-hours' },
+        ]}
+        onChange={(mode) => {
+          const params = new URLSearchParams(location.search);
+          params.delete('preview');
+          if (mode === 'gpu-hours') params.set('mode', 'gpu-hours');
+          else params.delete('mode');
+          const search = params.toString();
+          history.replace({
+            pathname: location.pathname,
+            search: search ? `?${search}` : '',
+            hash: location.hash,
+          });
+        }}
+      />
+      <p>
+        {hoursMode
+          ? '按显卡占用时间比较资源使用，支持用户、服务器、项目和每日趋势。'
+          : '保留原有 GPU 使用、用户、项目、时间趋势和活动时间分布。'}
+      </p>
+    </div>
+  );
+
+  return (
+    <>
+      {(visitedTasks || !hoursMode) && (
+        <div hidden={hoursMode}>
+          <LegacyStatisticsPage modeControl={modeControl} />
+        </div>
+      )}
+      {(visitedHours || hoursMode) && (
+        <div hidden={!hoursMode}>
+          <React.Suspense fallback={<Spin size="large" />}>
+            <GpuHoursStatistics modeControl={modeControl} />
+          </React.Suspense>
+        </div>
+      )}
+    </>
   );
 };
 

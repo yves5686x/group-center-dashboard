@@ -1,0 +1,328 @@
+.page {
+  min-width: 0;
+  color: var(--ant-color-text);
+
+  :global(.ant-statistic-content) {
+    font-variant-numeric: tabular-nums;
+    font-size: 30px;
+    font-weight: 600;
+  }
+
+  :global(.ant-statistic-content-suffix) {
+    margin-inline-start: 6px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ant-color-text-secondary);
+  }
+
+  :global(.ant-tabs-tab) {
+    padding: 12px 0;
+    font-weight: 500;
+  }
+
+  :global(.ant-table-cell) {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :global(.ant-card-head-title) {
+    white-space: normal;
+  }
+}
+
+.dataBanner {
+  margin-bottom: 20px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  min-height: 180px;
+  color: var(--ant-color-text-secondary);
+}
+
+.toolbar,
+.filters,
+.metricBar,
+.metricBar > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbar {
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.periodSelect {
+  width: 150px;
+}
+
+.serverSelect {
+  width: 142px;
+}
+
+.muted {
+  color: var(--ant-color-text-secondary);
+  font-size: 12px;
+}
+
+.overview {
+  margin-bottom: 22px;
+
+  :global(.ant-card) {
+    height: 100%;
+  }
+}
+
+.featuredCard {
+  border-color: var(--ant-color-primary-border);
+  background: var(--ant-color-primary-bg);
+}
+
+.cardNote {
+  margin: 12px 0 0;
+  color: var(--ant-color-text-secondary);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.metricBar {
+  justify-content: space-between;
+  padding: 14px 18px;
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: 10px;
+  background: var(--ant-color-bg-container);
+}
+
+.section {
+  margin-bottom: 16px;
+
+  :global(.ant-col > .ant-card) {
+    height: 100%;
+  }
+}
+
+.rankBars {
+  display: grid;
+  gap: 20px;
+  padding: 8px 0;
+}
+
+.rankRow {
+  display: grid;
+  grid-template-columns: minmax(100px, 160px) minmax(40px, 1fr) 108px;
+  align-items: center;
+  gap: 16px;
+}
+
+.rankLabel {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  overflow-wrap: anywhere;
+}
+
+.rankIndex {
+  color: var(--ant-color-text-secondary);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.estimate {
+  color: var(--ant-color-text-secondary);
+  font-size: 11px;
+}
+
+.rankTrack {
+  height: 10px;
+  border-radius: 3px;
+  background: var(--ant-color-fill-secondary);
+  overflow: hidden;
+}
+
+.rankFill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--usage-accent);
+  transition: width 180ms ease;
+}
+
+.rankValue {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+
+  small {
+    color: var(--ant-color-text-secondary);
+    font-size: 11px;
+    font-weight: 400;
+  }
+}
+
+.compactBars {
+  .rankRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+  }
+
+  .rankLabel {
+    grid-area: 1 / 1;
+  }
+
+  .rankValue {
+    grid-area: 1 / 2;
+  }
+
+  .rankTrack {
+    grid-area: 2 / 1 / 3 / 3;
+  }
+}
+
+.primaryNumber {
+  color: var(--usage-accent);
+}
+
+.tableName {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+
+.search {
+  width: 245px;
+  max-width: 100%;
+}
+
+.serverName {
+  font-size: 16px;
+}
+
+.trendScroll {
+  overflow-x: auto;
+}
+
+.trend {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  padding: 16px 6px 0;
+}
+
+.day {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-variant-numeric: tabular-nums;
+
+  > strong {
+    font-size: 13px;
+  }
+
+  > span {
+    color: var(--ant-color-text-secondary);
+    font-size: 12px;
+  }
+}
+
+.dayTrack {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  max-width: 44px;
+  height: 200px;
+  border-radius: 4px;
+  background: var(--ant-color-fill-quaternary);
+}
+
+.dayFill {
+  width: 100%;
+  background: var(--usage-accent);
+  border-radius: 4px 4px 0 0;
+  transition: height 180ms ease;
+}
+
+.footnote {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 2px 4px;
+  color: var(--ant-color-text-secondary);
+  font-size: 12px;
+  line-height: 1.8;
+
+  > span:first-child {
+    color: var(--ant-color-text);
+    font-weight: 500;
+  }
+}
+
+.rules {
+  line-height: 1.9;
+}
+
+.formula {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 20px 12px;
+  background: var(--ant-color-primary-bg);
+  border: 1px solid var(--ant-color-primary-border);
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+@media (max-width: 767px) {
+  .overview {
+    :global(.ant-statistic-content) {
+      font-size: 26px;
+    }
+  }
+
+  .rankRow {
+    grid-template-columns: minmax(88px, 1fr) minmax(40px, 1fr) 88px;
+    gap: 8px;
+  }
+
+  .rankIndex {
+    display: none;
+  }
+
+  .page :global(.ant-card-head) {
+    flex-wrap: wrap;
+    padding: 12px;
+  }
+
+  .page :global(.ant-card-head-wrapper) {
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .page :global(.ant-card-extra) {
+    max-width: 100%;
+    margin-inline-start: 0;
+  }
+
+  .metricBar {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .search {
+    width: 220px;
+  }
+}

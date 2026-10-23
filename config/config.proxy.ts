@@ -3,23 +3,28 @@ import { getEnvBool } from './utils';
 const disableProxy = getEnvBool('DISABLE_PROXY');
 const enableProxy = getEnvBool('ENABLE_PROXY');
 const finalResult = !disableProxy && enableProxy;
+// The dedicated preview source must not be overwritten by .env.development.
+const backendUrl =
+  process.env.GROUP_CENTER_REAL_PREVIEW === '1'
+    ? process.env.PREVIEW_READONLY_URL || 'http://127.0.0.1:18882'
+    : process.env.GROUP_CENTER_URL;
 
 console.log('DISABLE_PROXY', disableProxy);
 console.log('ENABLE_PROXY', enableProxy);
 console.log('[Proxy]', finalResult);
 
-console.log('[Proxy] GROUP_CENTER_URL =', process.env.GROUP_CENTER_URL);
+console.log('[Proxy] GROUP_CENTER_URL =', backendUrl);
 
 let proxyConfig = finalResult
   ? {
       proxy: {
         '/api': {
-          target: process.env.GROUP_CENTER_URL + '/api/',
+          target: backendUrl + '/api/',
           changeOrigin: true,
           pathRewrite: { '^/api': '' },
         },
         '/web': {
-          target: process.env.GROUP_CENTER_URL + '/web/',
+          target: backendUrl + '/web/',
           changeOrigin: true,
           pathRewrite: { '^/web': '' },
         },
@@ -30,7 +35,7 @@ let proxyConfig = finalResult
         // '/version' 在生产由后端同源提供；dev 下补一条代理，否则反馈报告页
         // 拿到的是前端 dev server 的 SPA HTML。
         '/version': {
-          target: process.env.GROUP_CENTER_URL || '',
+          target: backendUrl || '',
           changeOrigin: true,
         },
       },

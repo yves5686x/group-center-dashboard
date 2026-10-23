@@ -1,12 +1,13 @@
 {
   "name": "group-center-dashboard",
-  "version": "1.8.16-rc.7",
+  "version": "1.8.16-rc.8",
   "private": true,
   "author": "Haomin Kong <a645162@qq.com>",
   "scripts": {
     "build": "max build",
     "check:compile": "tsc --noEmit",
     "check:contrast": "node --experimental-strip-types --test scripts/verify-theme-contrast.test.mjs",
+    "check:usage": "node --experimental-strip-types --test scripts/verify-gpu-hours.test.mjs scripts/verify-real-usage.test.mjs",
     "dev": "max dev",
     "dev:proxy": "cross-env ENABLE_PROXY=true MOCK=none max dev",
     "dev:pure": "cross-env MOCK=none max dev",
@@ -19,6 +20,7 @@
     "openapi:old": "ts-node openapi.config.ts",
     "openapi:win": "set ENABLE_OPEN_API=true && max openapi",
     "prepare": "husky",
+    "preview:server": "node scripts/preview-real-statistics.mjs",
     "setup": "max setup",
     "start": "npm run dev",
     "stat": "tokei",
